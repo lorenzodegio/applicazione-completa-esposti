@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuova Pratica | Sportello Esposti</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    .wizard-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 2rem;
+      border: 1px solid var(--color-border);
+    }
+
+    .wizard-step {
+      display: none;
+    }
+    .wizard-step.active {
+      display: block;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-border);
+      z-index: 1;
+    }
+
+    .step-indicator {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--color-surface);
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      z-index: 2;
+      color: var(--color-text-muted);
+    }
+
+    .step-indicator.active {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .step-indicator.completed {
+      border-color: var(--color-secondary);
+      background: var(--color-secondary);
+      color: white;
+    }
+
+    .wizard-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container navbar">
+      <div class="nav-brand">
+        <a href="index.html" style="display:flex; align-items:center; gap:1rem; text-decoration:none;">
+          <img src="assets/logo.svg" alt="Logo Sportello Esposti">
+          <span>Sportello Esposti | Cittadino</span>
+        </a>
+      </div>
+      <div style="font-weight: 500;">
+        Benvenuto, Mario Rossi (SPID)
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="wizard-container">
+      <h2>Nuova Pratica — Sportello Esposti</h2>
+      <p style="color: var(--color-text-muted); margin-bottom: 2rem;">Compila la procedura guidata. Il nostro assistente IA analizzerà la tua richiesta per indirizzarla all'ufficio competente.</p>
+
+      <div class="progress-bar">
+        <div class="step-indicator active" id="ind-1">1</div>
+        <div class="step-indicator" id="ind-2">2</div>
+        <div class="step-indicator" id="ind-3">3</div>
+      </div>
+
+      <form id="pratica-form" onsubmit="return false;">
+
+        <!-- Step 1: Descrizione -->
+        <div class="wizard-step active" id="step-1">
+          <div class="form-group">
+            <label class="form-label">
+              Tipo di Pratica <span class="required-marker">*</span>
+              <button type="button" class="info-btn" id="btn-info-tipo-pratica" aria-label="Cosa significano queste voci?" title="Cosa significano queste voci?">i</button>
+            </label>
+            <select class="form-control form-select" id="tipo-pratica" required>
+              <option value="">Seleziona...</option>
+              <option value="segnalazione">Segnalazione</option>
+              <option value="esposto">Esposto</option>
+              <option value="accesso_atti">Richiesta di Accesso agli Atti (FOIA)</option>
+              <option value="informazioni">Richiesta di Informazioni</option>
+            </select>
+            <small id="errore-tipo-pratica" class="field-error hidden">Seleziona il tipo di pratica.</small>
+            <dl class="info-popover" id="info-popover-tipo-pratica">
+              <dt>Segnalazione</dt>
+              <dd>Comunicazione con cui porti all'attenzione dell'ente una situazione di disagio, rischio o irregolarità che hai riscontrato, senza chiedere necessariamente un provvedimento formale nei confronti di terzi.</dd>
+              <dt>Esposto</dt>
+              <dd>Atto con cui riferisci formalmente all'ente fatti o comportamenti che ritieni possano costituire una violazione di norme o regolamenti, chiedendo che vengano accertati e che l'ente assuma le iniziative conseguenti (verifiche, sopralluoghi, eventuali sanzioni).</dd>
+              <dt>Richiesta di Accesso agli Atti (FOIA)</dt>
+              <dd>Richiesta con cui chiedi di prendere visione o ottenere copia di documenti e atti amministrativi in possesso dell'ente, ai sensi della normativa sulla trasparenza.</dd>
+              <dt>Richiesta di Informazioni</dt>
+              <dd>Domanda generica con cui chiedi chiarimenti su servizi, procedure o competenze dell'ente, senza che si apra un vero e proprio procedimento amministrativo.</dd>
+            </dl>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descrizione della Richiesta <span class="required-marker">*</span></label>
+            <textarea class="form-control" id="descrizione" placeholder="Descrivi con parole tue cosa è successo o cosa desideri richiedere. Più dettagli fornisci, più rapidamente sapremo indirizzare la tua pratica." required></textarea>
+            <small id="errore-descrizione" class="field-error hidden">Fornisci una descrizione di almeno 15 caratteri.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Luogo o Riferimento (facoltativo)</label>
+            <input type="text" class="form-control" id="luogo" placeholder="Es. Via Roma 10, Varese (VA)">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Allegati (facoltativo)</label>
+            <input type="file" class="form-control" id="allegati" multiple>
+            <small style="color:var(--color-text-muted);">Puoi allegare foto, documenti o altri file utili alla valutazione.</small>
+            <div id="file-chips-container" style="margin-top:0.75rem;"></div>
+          </div>
+        </div>
+
+        <!-- Step 2: Analisi IA -->
+        <div class="wizard-step" id="step-2">
+          <div id="ai-loading" class="ai-loading-box">
+            <div class="spinner"></div>
+            <p>Analisi IA in corso: stiamo individuando l'ufficio competente...</p>
+          </div>
+
+          <div id="ai-error" class="ai-error-box hidden">
+            <p>Non è stato possibile completare l'analisi automatica.</p>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-retry-ai">Riprova Analisi</button>
+          </div>
+
+          <div id="ai-result-container" class="hidden">
+            <div class="ai-box" id="ai-box"></div>
+
+            <h3 style="margin-top:2rem;">Dati Necessari per Procedere</h3>
+            <p style="color:var(--color-text-muted); margin-bottom:1rem;">In base alla classificazione, conferma o integra i seguenti dati:</p>
+            <div id="dynamic-fields-container"></div>
+
+            <div class="form-group" id="conferma-container" style="background:#fcfcfc;border:1px solid #ddd;padding:1rem;border-radius:var(--radius-sm);">
+              <label style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.9rem;">
+                <input type="checkbox" id="conferma-dati" style="margin-top:3px;">
+                <span>Confermo che i dati forniti sono corretti e veritieri.</span>
+              </label>
+              <small id="errore-conferma" class="field-error hidden">Devi confermare i dati per proseguire.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Riepilogo / Esito -->
+        <div class="wizard-step" id="step-3">
+          <div id="riepilogo-container"></div>
+        </div>
+
+        <div class="wizard-actions">
+          <button type="button" class="btn btn-outline" id="btn-prev" disabled>Indietro</button>
+          <button type="button" class="btn btn-primary" id="btn-next">Avanti</button>
+          <button type="button" class="btn btn-primary hidden" id="btn-submit">Invia Pratica</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script src="js/ai-service.js"></script>
+  <script src="js/citizen-flow.js"></script>
+</body>
+</html>

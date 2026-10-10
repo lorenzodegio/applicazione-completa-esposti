@@ -1,0 +1,658 @@
+:root {
+  /* Colors */
+  --color-primary: #003366; /* Deep Blue PA */
+  --color-primary-light: #00509e;
+  --color-secondary: #00a65a; /* Vivid One-Health Green */
+  --color-secondary-hover: #008f4c;
+  --color-accent: #f39c12; /* Warning/Critical */
+  --color-danger: #e74c3c;
+  --color-success: #2ecc71;
+  
+  --color-bg: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-text: #333333;
+  --color-text-muted: #6c757d;
+  --color-border: #e9ecef;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Shadows & Glassmorphism */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: 1px solid rgba(255,255,255,0.3);
+  --glass-blur: blur(12px);
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography elements */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+a {
+  color: var(--color-primary-light);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* Layout */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Header & Navbar */
+header {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: var(--glass-border);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-brand img {
+  height: 50px;
+}
+
+.nav-brand span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-links a {
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Cards & Surface */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+  border: 1px solid var(--color-border);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background-color: #fcfcfc;
+  border: 1px solid #ced4da;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(0, 166, 90, 0.2);
+  background-color: #fff;
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+/* Mandatory field marker (asterisk next to blocking fields) */
+.required-marker {
+  color: var(--color-danger);
+  font-weight: 700;
+  margin-left: 0.15rem;
+}
+
+/* Small round "i" button that reveals field-level help text */
+.info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-style: italic;
+  font-family: Georgia, serif;
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.info-btn:hover {
+  background: var(--color-primary-light);
+}
+
+.info-popover {
+  display: none;
+  background: #f8f9fa;
+  border-left: 4px solid var(--color-primary);
+  border-radius: 4px;
+  padding: 0.75rem 1.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.info-popover.active {
+  display: block;
+}
+
+.info-popover dt {
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: 0.75rem;
+}
+
+.info-popover dt:first-child {
+  margin-top: 0;
+}
+
+.info-popover dd {
+  margin: 0.25rem 0 0;
+  color: var(--color-text);
+}
+
+/* Inline field validation (shared across forms) */
+.field-error {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+  display: block;
+  margin-top: 0.4rem;
+}
+
+.input-error {
+  border-color: var(--color-danger) !important;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 0.75em;
+  font-weight: 700;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-critico {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.badge-ordinario {
+  background-color: rgba(243, 156, 18, 0.15);
+  color: #d35400;
+}
+
+.badge-banale {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+
+/* Status badges for "stato pratica" (generic URP workflow) */
+.badge-ricevuta {
+  background-color: rgba(108, 117, 125, 0.15);
+  color: #495057;
+}
+
+.badge-da-valutare {
+  background-color: rgba(243, 156, 18, 0.18);
+  color: #b9770e;
+}
+
+.badge-assegnata {
+  background-color: rgba(0, 80, 158, 0.14);
+  color: #00509e;
+}
+
+.badge-in-lavorazione {
+  background-color: rgba(142, 68, 173, 0.14);
+  color: #6c3483;
+}
+
+.badge-chiusa {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+
+/* Generic "ambito" badge. Background/text color is assigned inline via
+   JS (see getColorForAmbito in app.js) so any new domain name renders
+   correctly without needing a dedicated CSS class. */
+.badge-ambito {
+  display: inline-block;
+  padding: 0.3em 0.75em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* Grid System Utility */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Hidden Utils */
+.hidden {
+  display: none !important;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Triage Alert Box */
+.triage-alert {
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.triage-alert.critico {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-left: 4px solid var(--color-danger);
+}
+
+.triage-alert.ordinario {
+  background-color: rgba(243, 156, 18, 0.1);
+  border-left: 4px solid var(--color-accent);
+}
+
+.triage-alert.banale {
+  background-color: rgba(46, 204, 113, 0.1);
+  border-left: 4px solid var(--color-success);
+}
+
+/* ============================================================
+   AI interaction components (shared between cittadino.html and
+   dashboard-operatore.html: both need to display what the AI
+   classification engine returned).
+   ============================================================ */
+.ai-box {
+  background: #f8f9fa;
+  border-left: 4px solid var(--color-primary);
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.ai-box h4 {
+  margin-top: 0;
+  color: var(--color-primary);
+}
+
+.ai-box p {
+  margin-bottom: 0.5rem;
+}
+
+.ai-box p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.ai-error-box {
+  background: rgba(231, 76, 60, 0.08);
+  border-left: 4px solid var(--color-danger);
+  padding: 1.5rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.ai-error-box p {
+  margin-bottom: 1rem;
+  color: #c0392b;
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(0, 51, 102, 0.15);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   File attachment chips (shared: used on citizen upload step and
+   in the operator detail modal).
+   ============================================================ */
+.file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f1f3f5;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  margin: 0.25rem 0.5rem 0.25rem 0;
+}
+
+.file-chip small {
+  color: var(--color-text-muted);
+}
+
+.file-chip button {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+/* "Already provided" tag shown next to dynamic fields the system could
+   pre-fill from data collected earlier in the wizard. */
+.campo-noto-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+  padding: 0.15em 0.6em;
+  border-radius: 10px;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+}
+
+/* ============================================================
+   Summary ("riepilogo") and success-state components.
+   ============================================================ */
+.riepilogo-section {
+  padding: 1rem 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.riepilogo-section:last-child {
+  border-bottom: none;
+}
+
+.riepilogo-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.success-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.success-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  background-color: var(--color-primary);
+  color: white;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+footer p {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: flex;
+    overflow-x: auto;
+    padding: 1rem;
+    gap: 0.5rem;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .sidebar .menu-item {
+    white-space: nowrap;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .wizard-container {
+    padding: 1.25rem;
+    margin: 1.5rem 1rem;
+  }
+  table {
+    font-size: 0.85rem;
+  }
+  th, td {
+    padding: 0.6rem;
+  }
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

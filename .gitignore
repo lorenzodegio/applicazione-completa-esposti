@@ -1,0 +1,77 @@
+# --- Segreti e configurazione locale ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Dati e documenti (mai nel repository, nemmeno sintetici generati a runtime) ---
+data/
+dati/
+**/data/
+**/dati/
+documenti_archivio/
+storage/
+uploads/
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+pgdata/
+backend/documenti/archivio/
+
+# Documenti caricati / prodotti (i test usano fixture sintetiche in tests/fixtures/)
+*.pdf
+*.docx
+*.doc
+*.odt
+*.xlsx
+*.xls
+*.eml
+*.msg
+*.p7m
+!**/tests/fixtures/**
+
+# --- Uscite del motore di classificazione ---
+backend/motore/output/
+backend/motore/uscite/
+backend/motore/runs/
+backend/motore/work/
+**/motore_output/
+*.jsonl
+
+# --- Node / frontend ---
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# --- Log e cache varie ---
+*.log
+logs/
+.cache/
+tmp/
+
+# --- Editor / sistema ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Operatore | Sportello Esposti</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: calc(100vh - 80px);
+    }
+    .sidebar {
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      padding: 2rem 1rem;
+    }
+    .main-content {
+      padding: 2rem;
+    }
+    .menu-item {
+      display: block;
+      padding: 0.75rem 1rem;
+      color: var(--color-text);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .menu-item:hover, .menu-item.active {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: top;
+    }
+    th {
+      background-color: var(--color-bg);
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+    tr:hover {
+      background-color: rgba(0,0,0,0.02);
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .filter-bar .form-group {
+      margin-bottom: 0;
+    }
+
+    /* Modal for details */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: var(--color-surface);
+      width: 90%;
+      max-width: 800px;
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 1rem;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body style="background-color: #f0f2f5;">
+
+  <header>
+    <div class="container navbar" style="max-width: 100%;">
+      <div class="nav-brand" style="margin-left: 1rem;">
+        <a href="../frontoffice/index.html" style="display:flex; align-items:center; gap:1rem; text-decoration:none;">
+          <img src="assets/logo.svg" alt="Logo Sportello Esposti">
+          <span>Sportello Esposti | Area Riservata Operatori</span>
+        </a>
+      </div>
+      <div style="font-weight: 500; margin-right: 1rem; display:flex; align-items:center; gap:1rem;" id="operatore-info-bar">
+        <span id="operatore-info-text"></span>
+        <button class="btn btn-outline btn-sm hidden" id="btn-logout-operatore">Cambia Operatore</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login simulato: selezione del profilo operatore (demo, nessuna autenticazione reale) -->
+  <div class="modal-overlay active" id="login-overlay" style="z-index:3000;">
+    <div class="modal" style="max-width:480px;">
+      <div class="modal-header">
+        <h3>Accesso Operatore (Demo)</h3>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom:1.5rem;">Seleziona un profilo per accedere alla dashboard. In questo mockup l'autenticazione è simulata: ogni operatore di ufficio vede solo le pratiche assegnate al proprio ufficio; l'operatore di smistamento URP le vede e le gestisce tutte.</p>
+        <div class="form-group">
+          <label class="form-label">Profilo Operatore</label>
+          <select id="login-operatore-select" class="form-control form-select"></select>
+        </div>
+        <button class="btn btn-primary" id="btn-login-operatore" style="width:100%;">Entra in Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-layout hidden" id="dashboard-root">
+    <aside class="sidebar">
+      <a href="#" class="menu-item active">Tutte le Pratiche</a>
+      <a href="#" class="menu-item">Configurazione Ambiti (Mock)</a>
+      <a href="#" class="menu-item">Statistiche (Mock)</a>
+      <a href="#" class="menu-item">Storico Archivio</a>
+    </aside>
+
+    <main class="main-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+        <h2 id="dashboard-heading">Gestione Pratiche</h2>
+        <button class="btn btn-outline" id="btn-refresh">Aggiorna Lista</button>
+      </div>
+
+      <div class="grid grid-3" style="margin-bottom: 2rem;">
+        <div class="card" style="border-top: 4px solid var(--color-primary)">
+          <h3>Totale Pratiche</h3>
+          <p style="font-size: 2rem; font-weight: 700;" id="count-totale">0</p>
+          <small class="text-muted">Tutte le pratiche nel sistema</small>
+        </div>
+        <div class="card" style="border-top: 4px solid var(--color-accent)">
+          <h3>Da Valutare</h3>
+          <p style="font-size: 2rem; font-weight: 700;" id="count-da-valutare">0</p>
+          <small class="text-muted">Ricevute o in attesa di valutazione</small>
+        </div>
+        <div class="card" style="border-top: 4px solid var(--color-secondary)">
+          <h3>In Lavorazione</h3>
+          <p style="font-size: 2rem; font-weight: 700;" id="count-in-lavorazione">0</p>
+          <small class="text-muted">Assegnate o in corso di gestione</small>
+        </div>
+        <div class="card" style="border-top: 4px solid var(--color-success)">
+          <h3>Chiuse</h3>
+          <p style="font-size: 2rem; font-weight: 700;" id="count-chiuse">0</p>
+          <small class="text-muted">Pratiche concluse</small>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="form-group">
+          <label class="form-label">Ambito</label>
+          <select id="filter-ambito" class="form-control form-select" style="min-width:220px;">
+            <option value="">Tutti gli ambiti</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stato</label>
+          <select id="filter-stato" class="form-control form-select" style="min-width:180px;">
+            <option value="">Tutti gli stati</option>
+            <option value="RICEVUTA">Ricevuta</option>
+            <option value="DA_VALUTARE">Da Valutare</option>
+            <option value="ASSEGNATA">Assegnata</option>
+            <option value="IN_LAVORAZIONE">In Lavorazione</option>
+            <option value="CHIUSA">Chiusa</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1; min-width:220px;">
+          <label class="form-label">Cerca</label>
+          <input type="text" id="search-input" class="form-control" placeholder="Cerca per cittadino o descrizione...">
+        </div>
+      </div>
+
+      <table id="pratiche-table">
+        <thead>
+          <tr>
+            <th>ID / Data</th>
+            <th>Cittadino</th>
+            <th>Ambito</th>
+            <th>Descrizione</th>
+            <th>Allegati</th>
+            <th>Verifica IA</th>
+            <th>Stato</th>
+            <th>Assegnato a</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </main>
+  </div>
+
+  <!-- Modal Dettaglio Pratica -->
+  <div class="modal-overlay" id="modal-dettaglio">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Dettaglio Pratica</h3>
+        <button class="close-btn" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-content">
+        <!-- Content injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/operator-dashboard.js"></script>
+</body>
+</html>

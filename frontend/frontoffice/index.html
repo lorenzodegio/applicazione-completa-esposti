@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sportello Esposti | ATS Insubria</title>
+  <meta name="description" content="Portale digitale per inviare segnalazioni, esposti, istanze e richieste di accesso agli atti all'ATS, con smistamento assistito dall'Intelligenza Artificiale.">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    .hero {
+      padding: 5rem 0;
+      text-align: center;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #00509e 100%);
+      color: white;
+      margin-bottom: 3rem;
+    }
+    .hero h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .how-it-works-step {
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .how-it-works-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin: 0 auto 1rem;
+    }
+
+    .portal-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    .portal-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .ambiti-section {
+      padding: 1rem 0 4rem;
+    }
+    .ambito-chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .ambito-chip {
+      padding: 0.6rem 1.25rem;
+      border-radius: 24px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+    .ambito-chip.coming-soon {
+      border-style: dashed;
+      color: var(--color-text-muted);
+      background: transparent;
+      box-shadow: none;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container navbar">
+      <div class="nav-brand">
+        <img src="assets/logo.svg" alt="Logo Sportello Esposti">
+        <span>Sportello Esposti</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#" class="active">Home</a>
+        <a href="#come-funziona">Come Funziona</a>
+        <a href="#">Info e Contatti</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container animate-fade-in">
+        <h1>Sportello Digitale Unico del Cittadino</h1>
+        <p>Un unico portale per inviare segnalazioni, esposti, istanze e richieste di accesso agli atti alla Pubblica Amministrazione. Non devi sapere a chi rivolgerti: ci pensa il nostro assistente digitale a indirizzare la tua pratica all'ufficio competente.</p>
+      </div>
+    </section>
+
+    <section class="container" id="come-funziona">
+      <h2 style="text-align:center; margin-bottom: 0.5rem;">Come funziona</h2>
+      <p style="text-align:center; color:var(--color-text-muted); max-width:650px; margin: 0 auto 2.5rem;">In tre passaggi la tua richiesta arriva all'ufficio giusto, senza che tu debba conoscere l'organizzazione interna dell'ente.</p>
+      <div class="grid grid-3" style="margin-bottom: 4rem;">
+        <div class="how-it-works-step">
+          <div class="how-it-works-number">1</div>
+          <h3>Descrivi la richiesta</h3>
+          <p style="color:var(--color-text-muted)">Racconta cosa è successo o cosa ti serve, in linguaggio naturale, ed eventualmente allega documenti o foto.</p>
+        </div>
+        <div class="how-it-works-step">
+          <div class="how-it-works-number">2</div>
+          <h3>L'IA classifica la pratica</h3>
+          <p style="color:var(--color-text-muted)">Il nostro assistente digitale individua l'ambito di competenza e ti chiede solo i dati davvero necessari.</p>
+        </div>
+        <div class="how-it-works-step">
+          <div class="how-it-works-number">3</div>
+          <h3>Ricevi conferma</h3>
+          <p style="color:var(--color-text-muted)">Verifichi il riepilogo, confermi l'invio e la pratica viene incanalata automaticamente verso l'ufficio competente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="portal-cards animate-fade-in">
+
+        <!-- Cittadino -->
+        <div class="card portal-card">
+          <svg style="width:80px;height:80px;color:var(--color-primary);margin-bottom:1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+          <h3>Accesso Cittadini/Enti</h3>
+          <p style="margin-bottom: 2rem; color: var(--color-text-muted);">Accedi con SPID o CIE per inviare una nuova pratica: segnalazione, esposto, istanza o richiesta di accesso agli atti.</p>
+          <a href="cittadino.html" class="btn btn-primary" style="width: 100%;">
+            Entra con SPID / CIE
+          </a>
+        </div>
+
+        <!-- Operatore -->
+        <div class="card portal-card">
+          <svg style="width:80px;height:80px;color:var(--color-secondary);margin-bottom:1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <h3>Accesso Operatori</h3>
+          <p style="margin-bottom: 2rem; color: var(--color-text-muted);">Area riservata al personale degli uffici per visualizzare, assegnare e gestire le pratiche in arrivo dal portale.</p>
+          <a href="../backoffice/dashboard-operatore.html" class="btn btn-secondary" style="width: 100%;">
+            Accedi (Rete Aziendale)
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="container ambiti-section">
+      <h2 style="text-align:center;">Ambiti attualmente supportati</h2>
+      <p style="text-align:center;color:var(--color-text-muted); max-width:650px;margin:0 auto 2rem;">Il motore di classificazione viene esteso progressivamente: questi sono gli ambiti già configurati nello smistamento automatico.</p>
+      <div class="ambito-chip-list">
+        <span class="ambito-chip">Veterinario</span>
+        <span class="ambito-chip">Ambiente e Igiene Urbana</span>
+        <span class="ambito-chip">Edilizia e Urbanistica</span>
+        <span class="ambito-chip">Tributi</span>
+        <span class="ambito-chip">Accesso agli Atti (FOIA)</span>
+        <span class="ambito-chip coming-soon">+ altri ambiti in arrivo</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Sportello Esposti — ATS Insubria. Progetto sperimentale: i dati di questa demo sono salvati localmente nel browser a fini dimostrativi.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
