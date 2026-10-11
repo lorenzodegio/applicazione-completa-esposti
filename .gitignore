@@ -31,6 +31,17 @@ backend/documenti/archivio/
 *.eml
 *.msg
 *.p7m
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+# Tabelle (es. il CSV reale delle valutazioni ATS: non deve mai entrare)
+*.csv
+*.tsv
+# Archivi (es. esportazioni di mockup: si estraggono in docs/mockups/)
+*.zip
+*.7z
+# Eccezione: fixture sintetiche dei test
 !**/tests/fixtures/**
 
 # --- Uscite del motore di classificazione ---

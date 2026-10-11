@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Gestione pratiche</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0059B3}a:hover{color:#003F80}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 860px; font-family: 'Titillium Web', sans-serif; color: #17324D; background: #F3F5F7">
+<nav aria-label="Menu principale" style="flex: 1 0 220px; background: #17324D; padding: 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px">
+<div style="color: #FFFFFF; font-weight: 700; font-size: 20px; padding: 0 12px 4px">Esposti ATS</div>
+<div style="color: #C5D3E0; font-size: 14px; padding: 0 12px 20px">Medicina Veterinaria</div>
+<a href="Main.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Home</a>
+<a href="Inbox.dc.html" style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none"><span>Inbox</span><span style="background: #FFB84D; color: #3D2600; border-radius: 12px; padding: 0 8px; font-size: 14px">12</span></a>
+<a href="Fascicolo.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Fascicoli</a>
+<a href="Pratiche.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; background: #FFFFFF; color: #17324D; font-weight: 700; text-decoration: none">Gestione pratiche</a>
+<div style="margin-top: auto; color: #C5D3E0; font-size: 14px; padding: 16px 12px 0">Laura Bianchi<br>Operatore di ufficio</div>
+</nav>
+<main style="flex: 999 1 560px; min-width: 0; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+<div>
+<h1 style="margin: 0; font-size: 32px; line-height: 1.2">Gestione pratiche</h1>
+<div style="color: #4A5B6B">Cerca una singola pratica tra tutte quelle del tuo ufficio · dati di esempio</div>
+</div>
+<form role="search" style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 20px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end">
+<div style="flex: 3 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<label for="q" style="font-weight: 700">Protocollo, comune o parole</label>
+<input id="q" type="search" defaultValue="Borgoverde" style="font: inherit; color: inherit; min-height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #6B7B8A; border-radius: 4px">
+</div>
+<div style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<label for="stato" style="font-weight: 700">Stato</label>
+<select id="stato" style="font: inherit; color: inherit; min-height: 44px; padding: 0 8px; border: 1px solid #6B7B8A; border-radius: 4px; background: #FFFFFF"><option>Tutti</option><option>Da validare</option><option>In lavorazione</option><option>Chiusa</option></select>
+</div>
+<div style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<label for="fasc" style="font-weight: 700">Fascicolo</label>
+<select id="fasc" style="font: inherit; color: inherit; min-height: 44px; padding: 0 8px; border: 1px solid #6B7B8A; border-radius: 4px; background: #FFFFFF"><option>Tutti</option><option>Cani</option><option>Gatti e colonie feline</option><option>Animali da reddito</option><option>Avvelenamenti</option></select>
+</div>
+<button type="button" style="font: inherit; font-weight: 700; min-height: 44px; padding: 0 20px; background: #0059B3; color: #FFFFFF; border: 0; border-radius: 4px; cursor: pointer">Cerca</button>
+<div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 4px 24px">
+<label style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px"><input type="checkbox" style="width: 20px; height: 20px; margin: 0">Con valutazione ATS</label>
+<label style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px"><input type="checkbox" style="width: 20px; height: 20px; margin: 0">IA e operatore in disaccordo</label>
+<label style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px"><input type="checkbox" style="width: 20px; height: 20px; margin: 0">Lettura incerta</label>
+</div>
+</form>
+<section style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 8px 0">
+<div style="padding: 12px 20px; font-weight: 700">6 pratiche trovate</div>
+<div style="overflow-x: auto">
+<table style="width: 100%; min-width: 860px; border-collapse: collapse; text-align: left">
+<thead>
+<tr style="background: #EEF3F8; color: #2B4257; font-size: 14px">
+<th scope="col" style="padding: 10px 20px">Protocollo</th>
+<th scope="col" style="padding: 10px 12px">Pratica</th>
+<th scope="col" style="padding: 10px 12px">Tipo</th>
+<th scope="col" style="padding: 10px 12px">Fascicolo</th>
+<th scope="col" style="padding: 10px 12px">Stato</th>
+<th scope="col" style="padding: 10px 12px">Esito</th>
+<th scope="col" style="padding: 10px 20px">Collegate</th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{righe}}" as="r" hint-placeholder-count="6">
+<tr style="border-top: 1px solid #E3E8ED">
+<td style="padding: 14px 20px; white-space: nowrap"><a href="Fascicolo.dc.html" style="font-weight: 700">{{r.prot}}</a></td>
+<td style="padding: 14px 12px"><span style="display: block; font-weight: 600">{{r.titolo}}</span><span style="display: block; font-size: 14px; color: #4A5B6B">{{r.data}} · {{r.comune}}</span></td>
+<td style="padding: 14px 12px">{{r.tipo}}</td>
+<td style="padding: 14px 12px">{{r.fasc}}</td>
+<td style="padding: 14px 12px">{{r.stato}}</td>
+<td style="padding: 14px 12px"><span style="display: block">{{r.esito}}</span><span style="display: block; font-size: 14px; color: #6B3A00; font-weight: 600">{{r.nota}}</span></td>
+<td style="padding: 14px 20px">{{r.coll}}</td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+righe: [
+{ prot: '0004512/2025', titolo: 'Cani in recinto, via delle Robinie', data: '8 apr 2025', comune: 'Borgoverde', tipo: 'Richiesta ente', fasc: 'Cani', stato: 'In lavorazione', esito: 'Accolto', nota: '', coll: '1 esposto' },
+{ prot: '0004498/2025', titolo: 'Gatti in appartamento, via Molino', data: '7 apr 2025', comune: 'Borgoverde', tipo: 'Esposto', fasc: 'Gatti e colonie feline', stato: 'Da validare', esito: 'Proposta: Invio Modulo', nota: '', coll: 'Nessuna' },
+{ prot: '0003177/2025', titolo: 'Cane alla catena, via dei Tigli', data: '14 mar 2025', comune: 'Borgoverde', tipo: 'Esposto', fasc: 'Cani', stato: 'Chiusa', esito: 'Accolto', nota: '', coll: '1 riscontro' },
+{ prot: '0003177/2025', titolo: 'Riscontro: cane alla catena', data: '2 apr 2025', comune: 'Borgoverde', tipo: 'Riscontro ATS', fasc: 'Cani', stato: 'Chiusa', esito: 'Accolto', nota: '', coll: '1 esposto' },
+{ prot: '0001350/2025', titolo: 'Esche sospette al parco', data: '5 feb 2025', comune: 'Borgoverde', tipo: 'Esposto', fasc: 'Avvelenamenti', stato: 'Chiusa', esito: 'Accolto', nota: 'IA: urgenza Immediata, operatore: Alta', coll: 'Nessuna' },
+{ prot: '0098431/2024', titolo: 'Abbaio notturno, cortile condominiale', data: '19 nov 2024', comune: 'Borgoverde', tipo: 'Esposto', fasc: 'Cani', stato: 'Trasmessa', esito: 'Altro', nota: 'IA: Accolto, operatore: Altro', coll: 'Nessuna' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

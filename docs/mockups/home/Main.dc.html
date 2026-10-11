@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Home backoffice</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0059B3}a:hover{color:#003F80}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 900px; font-family: 'Titillium Web', sans-serif; color: #17324D; background: #F3F5F7">
+<nav aria-label="Menu principale" style="flex: 1 0 220px; background: #17324D; padding: 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px">
+<div style="color: #FFFFFF; font-weight: 700; font-size: 20px; padding: 0 12px 4px">Esposti ATS</div>
+<div style="color: #C5D3E0; font-size: 14px; padding: 0 12px 20px">Medicina Veterinaria</div>
+<a href="Main.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; background: #FFFFFF; color: #17324D; font-weight: 700; text-decoration: none">Home</a>
+<a href="Inbox.dc.html" style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none"><span>Inbox</span><span style="background: #FFB84D; color: #3D2600; border-radius: 12px; padding: 0 8px; font-size: 14px">12</span></a>
+<a href="Fascicolo.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Fascicoli</a>
+<a href="Pratiche.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Gestione pratiche</a>
+<div style="margin-top: auto; color: #C5D3E0; font-size: 14px; padding: 16px 12px 0">Laura Bianchi<br>Operatore di ufficio</div>
+</nav>
+<main style="flex: 999 1 560px; min-width: 0; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+<div>
+<h1 style="margin: 0; font-size: 32px; line-height: 1.2">Home</h1>
+<div style="color: #4A5B6B; font-size: 16px">Sabato 10 ottobre 2026 · dati di esempio</div>
+</div>
+<a href="Inbox.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; background: #0059B3; color: #FFFFFF; font-weight: 700; border-radius: 4px; text-decoration: none">Apri la inbox</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+<div style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 20px">
+<div style="font-size: 16px; color: #4A5B6B">Da validare</div>
+<div style="font-size: 40px; font-weight: 700; line-height: 1.2">12</div>
+<div style="font-size: 14px; color: #4A5B6B">in attesa nella inbox</div>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 20px">
+<div style="font-size: 16px; color: #4A5B6B">In lavorazione</div>
+<div style="font-size: 40px; font-weight: 700; line-height: 1.2">31</div>
+<div style="font-size: 14px; color: #4A5B6B">pratiche aperte dell'ufficio</div>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 20px">
+<div style="font-size: 16px; color: #4A5B6B">Lettura incerta</div>
+<div style="font-size: 40px; font-weight: 700; line-height: 1.2">5</div>
+<div style="font-size: 14px; color: #4A5B6B">da leggere sull'originale</div>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 20px">
+<div style="font-size: 16px; color: #4A5B6B">Senza riscontro</div>
+<div style="font-size: 40px; font-weight: 700; line-height: 1.2">4</div>
+<div style="font-size: 14px; color: #4A5B6B">esposti accolti ancora senza risposta</div>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<section style="flex: 3 1 420px; min-width: 0; background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 24px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px">
+<h2 style="margin: 0; font-size: 22px">Arrivati per la validazione</h2>
+<a href="Inbox.dc.html" style="font-weight: 600">Vedi tutti</a>
+</div>
+<sc-for list="{{arrivi}}" as="a" hint-placeholder-count="5">
+<a href="Inbox.dc.html" style="display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; padding: 14px 0; border-top: 1px solid #E3E8ED; margin-top: 12px; text-decoration: none; color: #17324D">
+<span style="flex: 1 1 220px; min-width: 0">
+<span style="display: block; font-weight: 700">{{a.titolo}}</span>
+<span style="display: block; font-size: 14px; color: #4A5B6B">{{a.meta}}</span>
+</span>
+<span style="font-size: 14px; font-weight: 600; padding: 2px 10px; border-radius: 12px; background: {{a.bg}}; color: {{a.fg}}">{{a.proposta}}</span>
+</a>
+</sc-for>
+</section>
+<div style="flex: 2 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+<section style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 24px">
+<h2 style="margin: 0 0 8px; font-size: 22px">Fascicoli più attivi</h2>
+<sc-for list="{{fascicoli}}" as="f" hint-placeholder-count="4">
+<a href="Fascicolo.dc.html" style="display: flex; justify-content: space-between; gap: 16px; min-height: 44px; align-items: center; border-top: 1px solid #E3E8ED; text-decoration: none; color: #17324D">
+<span style="font-weight: 600">{{f.nome}}</span>
+<span style="color: #4A5B6B; font-size: 14px">{{f.n}}</span>
+</a>
+</sc-for>
+</section>
+<section style="background: #FFF4E5; border: 1px solid #E0A458; border-radius: 4px; padding: 24px">
+<h2 style="margin: 0 0 4px; font-size: 22px; color: #5C3300">IA e operatore in disaccordo</h2>
+<div style="color: #5C3300">7 pratiche in cui la valutazione dell'operatore è diversa dalla proposta dell'IA.</div>
+<a href="Pratiche.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: #5C3300">Aprile in Gestione pratiche</a>
+</section>
+</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+const blu = { bg: '#E3EEF9', fg: '#003F80' };
+const ar = { bg: '#FFF1E0', fg: '#6B3A00' };
+return {
+arrivi: [
+{ titolo: 'Cani in recinto, via delle Robinie', meta: 'Borgoverde · inoltro Polizia Locale · oggi 09:42', proposta: 'Accolto', ...blu },
+{ titolo: 'Pollaio a ridosso del confine', meta: 'Castelrovo · foglio a mano · lettura incerta', proposta: 'Da verificare', ...ar },
+{ titolo: 'Gatti in appartamento, via Molino', meta: 'Borgoverde · anonimo · ieri 16:10', proposta: 'Invio Modulo', ...ar },
+{ titolo: 'Cane alla catena, via dei Tigli', meta: 'Borgoverde · privato · ieri 11:25', proposta: 'Accolto', ...blu },
+{ titolo: 'Cane libero incustodito', meta: 'Castelrovo · per conoscenza · 8 ottobre', proposta: 'Archiviato', ...ar }
+],
+fascicoli: [
+{ nome: 'Cani', n: '48 pratiche' },
+{ nome: 'Gatti e colonie feline', n: '21 pratiche' },
+{ nome: 'Animali da reddito', n: '17 pratiche' },
+{ nome: 'Avvelenamenti', n: '6 pratiche' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

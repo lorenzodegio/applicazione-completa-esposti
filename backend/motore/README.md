@@ -1,13 +1,18 @@
 # backend/motore
 
 **Solo il connettore** verso il motore di classificazione. Il motore vero
-vive fuori da questo repository e qui non va copiato, letto o montato.
+(`classificatore-esposti-v2`) vive fuori da questo repository e qui non va
+copiato, letto o montato.
 
-- Il motore gira come servizio Docker separato.
-- Le richieste passano da una coda di lavori, elaborati uno alla volta.
-- All'inizio si usa un **finto motore** che restituisce dati con la stessa
-  forma di quelli reali (proposta, motivo, avviso di lettura incerta, testo
-  estratto, scheda precompilata).
+L'interfaccia è definita in [docs/contratto_motore.md](../../docs/contratto_motore.md).
+
+- Il motore gira come servizio Docker separato, raggiunto con `MOTORE_URL`.
+- La coda dei lavori è nel database dell'applicazione; un worker elabora
+  **un documento alla volta**: scarico temporaneo dall'archivio, invio al
+  motore, salvataggio del risultato, cancellazione del temporaneo.
+- Un **finto motore** implementa lo stesso contratto con risposte
+  sintetiche, per sviluppo e test.
 - La proposta dell'IA è un suggerimento: decide sempre la persona.
 
-Ancora nessun codice.
+Struttura prevista: `contratto/` (schema e file di prova), `finto/` (finto
+motore), connettore e worker. Ancora nessun codice.
