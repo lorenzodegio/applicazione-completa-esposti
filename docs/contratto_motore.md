@@ -1,4 +1,4 @@
-# Contratto del motore — versione 1.0
+# Contratto del motore — versione 1.1
 
 Questo documento definisce **l'unico punto di contatto** tra l'applicazione
 (questo repository) e il motore di classificazione (`classificatore-esposti-v2`,
@@ -48,7 +48,7 @@ risponde `429` con `Retry-After`; l'applicazione riprova più tardi.
 {
   "stato": "pronto",
   "versione_motore": "2.3.0",
-  "versione_contratto": "1.0",
+  "versione_contratto": "1.1",
   "occupato": false
 }
 ```
@@ -62,7 +62,7 @@ risponde `429` con `Retry-After`; l'applicazione riprova più tardi.
 
 ```json
 {
-  "versione_contratto": "1.0",
+  "versione_contratto": "1.1",
   "id_lavoro": "6f1c2a0e-8b7d-4d5e-9a31-0c2b9e4f7a10",
   "documento": {
     "id": "d2b5c7e1-3a4f-4b8e-9c10-5e6f7a8b9c0d",
@@ -111,7 +111,7 @@ la **frase del documento** che le giustifica, e la pagina dove si trova.
 
 ```json
 {
-  "versione_contratto": "1.0",
+  "versione_contratto": "1.1",
   "versione_motore": "2.3.0",
   "documento": { "id": "d2b5…9c0d", "sha256": "9f2c…e41a" },
 
@@ -228,18 +228,44 @@ I valori sono **codici testuali stabili**. L'applicazione tiene i vocabolari in
 tabella; un valore sconosciuto non fa fallire il salvataggio ma viene
 segnalato (e mostrato come "valore non riconosciuto").
 
-| Vocabolario | Valori (versione 1.0) |
-|---|---|
-| `tipo_documento` | `esposto`, `inoltro_per_competenza`, `richiesta_ente`, `riscontro_ats`, `integrazione`, `altro` |
-| `esito` | `Accolto`, `Archiviato`, `Da approfondire`, `Invio Modulo`, `Altro` |
-| `urgenza` | `Bassa`, `Normale`, `Alta`, `Immediata` |
-| `azione` | `Sopralluogo`, `Sopralluogo congiunto`, `Contatto segnalante`, `Richiesta integrazione`, `Trasmissione ad altro ente` |
-| `tema` | `Cani`, `Gatti e colonie feline`, `Animali da reddito`, `Avvelenamenti` (l'elenco crescerà) |
-| `ambito`, `problematica`, `elementi` | **da fissare**: oggi esempi dai mockup (`Medicina Veterinaria`, `Igiene pubblica`; `Condizioni igieniche carenti`, `Odori molesti`; `Presenza escrementi`, `Precedenti segnalazioni`). Gli elenchi definitivi devono coincidere con le scelte usate nelle valutazioni ATS |
+Esito, urgenza, azione, ambito, problematica ed elementi sono **gli elenchi
+del modulo di valutazione ATS**, con le stesse etichette: così proposta
+dell'IA e valutazione dell'operatore si confrontano campo per campo.
 
-Esito, urgenza, azione, ambito, problematica ed elementi usano **le stesse
-etichette** delle colonne della valutazione ATS: così proposta dell'IA e
-valutazione dell'operatore si confrontano campo per campo.
+| Vocabolario | Scelta | Valori (versione 1.1) |
+|---|---|---|
+| `tipo_documento` | singola | `esposto`, `inoltro_per_competenza`, `richiesta_ente`, `riscontro_ats`, `lettera_avvocato`, `integrazione`, `altro` |
+| `ambito` | multipla | `Medicina Veterinaria`, `Igiene pubblica`, `Disturbo/rumori`, `ARPA`, `Altro` (elenco attuale, vedi 4.1) |
+| `problematica` | multipla | `Maltrattamento animale`, `Abbandono animale`, `Condizioni igieniche carenti`, `Odori molesti`, `Rumori persistenti`, `Uccisione`, `Condizione di inidonea detenzione`, `Altro` |
+| `elementi` | multipla | `Ferite/sofferenza animale`, `Presenza escrementi`, `Odori molesti`, `Rumori persistenti`, `Rischio sanitario`, `Foto/allegati`, `Precedenti segnalazioni`, `Animali liberi o randagi`, `Omessa custodia`, `Altro` |
+| `esito` | singola | `Accolto`, `Archiviato`, `Da approfondire`, `Altro`, `Invio Modulo` |
+| `urgenza` | singola | `Bassa`, `Normale`, `Alta`, `Immediata` |
+| `azione` | multipla | `Sopralluogo`, `Sopralluogo congiunto`, `Contatto segnalante`, `Richiesta integrazione`, `Trasmissione ad altro ente` |
+| `tema` | multipla | `Cani`, `Gatti e colonie feline`, `Animali da reddito`, `Avvelenamenti` (l'elenco crescerà) |
+
+Quando il valore è `Altro`, il testo libero va nel campo `*_altro`
+corrispondente (`ambito_altro`, `problematica_altro`, `elementi_altro`).
+
+### 4.1 Ambito: elenco storico e elenco attuale
+
+La direzione ha chiesto di passare a un nuovo elenco di ambiti. Il motore
+**produce solo l'elenco attuale**. L'applicazione **accetta anche quello
+storico** (le valutazioni ATS già compilate lo usano) e lo converte così:
+
+| Elenco storico | → Elenco attuale |
+|---|---|
+| `Veterinario` | `Medicina Veterinaria` |
+| `Igiene pubblica` | `Igiene pubblica` |
+| `Disturbo/rumori` | `Disturbo/rumori` |
+| `Colonia felina` | `Medicina Veterinaria` |
+| `Allevamento/detenzione animali` | `Medicina Veterinaria` |
+| `Altro` | `Altro` |
+| — | `ARPA` (nuovo, senza corrispondente storico) |
+
+`Colonia felina` e `Allevamento/detenzione animali` confluiscono in
+`Medicina Veterinaria`; la distinzione non si perde, perché resta nel
+**tema** (`Gatti e colonie feline`, `Animali da reddito`). L'applicazione
+conserva sempre anche il valore originale.
 
 ---
 
@@ -278,7 +304,7 @@ disponibile": il lavoro umano non si blocca.
 
 ```json
 {
-  "versione_contratto": "1.0",
+  "versione_contratto": "1.1",
   "versione_motore": "2.3.0",
   "documento": { "id": "a1…", "sha256": "…" },
   "tipo_documento": { "valore": "esposto", "motivo": "Email di un privato che segnala animali in difficoltà." },
@@ -292,9 +318,9 @@ disponibile": il lavoro umano non si blocca.
     "comune": { "valore": "Borgoverde", "frase": "in via delle Robinie a Borgoverde", "pagina": 1 },
     "ambito": [ { "valore": "Medicina Veterinaria", "frase": "cinque cani in un recinto", "pagina": 1 } ],
     "ambito_altro": null,
-    "problematica": [ { "valore": "Benessere animale", "frase": "senza riparo, uno zoppica", "pagina": 1 } ],
+    "problematica": [ { "valore": "Condizione di inidonea detenzione", "frase": "in un recinto senza riparo", "pagina": 1 } ],
     "problematica_altro": null,
-    "elementi": [],
+    "elementi": [ { "valore": "Ferite/sofferenza animale", "frase": "uno zoppica", "pagina": 1 } ],
     "elementi_altro": null
   },
   "proposta": {
@@ -353,3 +379,12 @@ a *concluso*.
 - Ogni modifica a questo documento passa dal ramo `backend` con revisione.
 - Il **finto motore** dell'applicazione implementa esattamente questo
   contratto ed è il riferimento per i test di contratto.
+
+---
+
+## 8. Storico delle versioni
+
+| Versione | Modifiche |
+|---|---|
+| 1.0 | prima stesura |
+| 1.1 | vocabolari fissati sugli elenchi del modulo ATS; `lettera_avvocato` tra i tipi di documento (il motore la produce già); ambito: elenco attuale + conversione dall'elenco storico (4.1) |

@@ -20,10 +20,10 @@ a{color:#0059B3}a:hover{color:#003F80}
 <nav aria-label="Menu principale" style="flex: 1 0 220px; background: #17324D; padding: 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px">
 <div style="color: #FFFFFF; font-weight: 700; font-size: 20px; padding: 0 12px 4px">Esposti ATS</div>
 <div style="color: #C5D3E0; font-size: 14px; padding: 0 12px 20px">Medicina Veterinaria</div>
-<a href="Main.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; background: #FFFFFF; color: #17324D; font-weight: 700; text-decoration: none">Home</a>
-<a href="Inbox.dc.html" style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none"><span>Inbox</span><span style="background: #FFB84D; color: #3D2600; border-radius: 12px; padding: 0 8px; font-size: 14px">12</span></a>
-<a href="Fascicolo.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Fascicoli</a>
-<a href="Pratiche.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Gestione pratiche</a>
+<a href="../home/Main.dc.html" aria-current="page" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; background: #FFFFFF; color: #17324D; font-weight: 700; text-decoration: none">Home</a>
+<a href="../inbox/Inbox.dc.html" style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none"><span>Inbox</span><span style="background: #FFB84D; color: #3D2600; border-radius: 12px; padding: 0 8px; font-size: 14px">12</span></a>
+<a href="../fascicolo/Fascicolo.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Fascicoli</a>
+<a href="../pratiche/Pratiche.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Gestione pratiche</a>
 <div style="margin-top: auto; color: #C5D3E0; font-size: 14px; padding: 16px 12px 0">Laura Bianchi<br>Operatore di ufficio</div>
 </nav>
 <main style="flex: 999 1 560px; min-width: 0; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
@@ -32,7 +32,7 @@ a{color:#0059B3}a:hover{color:#003F80}
 <h1 style="margin: 0; font-size: 32px; line-height: 1.2">Home</h1>
 <div style="color: #4A5B6B; font-size: 16px">Sabato 10 ottobre 2026 · dati di esempio</div>
 </div>
-<a href="Inbox.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; background: #0059B3; color: #FFFFFF; font-weight: 700; border-radius: 4px; text-decoration: none">Apri la inbox</a>
+<a href="../inbox/Inbox.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; background: #0059B3; color: #FFFFFF; font-weight: 700; border-radius: 4px; text-decoration: none">Apri la inbox</a>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 20px">
@@ -60,10 +60,10 @@ a{color:#0059B3}a:hover{color:#003F80}
 <section style="flex: 3 1 420px; min-width: 0; background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 24px">
 <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px">
 <h2 style="margin: 0; font-size: 22px">Arrivati per la validazione</h2>
-<a href="Inbox.dc.html" style="font-weight: 600">Vedi tutti</a>
+<a href="../inbox/Inbox.dc.html" style="font-weight: 600">Vedi tutti</a>
 </div>
 <sc-for list="{{arrivi}}" as="a" hint-placeholder-count="5">
-<a href="Inbox.dc.html" style="display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; padding: 14px 0; border-top: 1px solid #E3E8ED; margin-top: 12px; text-decoration: none; color: #17324D">
+<a href="../inbox/Inbox.dc.html" style="display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; padding: 14px 0; border-top: 1px solid #E3E8ED; margin-top: 12px; text-decoration: none; color: #17324D">
 <span style="flex: 1 1 220px; min-width: 0">
 <span style="display: block; font-weight: 700">{{a.titolo}}</span>
 <span style="display: block; font-size: 14px; color: #4A5B6B">{{a.meta}}</span>
@@ -76,7 +76,7 @@ a{color:#0059B3}a:hover{color:#003F80}
 <section style="background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 24px">
 <h2 style="margin: 0 0 8px; font-size: 22px">Fascicoli più attivi</h2>
 <sc-for list="{{fascicoli}}" as="f" hint-placeholder-count="4">
-<a href="Fascicolo.dc.html" style="display: flex; justify-content: space-between; gap: 16px; min-height: 44px; align-items: center; border-top: 1px solid #E3E8ED; text-decoration: none; color: #17324D">
+<a href="../fascicolo/Fascicolo.dc.html" style="display: flex; justify-content: space-between; gap: 16px; min-height: 44px; align-items: center; border-top: 1px solid #E3E8ED; text-decoration: none; color: #17324D">
 <span style="font-weight: 600">{{f.nome}}</span>
 <span style="color: #4A5B6B; font-size: 14px">{{f.n}}</span>
 </a>
@@ -85,7 +85,7 @@ a{color:#0059B3}a:hover{color:#003F80}
 <section style="background: #FFF4E5; border: 1px solid #E0A458; border-radius: 4px; padding: 24px">
 <h2 style="margin: 0 0 4px; font-size: 22px; color: #5C3300">IA e operatore in disaccordo</h2>
 <div style="color: #5C3300">7 pratiche in cui la valutazione dell'operatore è diversa dalla proposta dell'IA.</div>
-<a href="Pratiche.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: #5C3300">Aprile in Gestione pratiche</a>
+<a href="../pratiche/Pratiche.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; color: #5C3300">Aprile in Gestione pratiche</a>
 </section>
 </div>
 </div>

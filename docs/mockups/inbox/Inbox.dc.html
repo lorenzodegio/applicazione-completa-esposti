@@ -20,10 +20,10 @@ a{color:#0059B3}a:hover{color:#003F80}
 <nav aria-label="Menu principale" style="flex: 1 0 220px; background: #17324D; padding: 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px">
 <div style="color: #FFFFFF; font-weight: 700; font-size: 20px; padding: 0 12px 4px">Esposti ATS</div>
 <div style="color: #C5D3E0; font-size: 14px; padding: 0 12px 20px">Medicina Veterinaria</div>
-<a href="Main.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Home</a>
-<a href="Inbox.dc.html" aria-current="page" style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 12px; border-radius: 4px; background: #FFFFFF; color: #17324D; font-weight: 700; text-decoration: none"><span>Inbox</span><span style="background: #FFB84D; color: #3D2600; border-radius: 12px; padding: 0 8px; font-size: 14px">12</span></a>
-<a href="Fascicolo.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Fascicoli</a>
-<a href="Pratiche.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Gestione pratiche</a>
+<a href="../home/Main.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Home</a>
+<a href="../inbox/Inbox.dc.html" aria-current="page" style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 12px; border-radius: 4px; background: #FFFFFF; color: #17324D; font-weight: 700; text-decoration: none"><span>Inbox</span><span style="background: #FFB84D; color: #3D2600; border-radius: 12px; padding: 0 8px; font-size: 14px">12</span></a>
+<a href="../fascicolo/Fascicolo.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Fascicoli</a>
+<a href="../pratiche/Pratiche.dc.html" style="display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 4px; color: #FFFFFF; font-weight: 600; text-decoration: none">Gestione pratiche</a>
 <div style="margin-top: auto; color: #C5D3E0; font-size: 14px; padding: 16px 12px 0">Laura Bianchi<br>Operatore di ufficio</div>
 </nav>
 <main style="flex: 999 1 560px; min-width: 0; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
@@ -34,7 +34,7 @@ a{color:#0059B3}a:hover{color:#003F80}
 <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
 <section aria-label="Coda" style="flex: 1 1 260px; min-width: 0; background: #FFFFFF; border: 1px solid #D5DCE3; border-radius: 4px; padding: 8px">
 <sc-for list="{{coda}}" as="c" hint-placeholder-count="6">
-<a href="Inbox.dc.html" style="display: block; padding: 12px; border-radius: 4px; background: {{c.bg}}; text-decoration: none; color: #17324D; border-bottom: 1px solid #E3E8ED">
+<a href="../inbox/Inbox.dc.html" style="display: block; padding: 12px; border-radius: 4px; background: {{c.bg}}; text-decoration: none; color: #17324D; border-bottom: 1px solid #E3E8ED">
 <span style="display: block; font-weight: 700">{{c.titolo}}</span>
 <span style="display: block; font-size: 14px; color: #4A5B6B">{{c.meta}}</span>
 </a>
@@ -46,9 +46,9 @@ a{color:#0059B3}a:hover{color:#003F80}
 <div style="min-width: 0">
 <div style="font-size: 14px; color: #4A5B6B">Prot. 0005120/2025 · Castelrovo · richiesta arrivata oggi</div>
 <h2 style="margin: 0; font-size: 24px">Pollaio a ridosso del confine</h2>
-<div style="color: #4A5B6B">Esposto di un privato · fascicolo <a href="Fascicolo.dc.html">Animali da reddito</a> · 1 pratica collegata</div>
+<div style="color: #4A5B6B">Esposto di un privato · fascicolo <a href="../fascicolo/Fascicolo.dc.html">Animali da reddito</a> · 1 pratica collegata</div>
 </div>
-<a href="Fascicolo.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 2px solid #0059B3; border-radius: 4px; font-weight: 700; text-decoration: none">Apri il PDF e lo storico</a>
+<a href="../fascicolo/Fascicolo.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 2px solid #0059B3; border-radius: 4px; font-weight: 700; text-decoration: none">Apri il PDF e lo storico</a>
 </div>
 <div role="status" style="margin-top: 16px; background: #FFF4E5; border: 1px solid #E0A458; border-radius: 4px; padding: 12px 16px; color: #5C3300"><strong>Lettura incerta.</strong> Foglio scritto a mano: nomi, date e numeri vanno controllati sull'originale prima di confermare.</div>
 </section>

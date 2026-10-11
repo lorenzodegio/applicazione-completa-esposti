@@ -1,8 +1,8 @@
 # Piano — Backoffice gestione esposti
 
-Stato: **approvato** (versione 2). Le proposte della prima versione sono
-approvate. Le scelte nuove di questa versione sono marcate *(nuova proposta)*
-e vanno confermate; le questioni ancora aperte sono in fondo.
+Stato: **approvato** (versione 2.1). Tutte le proposte fatte finora sono
+approvate; le questioni ancora aperte sono in fondo. Gli elenchi del modulo
+ATS sono fissati (sezione 3.2).
 
 Documenti collegati:
 - [CLAUDE.md](../CLAUDE.md) — regole di lavoro
@@ -50,7 +50,7 @@ arrivo ──► IN_ANALISI ──► DA_SMISTARE ──► DA_VALIDARE ──�
 - `IN_ANALISI`: documenti in archivio, lavori del motore in coda o in corso.
 - `DA_SMISTARE`: analisi conclusa (o fallita) → **Smistamento**.
 - `DA_VALIDARE`: assegnata a un ufficio → **Inbox** dell'ufficio
-  *(nuova proposta: sostituisce `ASSEGNATA`, per coincidere con i mockup)*.
+  (sostituisce `ASSEGNATA`, per coincidere con i mockup).
 - `IN_LAVORAZIONE`: l'operatore ha confermato la valutazione e i temi.
 - `CHIUSA`: conclusa. Riapertura solo dallo smistatore, con motivo.
   "Archiviata" e "Trasmessa" dei mockup sono **esiti**, non stati.
@@ -92,12 +92,36 @@ Cookie `HttpOnly`, `Secure`, `SameSite=Strict`.
 
 **voce_vocabolario**: id, vocabolario (`tipo_documento`, `esito`, `urgenza`,
 `azione`, `ambito`, `problematica`, `elementi`), codice, etichetta, ordine,
-attivo. Valori iniziali dal [contratto](contratto_motore.md#4-vocabolari).
+attivo, `elenco` (`attuale` / `storico`), `converte_in` (→ voce attuale, per
+le voci storiche).
+
+Gli elenchi sono quelli del **modulo di valutazione ATS** (dettaglio e
+valori nel [contratto, sezione 4](contratto_motore.md#4-vocabolari)):
+
+| Vocabolario | Scelta | Valori |
+|---|---|---|
+| Ambito (attuale) | multipla | Medicina Veterinaria, Igiene pubblica, Disturbo/rumori, ARPA, Altro |
+| Ambito (storico) | multipla | Veterinario, Igiene pubblica, Disturbo/rumori, Colonia felina, Allevamento/detenzione animali, Altro |
+| Problematica | multipla | Maltrattamento animale, Abbandono animale, Condizioni igieniche carenti, Odori molesti, Rumori persistenti, Uccisione, Condizione di inidonea detenzione, Altro |
+| Elementi | multipla | Ferite/sofferenza animale, Presenza escrementi, Odori molesti, Rumori persistenti, Rischio sanitario, Foto/allegati, Precedenti segnalazioni, Animali liberi o randagi, Omessa custodia, Altro |
+| Esito | singola | Accolto, Archiviato, Da approfondire, Altro, Invio Modulo |
+| Urgenza | singola | Bassa, Normale, Alta, Immediata |
+| Azione | multipla | Sopralluogo, Sopralluogo congiunto, Contatto segnalante, Richiesta integrazione, Trasmissione ad altro ente |
+| Tipo documento | singola | esposto, inoltro per competenza, richiesta ente, riscontro ATS, **lettera avvocato**, integrazione, altro |
+
+**Conversione dell'ambito** (storico → attuale): Veterinario → Medicina
+Veterinaria; Igiene pubblica → Igiene pubblica; Disturbo/rumori →
+Disturbo/rumori; Colonia felina → Medicina Veterinaria;
+Allevamento/detenzione animali → Medicina Veterinaria; Altro → Altro.
+ARPA è nuovo. Il motore e il modulo dell'applicazione usano solo l'elenco
+attuale; le valutazioni importate conservano il valore originale **e** quello
+convertito, e confronti e filtri usano quello convertito. La distinzione tra
+colonie feline e allevamenti resta nel **tema**.
 
 **tema** (i fascicoli): id, codice, nome (es. *Cani*, *Gatti e colonie
 feline*, *Animali da reddito*, *Avvelenamenti*), ordine, attivo.
 
-**ambito_ufficio** *(nuova proposta)*: ambito → ufficio suggerito. Serve allo
+**ambito_ufficio**: ambito → ufficio suggerito. Serve allo
 smistatore: il motore propone l'ambito, l'applicazione ne ricava l'ufficio da
 suggerire.
 
@@ -177,7 +201,8 @@ documento (`<id_documento>.testo.json`).
 | compilata | bool | una valutazione compilata **non viene mai sovrascritta da un'importazione** |
 | data_compilazione | date | |
 | data_doc, comune | | |
-| ambito, problematica, elementi | text[] | scelta multipla |
+| ambito, problematica, elementi | text[] | scelta multipla; ambito nell'elenco attuale |
+| ambito_originale | text[], null | per `import_ats`: valori come scritti nel CSV (anche elenco storico) |
 | ambito_altro, problematica_altro, elementi_altro | text, null | |
 | esito, urgenza | text | |
 | azione | text[] | scelta multipla |
@@ -185,7 +210,7 @@ documento (`<id_documento>.testo.json`).
 | da_risultato_id | uuid → risultato_motore, null | da quale proposta è partita la precompilazione |
 | creata_il, aggiornata_il | | ogni modifica nel registro con prima/dopo |
 
-**Disaccordo IA–operatore** *(nuova proposta)*: vista calcolata, vera se
+**Disaccordo IA–operatore**: vista calcolata, vera se
 tra valutazione compilata e proposta del documento principale differiscono
 `esito`, `urgenza` o l'insieme di `azione`. I campi diversi si mostrano in
 elenco (es. "IA: urgenza Immediata, operatore: Alta").
@@ -202,7 +227,7 @@ da_proposta_ia.
 
 **cambio_stato**: pratica_id, da_stato, a_stato, utente_id, il, motivo.
 
-**attivita** — le *azioni* dell'ufficio sulla pratica *(nuova proposta)*:
+**attivita** — le *azioni* dell'ufficio sulla pratica:
 id, pratica_id, tipo (vocabolario `azione`), stato (`prevista`, `in_corso`,
 `conclusa`, `annullata`), data_prevista, data_conclusione, descrizione,
 creata_da.
@@ -298,8 +323,8 @@ Lo smistatore crea una pratica dalla schermata Smistamento caricando uno o
 più documenti (e il protocollo, se noto).
 
 ### 5.2 Importazione in blocco da cartella
-Comando eseguito sulla macchina *(nuova proposta: comando, non pagina web, così
-nessun percorso arriva dal browser)*:
+Comando eseguito sulla macchina (comando, non pagina web, così nessun
+percorso arriva dal browser):
 
 ```
 python -m api.importa cartella <percorso> [--prova]
@@ -330,10 +355,28 @@ Regole:
 2. Una valutazione **compilata** esistente non viene **mai** sovrascritta.
 3. Le righe abbinate creano una valutazione con `origine = import_ats`,
    `autore_nome = Operatore`, `data_compilazione = Data comp`.
-4. Valori non presenti nei vocabolari → campo `_altro` corrispondente.
+4. Ambito nell'elenco storico → convertito nell'elenco attuale, conservando
+   l'originale. Valori non presenti in nessun elenco → campo `_altro`
+   corrispondente (e conteggiati come "non riconosciuti").
 5. Output e registro: **solo conteggi** (righe lette, abbinate per file,
    abbinate per protocollo, ambigue, non abbinate, saltate perché già
    compilate, valori non riconosciuti). Mai righe, nomi o protocolli.
+
+**Formato del CSV ancora aperto** (separatore, codifica, date, valori di
+`Compilato`). Per le celle a scelta multipla, invece, la soluzione c'è già:
+il motore contiene il codice che le **scompone qualunque sia il separatore**
+(`cerchio1/voci.py` nel repository del motore). L'importazione **deve
+riusare quella logica**, non riscriverne un'altra. Poiché il codice del
+motore non si copia in questo repository, il riuso passa da una di queste
+strade, da decidere con Khalil:
+- *(preferita)* la logica di scomposizione viene pubblicata dal repository
+  del motore come piccolo pacchetto Python versionato e installata qui come
+  dipendenza con versione fissata;
+- in alternativa, il motore espone una chiamata interna di scomposizione
+  delle celle, descritta nel contratto.
+
+In entrambi i casi questo repository ha test che verificano la scomposizione
+su celle sintetiche.
 
 Filtri conseguenti in Gestione pratiche: **con valutazione ATS**
 (`origine = import_ats`) e **IA e operatore in disaccordo**.
@@ -358,7 +401,7 @@ Filtri conseguenti in Gestione pratiche: **con valutazione ATS**
 
 L'amministratore **non vede le pratiche** né il loro registro. Temi,
 vocabolari e tipi di collegamento sono configurazione caricata con le
-migrazioni *(nuova proposta)*.
+migrazioni.
 
 Regole implementate come **un unico filtro di query**
 (`pratiche_visibili(utente)`) riusato da tutti gli endpoint. Dopo una
@@ -513,11 +556,10 @@ in `dev`, test verdi prima del merge; `master` solo a fasi stabili.
 
 ## 11. Questioni aperte
 
-1. **Vocabolari** di ambito, problematica ed elementi: servono gli elenchi
-   esatti delle scelte usate nel CSV ATS (solo l'elenco delle voci, non le
-   righe).
-2. **Formato del CSV**: separatore, codifica, separatore dei valori multipli,
-   formato delle date, valori di `Compilato`.
+1. **Riuso della scomposizione delle celle** (`cerchio1/voci.py` del
+   motore): pacchetto condiviso o chiamata del motore (sezione 5.3).
+2. **Formato del CSV**: separatore, codifica, formato delle date, valori di
+   `Compilato` (le celle multiple le scompone la logica del motore).
 3. **Raggruppamento** nell'importazione da cartella: come capire quali file
    formano una stessa pratica.
 4. **Stato** delle pratiche storiche abbinate dall'importazione ATS: restano

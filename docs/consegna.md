@@ -109,8 +109,9 @@ backend/
 ```
 
 I mockup in `docs/mockups/` sono esportati da un editor di design: per
-vederli servi la cartella (`python3 -m http.server`) e apri il file
-`.dc.html`. Sono un riferimento per struttura, testi, colori e carattere
+vederli servi **la cartella `docs/mockups/`** (`cd docs/mockups && python3 -m
+http.server`) e apri `home/Main.dc.html`; il menu porta alle altre
+schermate. Sono un riferimento per struttura, testi, colori e carattere
 (Titillium Web), **non codice da riusare**.
 
 Oggi nel repository **non c'è ancora codice applicativo**: solo struttura,
@@ -161,7 +162,12 @@ Regole che valgono sempre:
   dietro interfaccia unica.
 - Ruoli e visibilità (piano, sezione 6); collegamenti verso altri uffici
   visibili solo come numero, ufficio, stato.
-- Contratto del motore 1.0, con risultato **per documento**.
+- Contratto del motore 1.1, con risultato **per documento**.
+- Elenchi del modulo ATS (ambito, problematica, elementi, esito, urgenza,
+  azione) e tipi di documento, compresa la **lettera avvocato**. Per
+  l'ambito ci sono due elenchi: quello attuale, che il motore deve produrre,
+  e quello storico usato nelle valutazioni già compilate, con la
+  corrispondenza dal vecchio al nuovo (contratto, sezione 4.1).
 - Valutazione dell'operatore distinta dalla proposta dell'IA; importazione
   delle valutazioni ATS per nome file e poi per protocollo, solo conteggi,
   mai sovrascrivere.
@@ -170,8 +176,13 @@ Regole che valgono sempre:
 - Menu: Home, Inbox, Fascicoli, Gestione pratiche (+ Smistamento).
 
 **Aperto** (dettaglio nel [piano](piano.md#11-questioni-aperte))
-- Elenchi definitivi di ambito, problematica, elementi.
-- Formato tecnico del CSV ATS.
+- Formato tecnico del CSV ATS (separatore, codifica, date).
+- **Come riusare la scomposizione delle celle a scelta multipla** già
+  presente nel motore (`cerchio1/voci.py`): l'importazione delle valutazioni
+  ATS deve usare quella logica, ma senza copiarla qui. La strada preferita è
+  pubblicarla dal motore come piccolo pacchetto versionato; in alternativa,
+  una chiamata del motore ([piano, 5.3](piano.md#53-valutazioni-già-fatte-da-ats)).
+  Tocca a te proporre come.
 - Regola di raggruppamento dei file nell'importazione da cartella.
 - Struttura di SharePoint.
 - Ricerca nel testo estratto.
