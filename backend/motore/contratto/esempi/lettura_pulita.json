@@ -1,0 +1,82 @@
+{
+  "versione_contratto": "1.1",
+  "versione_motore": "finto-1.0.0",
+  "documento": {
+    "id": "{{documento_id}}",
+    "sha256": "{{sha256}}"
+  },
+  "tipo_documento": {
+    "valore": "esposto",
+    "motivo": "Email di un privato che segnala animali in difficoltà."
+  },
+  "protocollo": {
+    "numero": "0004512/2025",
+    "data": "2025-04-08",
+    "frase": "Protocollo 0004512/2025",
+    "pagina": 1
+  },
+  "pagine": [
+    {
+      "numero": 1,
+      "acquisizione": "testo_nativo",
+      "lettura_incerta": false,
+      "motivo_incertezza": null,
+      "testo": "Buonasera, in via delle Robinie a Borgoverde ci sono cinque cani in un recinto senza riparo, uno zoppica."
+    }
+  ],
+  "lettura_incerta": false,
+  "scheda": {
+    "data_doc": {
+      "valore": "2025-04-07",
+      "frase": "inviato il 7 aprile 2025 alle 21:15",
+      "pagina": 1
+    },
+    "comune": {
+      "valore": "Borgoverde",
+      "frase": "in via delle Robinie a Borgoverde",
+      "pagina": 1
+    },
+    "ambito": [
+      {
+        "valore": "Medicina Veterinaria",
+        "frase": "cinque cani in un recinto",
+        "pagina": 1
+      }
+    ],
+    "ambito_altro": null,
+    "problematica": [
+      {
+        "valore": "Condizione di inidonea detenzione",
+        "frase": "in un recinto senza riparo",
+        "pagina": 1
+      }
+    ],
+    "problematica_altro": null,
+    "elementi": [
+      {
+        "valore": "Ferite/sofferenza animale",
+        "frase": "uno zoppica",
+        "pagina": 1
+      }
+    ],
+    "elementi_altro": null
+  },
+  "proposta": {
+    "esito": "Accolto",
+    "urgenza": "Normale",
+    "azione": [
+      "Sopralluogo congiunto"
+    ],
+    "motivo": "Luogo e problema sono precisi; un animale è ferito, quindi urgenza non bassa.",
+    "domanda_decisiva": "Ci sono animali feriti o in pericolo immediato?",
+    "da_verificare_sull_originale": []
+  },
+  "temi": [
+    {
+      "valore": "Cani",
+      "motivo": "Cani detenuti in un recinto.",
+      "frase": "cinque cani in un recinto",
+      "pagina": 1
+    }
+  ]
+}

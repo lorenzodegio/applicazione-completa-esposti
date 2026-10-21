@@ -1,0 +1,6160 @@
+{
+  "components": {
+    "schemas": {
+      "AnalisiOut": {
+        "description": "Il suggerimento del motore: mai un dato della pratica. `scheda`, `proposta` e\n`temi_proposti` hanno la forma del contratto (voci con frase e pagina).",
+        "properties": {
+          "acquisizione": {
+            "additionalProperties": true,
+            "title": "Acquisizione",
+            "type": "object"
+          },
+          "avvisi": {
+            "items": {
+              "$ref": "#/components/schemas/Avviso"
+            },
+            "title": "Avvisi",
+            "type": "array"
+          },
+          "data_protocollo_letta": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Protocollo Letta"
+          },
+          "documento_id": {
+            "format": "uuid",
+            "title": "Documento Id",
+            "type": "string"
+          },
+          "lavoro_id": {
+            "format": "uuid",
+            "title": "Lavoro Id",
+            "type": "string"
+          },
+          "lettura_incerta": {
+            "title": "Lettura Incerta",
+            "type": "boolean"
+          },
+          "pagine_incerte": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Pagine Incerte",
+            "type": "array"
+          },
+          "proposta": {
+            "additionalProperties": true,
+            "title": "Proposta",
+            "type": "object"
+          },
+          "protocollo_letto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo Letto"
+          },
+          "ricevuto_il": {
+            "format": "date-time",
+            "title": "Ricevuto Il",
+            "type": "string"
+          },
+          "risultato_id": {
+            "format": "uuid",
+            "title": "Risultato Id",
+            "type": "string"
+          },
+          "scheda": {
+            "additionalProperties": true,
+            "title": "Scheda",
+            "type": "object"
+          },
+          "temi_proposti": {
+            "items": {},
+            "title": "Temi Proposti",
+            "type": "array"
+          },
+          "tipo_documento": {
+            "title": "Tipo Documento",
+            "type": "string"
+          },
+          "tipo_documento_motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Documento Motivo"
+          },
+          "valori_non_riconosciuti": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Valori Non Riconosciuti",
+            "type": "array"
+          },
+          "versione_contratto": {
+            "title": "Versione Contratto",
+            "type": "string"
+          },
+          "versione_motore": {
+            "title": "Versione Motore",
+            "type": "string"
+          }
+        },
+        "required": [
+          "risultato_id",
+          "lavoro_id",
+          "documento_id",
+          "ricevuto_il",
+          "versione_motore",
+          "versione_contratto",
+          "tipo_documento",
+          "tipo_documento_motivo",
+          "protocollo_letto",
+          "data_protocollo_letta",
+          "lettura_incerta",
+          "pagine_incerte",
+          "acquisizione",
+          "scheda",
+          "proposta",
+          "temi_proposti",
+          "valori_non_riconosciuti",
+          "avvisi"
+        ],
+        "title": "AnalisiOut",
+        "type": "object"
+      },
+      "AssegnazioneIn": {
+        "properties": {
+          "da_proposta_ia": {
+            "default": false,
+            "title": "Da Proposta Ia",
+            "type": "boolean"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "ufficio_id": {
+            "format": "uuid",
+            "title": "Ufficio Id",
+            "type": "string"
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "versione",
+          "ufficio_id"
+        ],
+        "title": "AssegnazioneIn",
+        "type": "object"
+      },
+      "AttivitaIn": {
+        "properties": {
+          "data_prevista": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Prevista"
+          },
+          "descrizione": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descrizione"
+          },
+          "tipo": {
+            "maxLength": 100,
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tipo"
+        ],
+        "title": "AttivitaIn",
+        "type": "object"
+      },
+      "AttivitaOut": {
+        "properties": {
+          "aggiornata_il": {
+            "format": "date-time",
+            "title": "Aggiornata Il",
+            "type": "string"
+          },
+          "creata_da": {
+            "format": "uuid",
+            "title": "Creata Da",
+            "type": "string"
+          },
+          "creata_il": {
+            "format": "date-time",
+            "title": "Creata Il",
+            "type": "string"
+          },
+          "data_conclusione": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Conclusione"
+          },
+          "data_prevista": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Prevista"
+          },
+          "descrizione": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descrizione"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "pratica_id": {
+            "format": "uuid",
+            "title": "Pratica Id",
+            "type": "string"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/StatoAttivita"
+          },
+          "tipo": {
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "pratica_id",
+          "tipo",
+          "stato",
+          "data_prevista",
+          "data_conclusione",
+          "descrizione",
+          "creata_da",
+          "creata_il",
+          "aggiornata_il"
+        ],
+        "title": "AttivitaOut",
+        "type": "object"
+      },
+      "AttivitaPatch": {
+        "properties": {
+          "data_conclusione": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Conclusione"
+          },
+          "data_prevista": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Prevista"
+          },
+          "descrizione": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descrizione"
+          },
+          "stato": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatoAttivita"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "AttivitaPatch",
+        "type": "object"
+      },
+      "Avviso": {
+        "properties": {
+          "codice": {
+            "title": "Codice",
+            "type": "string"
+          },
+          "pagine": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pagine"
+          },
+          "testo": {
+            "title": "Testo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "codice",
+          "testo"
+        ],
+        "title": "Avviso",
+        "type": "object"
+      },
+      "Body_aggiungi_documenti_api_v1_pratiche__pratica_id__documenti_post": {
+        "properties": {
+          "files": {
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "title": "Body_aggiungi_documenti_api_v1_pratiche__pratica_id__documenti_post",
+        "type": "object"
+      },
+      "Body_nuova_pratica_api_v1_pratiche_post": {
+        "properties": {
+          "comune": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "files": {
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "protocollo": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo"
+          },
+          "titolo": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Titolo"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "title": "Body_nuova_pratica_api_v1_pratiche_post",
+        "type": "object"
+      },
+      "CambioStatoIn": {
+        "properties": {
+          "a_stato": {
+            "$ref": "#/components/schemas/Stato"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "versione",
+          "a_stato"
+        ],
+        "title": "CambioStatoIn",
+        "type": "object"
+      },
+      "Canale": {
+        "enum": [
+          "caricamento_manuale",
+          "import_cartella"
+        ],
+        "title": "Canale",
+        "type": "string"
+      },
+      "CollegamentoIn": {
+        "properties": {
+          "nota": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nota"
+          },
+          "pratica_id": {
+            "format": "uuid",
+            "title": "Pratica Id",
+            "type": "string"
+          },
+          "tipo_id": {
+            "format": "uuid",
+            "title": "Tipo Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pratica_id",
+          "tipo_id"
+        ],
+        "title": "CollegamentoIn",
+        "type": "object"
+      },
+      "CollegamentoOut": {
+        "properties": {
+          "automatico": {
+            "title": "Automatico",
+            "type": "boolean"
+          },
+          "creato_il": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Creato Il"
+          },
+          "etichetta": {
+            "title": "Etichetta",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "nota": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nota"
+          },
+          "pratica": {
+            "$ref": "#/components/schemas/PraticaRef"
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoCollegamentoOut"
+          }
+        },
+        "required": [
+          "id",
+          "automatico",
+          "tipo",
+          "etichetta",
+          "nota",
+          "pratica"
+        ],
+        "title": "CollegamentoOut",
+        "type": "object"
+      },
+      "Differenza": {
+        "description": "Un campo su cui la valutazione dell'operatore e la proposta dell'IA differiscono.",
+        "properties": {
+          "campo": {
+            "title": "Campo",
+            "type": "string"
+          },
+          "ia": {
+            "title": "Ia"
+          },
+          "operatore": {
+            "title": "Operatore"
+          }
+        },
+        "required": [
+          "campo"
+        ],
+        "title": "Differenza",
+        "type": "object"
+      },
+      "DisaccordoHome": {
+        "properties": {
+          "pratiche": {
+            "items": {
+              "$ref": "#/components/schemas/PraticaRiga"
+            },
+            "title": "Pratiche",
+            "type": "array"
+          },
+          "totale": {
+            "title": "Totale",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "totale",
+          "pratiche"
+        ],
+        "title": "DisaccordoHome",
+        "type": "object"
+      },
+      "DocumentoOut": {
+        "properties": {
+          "analisi": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatoAnalisiOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "caricato_il": {
+            "format": "date-time",
+            "title": "Caricato Il",
+            "type": "string"
+          },
+          "dimensione": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dimensione"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nome_file": {
+            "title": "Nome File",
+            "type": "string"
+          },
+          "principale": {
+            "default": false,
+            "title": "Principale",
+            "type": "boolean"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          },
+          "tipo_documento": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Documento"
+          },
+          "tipo_mime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Mime"
+          }
+        },
+        "required": [
+          "id",
+          "nome_file",
+          "tipo_mime",
+          "dimensione",
+          "sha256",
+          "tipo_documento",
+          "caricato_il"
+        ],
+        "title": "DocumentoOut",
+        "type": "object"
+      },
+      "EsitoRiga": {
+        "properties": {
+          "compilata": {
+            "title": "Compilata",
+            "type": "boolean"
+          },
+          "esito": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Esito"
+          },
+          "origine": {
+            "$ref": "#/components/schemas/OrigineValutazione"
+          },
+          "urgenza": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgenza"
+          }
+        },
+        "required": [
+          "esito",
+          "urgenza",
+          "origine",
+          "compilata"
+        ],
+        "title": "EsitoRiga",
+        "type": "object"
+      },
+      "FascicoloOut": {
+        "properties": {
+          "codice": {
+            "title": "Codice",
+            "type": "string"
+          },
+          "nome": {
+            "title": "Nome",
+            "type": "string"
+          },
+          "pratiche": {
+            "title": "Pratiche",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "codice",
+          "nome",
+          "pratiche"
+        ],
+        "title": "FascicoloOut",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HomeOut": {
+        "properties": {
+          "contatori": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Contatori",
+            "type": "object"
+          },
+          "disaccordo": {
+            "$ref": "#/components/schemas/DisaccordoHome"
+          },
+          "fascicoli_piu_attivi": {
+            "items": {
+              "$ref": "#/components/schemas/FascicoloOut"
+            },
+            "title": "Fascicoli Piu Attivi",
+            "type": "array"
+          },
+          "ultimi_arrivi": {
+            "items": {
+              "$ref": "#/components/schemas/PraticaRiga"
+            },
+            "title": "Ultimi Arrivi",
+            "type": "array"
+          }
+        },
+        "required": [
+          "contatori",
+          "ultimi_arrivi",
+          "fascicoli_piu_attivi",
+          "disaccordo"
+        ],
+        "title": "HomeOut",
+        "type": "object"
+      },
+      "LavoroOut": {
+        "properties": {
+          "codice_errore": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codice Errore"
+          },
+          "documento_id": {
+            "format": "uuid",
+            "title": "Documento Id",
+            "type": "string"
+          },
+          "finito_il": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finito Il"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "iniziato_il": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iniziato Il"
+          },
+          "richiesto_il": {
+            "format": "date-time",
+            "title": "Richiesto Il",
+            "type": "string"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/StatoLavoro"
+          },
+          "tentativi": {
+            "title": "Tentativi",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "documento_id",
+          "stato",
+          "tentativi",
+          "richiesto_il",
+          "iniziato_il",
+          "finito_il",
+          "codice_errore"
+        ],
+        "title": "LavoroOut",
+        "type": "object"
+      },
+      "LoginIn": {
+        "properties": {
+          "password": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginIn",
+        "type": "object"
+      },
+      "MeOut": {
+        "properties": {
+          "menu": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Menu",
+            "type": "array"
+          },
+          "utente": {
+            "$ref": "#/components/schemas/UtenteOut"
+          }
+        },
+        "required": [
+          "utente",
+          "menu"
+        ],
+        "title": "MeOut",
+        "type": "object"
+      },
+      "NotaIn": {
+        "properties": {
+          "testo": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Testo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "testo"
+        ],
+        "title": "NotaIn",
+        "type": "object"
+      },
+      "NotaOut": {
+        "properties": {
+          "autore_id": {
+            "format": "uuid",
+            "title": "Autore Id",
+            "type": "string"
+          },
+          "creata_il": {
+            "format": "date-time",
+            "title": "Creata Il",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "testo": {
+            "title": "Testo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "autore_id",
+          "testo",
+          "creata_il"
+        ],
+        "title": "NotaOut",
+        "type": "object"
+      },
+      "NuovaPraticaOut": {
+        "properties": {
+          "documenti": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentoOut"
+            },
+            "title": "Documenti",
+            "type": "array"
+          },
+          "pratica": {
+            "$ref": "#/components/schemas/PraticaOut"
+          }
+        },
+        "required": [
+          "pratica",
+          "documenti"
+        ],
+        "title": "NuovaPraticaOut",
+        "type": "object"
+      },
+      "OrigineTema": {
+        "enum": [
+          "ia",
+          "operatore"
+        ],
+        "title": "OrigineTema",
+        "type": "string"
+      },
+      "OrigineValutazione": {
+        "enum": [
+          "applicazione",
+          "import_ats"
+        ],
+        "title": "OrigineValutazione",
+        "type": "string"
+      },
+      "Pagina": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PraticaRiga"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "per_page": {
+            "title": "Per Page",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "per_page"
+        ],
+        "title": "Pagina",
+        "type": "object"
+      },
+      "PassoPercorso": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "documento_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Documento Id"
+          },
+          "pagina": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pagina"
+          },
+          "passo": {
+            "title": "Passo",
+            "type": "string"
+          },
+          "pratica_collegata": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PraticaRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stato": {
+            "title": "Stato",
+            "type": "string"
+          },
+          "testo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Testo"
+          },
+          "titolo": {
+            "title": "Titolo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "passo",
+          "stato",
+          "titolo"
+        ],
+        "title": "PassoPercorso",
+        "type": "object"
+      },
+      "PasswordIn": {
+        "properties": {
+          "password": {
+            "maxLength": 200,
+            "minLength": 10,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ],
+        "title": "PasswordIn",
+        "type": "object"
+      },
+      "PraticaDettaglio": {
+        "properties": {
+          "aggiornata_il": {
+            "format": "date-time",
+            "title": "Aggiornata Il",
+            "type": "string"
+          },
+          "analisi": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AnalisiOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "avvisi": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Avviso"
+            },
+            "title": "Avvisi",
+            "type": "array"
+          },
+          "canale": {
+            "$ref": "#/components/schemas/Canale"
+          },
+          "comune": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "creata_il": {
+            "format": "date-time",
+            "title": "Creata Il",
+            "type": "string"
+          },
+          "data_protocollo": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Protocollo"
+          },
+          "disaccordo": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Differenza"
+            },
+            "title": "Disaccordo",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "n_collegate": {
+            "default": 0,
+            "title": "N Collegate",
+            "type": "integer"
+          },
+          "numero": {
+            "title": "Numero",
+            "type": "string"
+          },
+          "protocollo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/Stato"
+          },
+          "stato_analisi": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatoAnalisiOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temi": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/TemaOut"
+            },
+            "title": "Temi",
+            "type": "array"
+          },
+          "tipo": {
+            "title": "Tipo",
+            "type": "string"
+          },
+          "titolo": {
+            "title": "Titolo",
+            "type": "string"
+          },
+          "ufficio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UfficioRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "valutazione": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValutazioneVista"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "numero",
+          "protocollo",
+          "data_protocollo",
+          "tipo",
+          "titolo",
+          "comune",
+          "canale",
+          "stato",
+          "ufficio",
+          "creata_il",
+          "aggiornata_il",
+          "versione"
+        ],
+        "title": "PraticaDettaglio",
+        "type": "object"
+      },
+      "PraticaOut": {
+        "properties": {
+          "aggiornata_il": {
+            "format": "date-time",
+            "title": "Aggiornata Il",
+            "type": "string"
+          },
+          "canale": {
+            "$ref": "#/components/schemas/Canale"
+          },
+          "comune": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "creata_il": {
+            "format": "date-time",
+            "title": "Creata Il",
+            "type": "string"
+          },
+          "data_protocollo": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Protocollo"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "numero": {
+            "title": "Numero",
+            "type": "string"
+          },
+          "protocollo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/Stato"
+          },
+          "tipo": {
+            "title": "Tipo",
+            "type": "string"
+          },
+          "titolo": {
+            "title": "Titolo",
+            "type": "string"
+          },
+          "ufficio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UfficioRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "numero",
+          "protocollo",
+          "data_protocollo",
+          "tipo",
+          "titolo",
+          "comune",
+          "canale",
+          "stato",
+          "ufficio",
+          "creata_il",
+          "aggiornata_il",
+          "versione"
+        ],
+        "title": "PraticaOut",
+        "type": "object"
+      },
+      "PraticaPatch": {
+        "properties": {
+          "comune": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "protocollo": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo"
+          },
+          "titolo": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Titolo"
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "versione"
+        ],
+        "title": "PraticaPatch",
+        "type": "object"
+      },
+      "PraticaRef": {
+        "description": "Pratica collegata. Fuori dal perimetro dell'utente: solo numero, ufficio e stato (`id` nullo).",
+        "properties": {
+          "comune": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "numero": {
+            "title": "Numero",
+            "type": "string"
+          },
+          "protocollo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/Stato"
+          },
+          "tipo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo"
+          },
+          "titolo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Titolo"
+          },
+          "ufficio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UfficioRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "numero",
+          "ufficio",
+          "stato"
+        ],
+        "title": "PraticaRef",
+        "type": "object"
+      },
+      "PraticaRiga": {
+        "description": "Riga di elenco (Gestione pratiche, Inbox, Smistamento, Fascicoli).",
+        "properties": {
+          "aggiornata_il": {
+            "format": "date-time",
+            "title": "Aggiornata Il",
+            "type": "string"
+          },
+          "canale": {
+            "$ref": "#/components/schemas/Canale"
+          },
+          "comune": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "creata_il": {
+            "format": "date-time",
+            "title": "Creata Il",
+            "type": "string"
+          },
+          "data_protocollo": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Protocollo"
+          },
+          "disaccordo": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Differenza"
+            },
+            "title": "Disaccordo",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lettura_incerta": {
+            "default": false,
+            "title": "Lettura Incerta",
+            "type": "boolean"
+          },
+          "n_collegate": {
+            "default": 0,
+            "title": "N Collegate",
+            "type": "integer"
+          },
+          "numero": {
+            "title": "Numero",
+            "type": "string"
+          },
+          "proposta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PropostaRiga"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "protocollo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/Stato"
+          },
+          "temi": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Temi",
+            "type": "array"
+          },
+          "tipo": {
+            "title": "Tipo",
+            "type": "string"
+          },
+          "titolo": {
+            "title": "Titolo",
+            "type": "string"
+          },
+          "ufficio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UfficioRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "valutazione": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EsitoRiga"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "numero",
+          "protocollo",
+          "data_protocollo",
+          "tipo",
+          "titolo",
+          "comune",
+          "canale",
+          "stato",
+          "ufficio",
+          "creata_il",
+          "aggiornata_il",
+          "versione"
+        ],
+        "title": "PraticaRiga",
+        "type": "object"
+      },
+      "PropostaRiga": {
+        "description": "Esito e urgenza proposti dall'IA per il documento principale (un suggerimento).",
+        "properties": {
+          "esito": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Esito"
+          },
+          "urgenza": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgenza"
+          }
+        },
+        "required": [
+          "esito",
+          "urgenza"
+        ],
+        "title": "PropostaRiga",
+        "type": "object"
+      },
+      "RestituzioneIn": {
+        "properties": {
+          "motivo": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Motivo",
+            "type": "string"
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "versione",
+          "motivo"
+        ],
+        "title": "RestituzioneIn",
+        "type": "object"
+      },
+      "RicercaRapidaOut": {
+        "properties": {
+          "comune": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "numero": {
+            "title": "Numero",
+            "type": "string"
+          },
+          "protocollo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocollo"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/Stato"
+          },
+          "titolo": {
+            "title": "Titolo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "numero",
+          "protocollo",
+          "titolo",
+          "comune",
+          "stato"
+        ],
+        "title": "RicercaRapidaOut",
+        "type": "object"
+      },
+      "Ruolo": {
+        "enum": [
+          "smistatore",
+          "operatore",
+          "amministratore"
+        ],
+        "title": "Ruolo",
+        "type": "string"
+      },
+      "Stato": {
+        "enum": [
+          "IN_ANALISI",
+          "DA_SMISTARE",
+          "DA_VALIDARE",
+          "IN_LAVORAZIONE",
+          "CHIUSA"
+        ],
+        "title": "Stato",
+        "type": "string"
+      },
+      "StatoAnalisiOut": {
+        "properties": {
+          "codice_errore": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codice Errore"
+          },
+          "lavoro_id": {
+            "format": "uuid",
+            "title": "Lavoro Id",
+            "type": "string"
+          },
+          "stato": {
+            "title": "Stato",
+            "type": "string"
+          },
+          "stato_lavoro": {
+            "$ref": "#/components/schemas/StatoLavoro"
+          },
+          "tentativi": {
+            "title": "Tentativi",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "stato",
+          "lavoro_id",
+          "stato_lavoro",
+          "tentativi",
+          "codice_errore"
+        ],
+        "title": "StatoAnalisiOut",
+        "type": "object"
+      },
+      "StatoAttivita": {
+        "enum": [
+          "prevista",
+          "in_corso",
+          "conclusa",
+          "annullata"
+        ],
+        "title": "StatoAttivita",
+        "type": "string"
+      },
+      "StatoLavoro": {
+        "enum": [
+          "in_coda",
+          "in_corso",
+          "completato",
+          "errore"
+        ],
+        "title": "StatoLavoro",
+        "type": "string"
+      },
+      "StatoTema": {
+        "enum": [
+          "proposto",
+          "confermato",
+          "scartato"
+        ],
+        "title": "StatoTema",
+        "type": "string"
+      },
+      "TemaCatalogoOut": {
+        "properties": {
+          "codice": {
+            "title": "Codice",
+            "type": "string"
+          },
+          "nome": {
+            "title": "Nome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "codice",
+          "nome"
+        ],
+        "title": "TemaCatalogoOut",
+        "type": "object"
+      },
+      "TemaDecisione": {
+        "properties": {
+          "codice": {
+            "maxLength": 64,
+            "title": "Codice",
+            "type": "string"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/StatoTema"
+          }
+        },
+        "required": [
+          "codice",
+          "stato"
+        ],
+        "title": "TemaDecisione",
+        "type": "object"
+      },
+      "TemaOut": {
+        "properties": {
+          "codice": {
+            "title": "Codice",
+            "type": "string"
+          },
+          "deciso_da": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deciso Da"
+          },
+          "deciso_il": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deciso Il"
+          },
+          "frase": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frase"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "nome": {
+            "title": "Nome",
+            "type": "string"
+          },
+          "origine": {
+            "$ref": "#/components/schemas/OrigineTema"
+          },
+          "pagina": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pagina"
+          },
+          "stato": {
+            "$ref": "#/components/schemas/StatoTema"
+          }
+        },
+        "required": [
+          "codice",
+          "nome",
+          "origine",
+          "stato",
+          "deciso_da",
+          "deciso_il"
+        ],
+        "title": "TemaOut",
+        "type": "object"
+      },
+      "TemiIn": {
+        "properties": {
+          "temi": {
+            "items": {
+              "$ref": "#/components/schemas/TemaDecisione"
+            },
+            "title": "Temi",
+            "type": "array"
+          }
+        },
+        "required": [
+          "temi"
+        ],
+        "title": "TemiIn",
+        "type": "object"
+      },
+      "TipoCollegamentoOut": {
+        "properties": {
+          "codice": {
+            "title": "Codice",
+            "type": "string"
+          },
+          "etichetta": {
+            "title": "Etichetta",
+            "type": "string"
+          },
+          "etichetta_inversa": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Etichetta Inversa"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "manuale": {
+            "title": "Manuale",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "codice",
+          "etichetta",
+          "etichetta_inversa",
+          "manuale"
+        ],
+        "title": "TipoCollegamentoOut",
+        "type": "object"
+      },
+      "UfficioIn": {
+        "properties": {
+          "codice": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Codice",
+            "type": "string"
+          },
+          "nome": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Nome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "codice",
+          "nome"
+        ],
+        "title": "UfficioIn",
+        "type": "object"
+      },
+      "UfficioOut": {
+        "properties": {
+          "attivo": {
+            "title": "Attivo",
+            "type": "boolean"
+          },
+          "codice": {
+            "title": "Codice",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nome": {
+            "title": "Nome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "codice",
+          "nome",
+          "attivo"
+        ],
+        "title": "UfficioOut",
+        "type": "object"
+      },
+      "UfficioPatch": {
+        "properties": {
+          "attivo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attivo"
+          },
+          "nome": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nome"
+          }
+        },
+        "title": "UfficioPatch",
+        "type": "object"
+      },
+      "UfficioRef": {
+        "properties": {
+          "codice": {
+            "title": "Codice",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nome": {
+            "title": "Nome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "codice",
+          "nome"
+        ],
+        "title": "UfficioRef",
+        "type": "object"
+      },
+      "UtenteIn": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 320,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "nome_visualizzato": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Nome Visualizzato",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 200,
+            "minLength": 10,
+            "title": "Password",
+            "type": "string"
+          },
+          "ruolo": {
+            "$ref": "#/components/schemas/Ruolo"
+          },
+          "ufficio_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ufficio Id"
+          },
+          "username": {
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "nome_visualizzato",
+          "ruolo",
+          "password"
+        ],
+        "title": "UtenteIn",
+        "type": "object"
+      },
+      "UtenteOut": {
+        "properties": {
+          "attivo": {
+            "title": "Attivo",
+            "type": "boolean"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nome_visualizzato": {
+            "title": "Nome Visualizzato",
+            "type": "string"
+          },
+          "ruolo": {
+            "$ref": "#/components/schemas/Ruolo"
+          },
+          "ufficio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UfficioOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "nome_visualizzato",
+          "email",
+          "ruolo",
+          "ufficio",
+          "attivo"
+        ],
+        "title": "UtenteOut",
+        "type": "object"
+      },
+      "UtentePatch": {
+        "properties": {
+          "attivo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attivo"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 320,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "nome_visualizzato": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nome Visualizzato"
+          },
+          "ruolo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Ruolo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ufficio_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ufficio Id"
+          }
+        },
+        "title": "UtentePatch",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "ValidazioneIn": {
+        "properties": {
+          "temi": {
+            "items": {
+              "$ref": "#/components/schemas/TemaDecisione"
+            },
+            "title": "Temi",
+            "type": "array"
+          },
+          "valutazione": {
+            "$ref": "#/components/schemas/ValutazioneIn"
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "versione",
+          "valutazione",
+          "temi"
+        ],
+        "title": "ValidazioneIn",
+        "type": "object"
+      },
+      "ValutazioneIn": {
+        "description": "Sostituisce l'intera valutazione. `compilata=False` salva una bozza.",
+        "properties": {
+          "ambito": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Ambito",
+            "type": "array"
+          },
+          "ambito_altro": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ambito Altro"
+          },
+          "azione": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Azione",
+            "type": "array"
+          },
+          "compilata": {
+            "default": true,
+            "title": "Compilata",
+            "type": "boolean"
+          },
+          "comune": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "conferma_sovrascrittura": {
+            "default": false,
+            "title": "Conferma Sovrascrittura",
+            "type": "boolean"
+          },
+          "data_doc": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Doc"
+          },
+          "elementi": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Elementi",
+            "type": "array"
+          },
+          "elementi_altro": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elementi Altro"
+          },
+          "esito": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Esito"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "problematica": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Problematica",
+            "type": "array"
+          },
+          "problematica_altro": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Problematica Altro"
+          },
+          "urgenza": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgenza"
+          }
+        },
+        "title": "ValutazioneIn",
+        "type": "object"
+      },
+      "ValutazioneOut": {
+        "properties": {
+          "aggiornata_il": {
+            "format": "date-time",
+            "title": "Aggiornata Il",
+            "type": "string"
+          },
+          "ambito": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Ambito",
+            "type": "array"
+          },
+          "ambito_altro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ambito Altro"
+          },
+          "ambito_originale": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ambito Originale"
+          },
+          "autore_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autore Id"
+          },
+          "autore_nome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autore Nome"
+          },
+          "azione": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Azione",
+            "type": "array"
+          },
+          "compilata": {
+            "title": "Compilata",
+            "type": "boolean"
+          },
+          "comune": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comune"
+          },
+          "creata_il": {
+            "format": "date-time",
+            "title": "Creata Il",
+            "type": "string"
+          },
+          "da_risultato_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Da Risultato Id"
+          },
+          "data_compilazione": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Compilazione"
+          },
+          "data_doc": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Doc"
+          },
+          "elementi": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Elementi",
+            "type": "array"
+          },
+          "elementi_altro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elementi Altro"
+          },
+          "esito": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Esito"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "origine": {
+            "$ref": "#/components/schemas/OrigineValutazione"
+          },
+          "problematica": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Problematica",
+            "type": "array"
+          },
+          "problematica_altro": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Problematica Altro"
+          },
+          "urgenza": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgenza"
+          }
+        },
+        "required": [
+          "id",
+          "origine",
+          "autore_id",
+          "autore_nome",
+          "compilata",
+          "data_compilazione",
+          "data_doc",
+          "comune",
+          "ambito",
+          "problematica",
+          "elementi",
+          "ambito_originale",
+          "ambito_altro",
+          "problematica_altro",
+          "elementi_altro",
+          "esito",
+          "urgenza",
+          "azione",
+          "note",
+          "da_risultato_id",
+          "creata_il",
+          "aggiornata_il"
+        ],
+        "title": "ValutazioneOut",
+        "type": "object"
+      },
+      "ValutazioneVista": {
+        "properties": {
+          "disaccordo": {
+            "items": {
+              "$ref": "#/components/schemas/Differenza"
+            },
+            "title": "Disaccordo",
+            "type": "array"
+          },
+          "precompilazione": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precompilazione"
+          },
+          "valutazione": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValutazioneOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "valutazione",
+          "precompilazione",
+          "disaccordo"
+        ],
+        "title": "ValutazioneVista",
+        "type": "object"
+      },
+      "VoceRegistro": {
+        "properties": {
+          "azione": {
+            "title": "Azione",
+            "type": "string"
+          },
+          "dettagli": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dettagli"
+          },
+          "oggetto_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oggetto Id"
+          },
+          "oggetto_tipo": {
+            "title": "Oggetto Tipo",
+            "type": "string"
+          },
+          "quando": {
+            "format": "date-time",
+            "title": "Quando",
+            "type": "string"
+          },
+          "utente_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utente Id"
+          }
+        },
+        "required": [
+          "quando",
+          "utente_id",
+          "azione",
+          "oggetto_tipo",
+          "oggetto_id",
+          "dettagli"
+        ],
+        "title": "VoceRegistro",
+        "type": "object"
+      },
+      "VoceStorico": {
+        "properties": {
+          "dettagli": {
+            "additionalProperties": true,
+            "title": "Dettagli",
+            "type": "object"
+          },
+          "il": {
+            "format": "date-time",
+            "title": "Il",
+            "type": "string"
+          },
+          "tipo": {
+            "title": "Tipo",
+            "type": "string"
+          },
+          "utente_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utente Id"
+          }
+        },
+        "required": [
+          "tipo",
+          "il",
+          "utente_id",
+          "dettagli"
+        ],
+        "title": "VoceStorico",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Gestione esposti — ATS Insubria",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/attivita/{attivita_id}": {
+      "patch": {
+        "operationId": "modifica_attivita_api_v1_attivita__attivita_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attivita_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attivita Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttivitaPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttivitaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Modifica Attivita",
+        "tags": [
+          "operatore"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Login",
+        "tags": [
+          "accesso"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "logout_api_v1_auth_logout_post",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Logout",
+        "tags": [
+          "accesso"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "operationId": "me_api_v1_auth_me_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Me",
+        "tags": [
+          "accesso"
+        ]
+      }
+    },
+    "/api/v1/collegamenti/{collegamento_id}": {
+      "delete": {
+        "description": "Rimozione logica. Basta vedere uno dei due lati; altrimenti il collegamento «non esiste».",
+        "operationId": "rimuovi_api_v1_collegamenti__collegamento_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "collegamento_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Collegamento Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rimuovi",
+        "tags": [
+          "collegamenti"
+        ]
+      }
+    },
+    "/api/v1/documenti/{documento_id}/analisi": {
+      "get": {
+        "operationId": "analisi_documento_api_v1_documenti__documento_id__analisi_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documento_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Documento Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AnalisiOut"
+                  },
+                  "title": "Response Analisi Documento Api V1 Documenti  Documento Id  Analisi Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analisi Documento",
+        "tags": [
+          "documenti e motore"
+        ]
+      },
+      "post": {
+        "operationId": "rilancia_analisi_api_v1_documenti__documento_id__analisi_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documento_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Documento Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LavoroOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rilancia Analisi",
+        "tags": [
+          "documenti e motore"
+        ]
+      }
+    },
+    "/api/v1/documenti/{documento_id}/contenuto": {
+      "get": {
+        "operationId": "contenuto_documento_api_v1_documenti__documento_id__contenuto_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documento_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Documento Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Contenuto Documento",
+        "tags": [
+          "documenti e motore"
+        ]
+      }
+    },
+    "/api/v1/documenti/{documento_id}/testo": {
+      "get": {
+        "operationId": "testo_documento_api_v1_documenti__documento_id__testo_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "documento_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Documento Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Testo Documento Api V1 Documenti  Documento Id  Testo Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Testo Documento",
+        "tags": [
+          "documenti e motore"
+        ]
+      }
+    },
+    "/api/v1/fascicoli": {
+      "get": {
+        "description": "Temi con il numero di pratiche (che l'utente vede) in cui il tema è confermato.",
+        "operationId": "fascicoli_api_v1_fascicoli_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FascicoloOut"
+                  },
+                  "title": "Response Fascicoli Api V1 Fascicoli Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Fascicoli",
+        "tags": [
+          "schermate"
+        ]
+      }
+    },
+    "/api/v1/fascicoli/{codice}/pratiche": {
+      "get": {
+        "description": "Pratiche con il tema confermato, in ordine di tempo (il percorso del fascicolo).",
+        "operationId": "pratiche_fascicolo_api_v1_fascicoli__codice__pratiche_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "codice",
+            "required": true,
+            "schema": {
+              "title": "Codice",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Per Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pagina"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pratiche Fascicolo",
+        "tags": [
+          "schermate"
+        ]
+      }
+    },
+    "/api/v1/home": {
+      "get": {
+        "operationId": "home_api_v1_home_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Home",
+        "tags": [
+          "schermate"
+        ]
+      }
+    },
+    "/api/v1/inbox": {
+      "get": {
+        "operationId": "inbox_api_v1_inbox_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Per Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pagina"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Inbox",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/lavori/{lavoro_id}": {
+      "get": {
+        "operationId": "lavoro_api_v1_lavori__lavoro_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lavoro_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Lavoro Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LavoroOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lavoro",
+        "tags": [
+          "documenti e motore"
+        ]
+      }
+    },
+    "/api/v1/pratiche": {
+      "get": {
+        "operationId": "elenco_api_v1_pratiche_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "testo",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Testo"
+            }
+          },
+          {
+            "in": "query",
+            "name": "stato",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Stato"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Stato"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tema",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tema"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tipo",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tipo"
+            }
+          },
+          {
+            "in": "query",
+            "name": "con_valutazione_ats",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Con Valutazione Ats"
+            }
+          },
+          {
+            "in": "query",
+            "name": "disaccordo",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Disaccordo"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lettura_incerta",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lettura Incerta"
+            }
+          },
+          {
+            "in": "query",
+            "name": "dal",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Dal"
+            }
+          },
+          {
+            "in": "query",
+            "name": "al",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Al"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Per Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pagina"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elenco",
+        "tags": [
+          "pratiche"
+        ]
+      },
+      "post": {
+        "description": "Caricamento a mano: la pratica nasce IN_ANALISI e ogni documento va in coda al motore.",
+        "operationId": "nuova_pratica_api_v1_pratiche_post",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_nuova_pratica_api_v1_pratiche_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NuovaPraticaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Nuova Pratica",
+        "tags": [
+          "documenti e motore"
+        ]
+      }
+    },
+    "/api/v1/pratiche/ricerca-rapida": {
+      "get": {
+        "description": "Per scegliere la pratica da collegare: solo quelle che l'utente vede.",
+        "operationId": "ricerca_rapida_api_v1_pratiche_ricerca_rapida_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 100,
+              "minLength": 2,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "escludi",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Escludi"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RicercaRapidaOut"
+                  },
+                  "title": "Response Ricerca Rapida Api V1 Pratiche Ricerca Rapida Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ricerca Rapida",
+        "tags": [
+          "collegamenti"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}": {
+      "get": {
+        "operationId": "dettaglio_api_v1_pratiche__pratica_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PraticaDettaglio"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dettaglio",
+        "tags": [
+          "pratiche"
+        ]
+      },
+      "patch": {
+        "operationId": "modifica_api_v1_pratiche__pratica_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PraticaPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PraticaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Modifica",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/assegnazione": {
+      "post": {
+        "operationId": "assegna_api_v1_pratiche__pratica_id__assegnazione_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssegnazioneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PraticaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Assegna",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/attivita": {
+      "get": {
+        "operationId": "elenco_attivita_api_v1_pratiche__pratica_id__attivita_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AttivitaOut"
+                  },
+                  "title": "Response Elenco Attivita Api V1 Pratiche  Pratica Id  Attivita Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elenco Attivita",
+        "tags": [
+          "operatore"
+        ]
+      },
+      "post": {
+        "operationId": "nuova_attivita_api_v1_pratiche__pratica_id__attivita_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttivitaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttivitaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Nuova Attivita",
+        "tags": [
+          "operatore"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/collegamenti": {
+      "get": {
+        "operationId": "elenco_api_v1_pratiche__pratica_id__collegamenti_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CollegamentoOut"
+                  },
+                  "title": "Response Elenco Api V1 Pratiche  Pratica Id  Collegamenti Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elenco",
+        "tags": [
+          "collegamenti"
+        ]
+      },
+      "post": {
+        "description": "Tra pratiche che l'utente vede entrambe; l'altra, se non la vede, «non esiste» (404).",
+        "operationId": "crea_api_v1_pratiche__pratica_id__collegamenti_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollegamentoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollegamentoOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crea",
+        "tags": [
+          "collegamenti"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/documenti": {
+      "get": {
+        "operationId": "elenco_documenti_api_v1_pratiche__pratica_id__documenti_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentoOut"
+                  },
+                  "title": "Response Elenco Documenti Api V1 Pratiche  Pratica Id  Documenti Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elenco Documenti",
+        "tags": [
+          "documenti e motore"
+        ]
+      },
+      "post": {
+        "operationId": "aggiungi_documenti_api_v1_pratiche__pratica_id__documenti_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_aggiungi_documenti_api_v1_pratiche__pratica_id__documenti_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentoOut"
+                  },
+                  "title": "Response Aggiungi Documenti Api V1 Pratiche  Pratica Id  Documenti Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Aggiungi Documenti",
+        "tags": [
+          "documenti e motore"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/note": {
+      "get": {
+        "operationId": "note_api_v1_pratiche__pratica_id__note_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NotaOut"
+                  },
+                  "title": "Response Note Api V1 Pratiche  Pratica Id  Note Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Note",
+        "tags": [
+          "pratiche"
+        ]
+      },
+      "post": {
+        "operationId": "nuova_nota_api_v1_pratiche__pratica_id__note_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Nuova Nota",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/percorso": {
+      "get": {
+        "operationId": "percorso_pratica_api_v1_pratiche__pratica_id__percorso_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PassoPercorso"
+                  },
+                  "title": "Response Percorso Pratica Api V1 Pratiche  Pratica Id  Percorso Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Percorso Pratica",
+        "tags": [
+          "collegamenti"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/registro": {
+      "get": {
+        "operationId": "registro_pratica_api_v1_pratiche__pratica_id__registro_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VoceRegistro"
+                  },
+                  "title": "Response Registro Pratica Api V1 Pratiche  Pratica Id  Registro Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Registro Pratica",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/restituzione": {
+      "post": {
+        "operationId": "restituisci_api_v1_pratiche__pratica_id__restituzione_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestituzioneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PraticaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Restituisci",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/stato": {
+      "post": {
+        "operationId": "cambia_stato_api_v1_pratiche__pratica_id__stato_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CambioStatoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PraticaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cambia Stato",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/storico": {
+      "get": {
+        "operationId": "storico_api_v1_pratiche__pratica_id__storico_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VoceStorico"
+                  },
+                  "title": "Response Storico Api V1 Pratiche  Pratica Id  Storico Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Storico",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/temi": {
+      "get": {
+        "operationId": "elenco_temi_api_v1_pratiche__pratica_id__temi_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TemaOut"
+                  },
+                  "title": "Response Elenco Temi Api V1 Pratiche  Pratica Id  Temi Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elenco Temi",
+        "tags": [
+          "operatore"
+        ]
+      },
+      "put": {
+        "description": "Conferma, scarta o aggiunge temi (anche dopo la validazione).",
+        "operationId": "decidi_temi_api_v1_pratiche__pratica_id__temi_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemiIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TemaOut"
+                  },
+                  "title": "Response Decidi Temi Api V1 Pratiche  Pratica Id  Temi Put",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decidi Temi",
+        "tags": [
+          "operatore"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/validazione": {
+      "post": {
+        "description": "Valutazione compilata + decisione su ogni tema proposto → IN_LAVORAZIONE. La decide la persona.",
+        "operationId": "valida_pratica_api_v1_pratiche__pratica_id__validazione_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidazioneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PraticaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Valida Pratica",
+        "tags": [
+          "operatore"
+        ]
+      }
+    },
+    "/api/v1/pratiche/{pratica_id}/valutazione": {
+      "get": {
+        "operationId": "leggi_valutazione_api_v1_pratiche__pratica_id__valutazione_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValutazioneVista"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Leggi Valutazione",
+        "tags": [
+          "operatore"
+        ]
+      },
+      "put": {
+        "description": "Salva (o aggiorna) la valutazione senza cambiare lo stato; per validare c'è /validazione.",
+        "operationId": "scrivi_valutazione_api_v1_pratiche__pratica_id__valutazione_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pratica_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Pratica Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValutazioneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValutazioneOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Scrivi Valutazione",
+        "tags": [
+          "operatore"
+        ]
+      }
+    },
+    "/api/v1/salute": {
+      "get": {
+        "operationId": "salute_api_v1_salute_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Salute Api V1 Salute Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Salute"
+      }
+    },
+    "/api/v1/smistamento": {
+      "get": {
+        "operationId": "smistamento_api_v1_smistamento_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Per Page",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pagina"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Smistamento",
+        "tags": [
+          "pratiche"
+        ]
+      }
+    },
+    "/api/v1/temi": {
+      "get": {
+        "operationId": "temi_api_v1_temi_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TemaCatalogoOut"
+                  },
+                  "title": "Response Temi Api V1 Temi Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Temi",
+        "tags": [
+          "schermate"
+        ]
+      }
+    },
+    "/api/v1/tipi-collegamento": {
+      "get": {
+        "operationId": "tipi_collegamento_api_v1_tipi_collegamento_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TipoCollegamentoOut"
+                  },
+                  "title": "Response Tipi Collegamento Api V1 Tipi Collegamento Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Tipi Collegamento",
+        "tags": [
+          "schermate"
+        ]
+      }
+    },
+    "/api/v1/uffici": {
+      "get": {
+        "operationId": "elenco_uffici_api_v1_uffici_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UfficioOut"
+                  },
+                  "title": "Response Elenco Uffici Api V1 Uffici Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elenco Uffici",
+        "tags": [
+          "amministrazione"
+        ]
+      },
+      "post": {
+        "operationId": "crea_ufficio_api_v1_uffici_post",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UfficioIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UfficioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crea Ufficio",
+        "tags": [
+          "amministrazione"
+        ]
+      }
+    },
+    "/api/v1/uffici/{ufficio_id}": {
+      "patch": {
+        "operationId": "modifica_ufficio_api_v1_uffici__ufficio_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ufficio_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ufficio Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UfficioPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UfficioOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Modifica Ufficio",
+        "tags": [
+          "amministrazione"
+        ]
+      }
+    },
+    "/api/v1/utenti": {
+      "get": {
+        "operationId": "elenco_utenti_api_v1_utenti_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UtenteOut"
+                  },
+                  "title": "Response Elenco Utenti Api V1 Utenti Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elenco Utenti",
+        "tags": [
+          "amministrazione"
+        ]
+      },
+      "post": {
+        "operationId": "crea_utente_api_v1_utenti_post",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UtenteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UtenteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crea Utente",
+        "tags": [
+          "amministrazione"
+        ]
+      }
+    },
+    "/api/v1/utenti/{utente_id}": {
+      "patch": {
+        "operationId": "modifica_utente_api_v1_utenti__utente_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "utente_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Utente Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UtentePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UtenteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Modifica Utente",
+        "tags": [
+          "amministrazione"
+        ]
+      }
+    },
+    "/api/v1/utenti/{utente_id}/password": {
+      "post": {
+        "operationId": "reimposta_password_api_v1_utenti__utente_id__password_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "utente_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Utente Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reimposta Password",
+        "tags": [
+          "amministrazione"
+        ]
+      }
+    },
+    "/api/v1/vocabolari": {
+      "get": {
+        "description": "Elenchi attuali dei vocabolari ATS. L'elenco storico degli ambiti serve solo all'importazione.",
+        "operationId": "vocabolari_api_v1_vocabolari_get",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "esposti_sessione",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Esposti Sessione"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "items": {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "title": "Response Vocabolari Api V1 Vocabolari Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vocabolari",
+        "tags": [
+          "schermate"
+        ]
+      }
+    }
+  }
+}

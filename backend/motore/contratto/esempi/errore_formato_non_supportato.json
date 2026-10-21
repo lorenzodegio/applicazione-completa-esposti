@@ -1,0 +1,9 @@
+{
+  "id_lavoro": "{{id_lavoro}}",
+  "stato": "errore",
+  "errore": {
+    "codice": "formato_non_supportato",
+    "messaggio": "Tipo di file non gestito.",
+    "ritentabile": false
+  }
+}
