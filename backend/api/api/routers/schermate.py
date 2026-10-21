@@ -70,7 +70,8 @@ def home(utente: Utente = Depends(smistatore_o_operatore), db: Session = Depends
         and_(Collegamento.pratica_da_id == Pratica.id, Collegamento.pratica_a_id == r2.id),
         and_(Collegamento.pratica_da_id == r2.id, Collegamento.pratica_a_id == Pratica.id)))
     riscontro = exists().where(r2.tipo == "riscontro_ats", r2.id != Pratica.id,
-                               or_(and_(Pratica.protocollo.is_not(None), r2.protocollo == Pratica.protocollo), manuale))
+                               or_(and_(Pratica.chiave_protocollo.is_not(None),
+                                        r2.chiave_protocollo == Pratica.chiave_protocollo), manuale))
     incerta = exists().where(vista_analisi_principale.c.pratica_id == Pratica.id,
                              vista_analisi_principale.c.lettura_incerta)
     dis = exists().where(vista_disaccordo.c.pratica_id == Pratica.id, vista_disaccordo.c.in_disaccordo)
