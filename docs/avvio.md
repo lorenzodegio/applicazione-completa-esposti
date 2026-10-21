@@ -26,7 +26,7 @@ docker compose up -d --build
 | `db` | PostgreSQL 16 (volume `pgdata`) | solo in rete Docker |
 | `api` | migrazioni + demo sintetica all'avvio, poi FastAPI | http://127.0.0.1:8100/api/v1 (documentazione su `/docs`) |
 | `worker` | coda dei lavori, un documento alla volta | reti `default` ed `esposti_interna` |
-| `motore-finto` | finto motore, contratto 1.1, porta 8080 | `http://motore-finto:8080` (solo in rete Docker) |
+| `motore-finto` | finto motore, contratto 1.2, porta 8080 | `http://motore-finto:8080` (solo in rete Docker) |
 | `backoffice` | Vite, inoltra `/api` all'API | http://127.0.0.1:5173 |
 
 La porta 8000 dell'host è occupata da un servizio di Windows: per questo l'API è pubblicata su **8100**.
@@ -36,7 +36,8 @@ Dopo una modifica al backend: `docker compose up -d --build`. I sorgenti del bac
 montati in sola lettura: Vite ricarica al volo; dopo un cambio di dipendenze serve `--build`.
 
 Stato: `curl -s http://127.0.0.1:8100/api/v1/salute` (database, archivio, coda, motore con versioni;
-`503` solo se database o archivio non funzionano, motore assente = `"degradato"` con `200`).
+`503` solo se database o archivio non funzionano; motore assente, non pronto o con contratto di altra versione
+principale = `"degradato"` con `200`).
 
 ## Avvio con il motore vero
 
@@ -47,7 +48,10 @@ alla rete `esposti_interna`. Si avvia dal suo repository; qui basta indicare l'U
 MOTORE_URL=http://motore:8080 docker compose up -d
 ```
 
-`MOTORE_URL` diventa `ESPOSTI_MOTORE_URL` di `api` (per `/salute`) e `worker`. Senza la variabile si usa
+`MOTORE_URL` diventa `ESPOSTI_MOTORE_URL` di `api` (per `/salute`) e `worker`.
+L'applicazione aspetta ogni analisi fino a `ESPOSTI_MOTORE_TIMEOUT_SECONDI` (default **2100 s**), più del
+tempo massimo del motore vero (`tempo_max_s = 1800`, circa 45 s per pagina trascritta): così è il motore a
+dichiarare `tempo_scaduto`, non l'applicazione. I temporanei del worker stanno su tmpfs (`/tmp/esposti-lavoro`). Senza la variabile si usa
 `http://motore-finto:8080`. Lo stack parte anche se il motore vero non c'è: i lavori restano in coda e
 `/salute` dice `"motore": {"stato": "irraggiungibile"}`. Per tornare al finto: `docker compose up -d`.
 

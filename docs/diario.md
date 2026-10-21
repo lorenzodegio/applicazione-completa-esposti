@@ -56,3 +56,26 @@ Le decisioni di prodotto stabili finiscono anche in `backend/api/README.md` («D
 - **Scenari del finto: sono 9, non 8** (lettura pulita, riscontro, manoscritto/incerto, formato/.pages,
   illeggibile, scaduto, instabile, occupato, invalido): l'end-to-end li copre tutti.
 - **Intervallo del worker 0,5 s nelle prove** (2 s in sviluppo). Motivo: prove più rapide, stessa logica.
+
+## 2026-10-21 — correzioni dopo la revisione (Agente A, ramo `lorenzo`)
+
+- **Timeout dell'applicazione 2100 s** (era 600). Motivo: il motore vero ha `tempo_max_s = 1800`
+  (circa 45 s per pagina trascritta); con un'attesa più lunga è il motore a dichiarare `tempo_scaduto`
+  e l'applicazione non abbandona un lavoro che sta ancora andando.
+- **Codici HTTP in `stato()` del client**: il corpo conta più del codice. Corpo conforme = si usa
+  (anche il 404 del motore riavviato, `errore_interno` ritentabile); corpo non conforme con codice ≠ 200 =
+  `MotoreIrraggiungibile`, ritentabile; corpo non conforme con 200 = `risultato_non_valido`. Motivo: un
+  500 o un URL sbagliato non sono un risultato fuori contratto e non devono bloccare per sempre il documento.
+- **`/salute` con motore «non_pronto»**: motore raggiungibile ma con `stato` diverso da `pronto` →
+  motore `non_pronto`, generale `degradato` (200). Motivo: il motore vero dice `non_pronto` se manca il
+  modello o i digest non coincidono; i lavori non andrebbero avanti.
+- **Contratto 1.2** (versione minore): `richiesta_non_valida` (422, non ritentabile), anche nel finto;
+  annotati `acquisizione` sempre `ocr` nel motore vero, `frase` convenzionale del protocollo dal nome del
+  file, `.eml` non supportato. `Risultato.versione_contratto` deve essere `1.x` (qualunque minore). Motivo:
+  allineare il contratto a ciò che il motore vero fa davvero; la regola delle versioni minori lo consente.
+- **Protocollo: numero + anno**, con una colonna calcolata dal database (`chiave_protocollo`, migrazione
+  0006) invece che in Python. Motivo: il protocollo si scrive in più punti (creazione, modifica, worker); una
+  colonna generata è sempre coerente e indicizzabile. Spazi intorno alla barra e maiuscole non contano;
+  gli zeri iniziali sì (non si sa se `12` e `0000012` siano lo stesso protocollo).
+- **Temporanei del worker su tmpfs** (`/tmp/esposti-lavoro`, 1 GB): il documento scaricato non tocca mai
+  il disco del container, come nel motore.

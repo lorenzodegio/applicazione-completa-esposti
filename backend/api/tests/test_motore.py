@@ -346,3 +346,22 @@ def test_all_avvio_il_worker_cancella_i_temporanei_rimasti(monkeypatch, tmp_path
     (tmp_path / "altro").mkdir()                             # non è del worker: resta
     assert pulisci_temporanei() == 1
     assert [p.name for p in tmp_path.iterdir()] == ["altro"]
+
+
+def test_motore_che_risponde_500_testuale_si_ritenta_fino_al_limite(s, accedi, worker, db):
+    import httpx
+    from motore.client import MotoreHttp
+
+    def risposta(req: httpx.Request) -> httpx.Response:
+        if req.method == "POST":
+            return httpx.Response(202, json={"id_lavoro": "x", "stato": "in_coda"})
+        if req.method == "GET":
+            return httpx.Response(500, text="Internal Server Error")
+        return httpx.Response(204)
+    rotto = MotoreHttp(http_client=httpx.Client(transport=httpx.MockTransport(risposta), base_url="http://motore:8080"))
+    pid = carica(accedi(s["smi"]), "esposto_cani.pdf")["pratica"]["id"]
+    esegui_coda(client=rotto, archivio=get_archivio(), dormi=lambda x: None)
+    lavoro = db.execute(select(LavoroMotore).where(LavoroMotore.pratica_id == pid)).scalar_one()
+    assert (lavoro.stato, lavoro.codice_errore, lavoro.tentativi) == (StatoLavoro.errore, "errore_interno", 3)
+    assert azioni(db, pid).count("motore.ritenta") == 2
+    assert db.get(Pratica, pid).stato == Stato.DA_SMISTARE

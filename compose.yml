@@ -51,6 +51,8 @@ services:
   worker:
     <<: *backend
     command: ["python", "-m", "api.worker"]
+    # i documenti temporanei solo in memoria, mai sul disco del container (come nel motore)
+    tmpfs: [ "/tmp/esposti-lavoro:size=1g,mode=1777" ]
     depends_on:
       api: { condition: service_healthy }        # migrazioni già applicate
       motore-finto: { condition: service_started }

@@ -154,8 +154,9 @@ Decise il 2026-10-21 (le prime tre dal coordinatore, le altre su raccomandazione
   (`note`, `*_altro`, descrizione attività) non entrano mai nel registro, che conserva prima/dopo.
 - **`GET /salute`**: controlla database, archivio (scrittura e cancellazione di un file di prova), coda
   (lavori `in_coda`/`in_corso`) e motore (`GET {MOTORE_URL}/v1/salute`, timeout 2 s, con versione del motore
-  e del contratto). **503** solo se database o archivio non funzionano; motore irraggiungibile o con
-  contratto di versione principale diversa = `"degradato"` con **200** (il lavoro delle persone continua, i
+  e del contratto). **503** solo se database o archivio non funzionano; motore irraggiungibile, non pronto
+  (`stato` diverso da `pronto`, es. `non_pronto`) o con contratto di versione principale diversa = `"degradato"`
+  con **200** (il lavoro delle persone continua, i
   lavori restano in coda). Nessun URL, percorso o messaggio interno nella risposta.
 - Restituzione ammessa da `DA_VALIDARE` e `IN_LAVORAZIONE`: `ufficio_id` torna `NULL`.
 - Limite di tentativi di accesso: 5 falliti per nome utente in 15 minuti.
@@ -164,7 +165,15 @@ Decise il 2026-10-21 (le prime tre dal coordinatore, le altre su raccomandazione
   motore fallisce): il lavoro umano non si blocca. Si precompilano **solo** `tipo` e, se
   vuoti, protocollo e comune; ufficio, valutazione e temi restano alle persone.
 - Errori del motore: ritentabili fino a 3 tentativi; `risultato_non_valido` (fuori
-  contratto) e `archivio_non_disponibile` (impronta diversa) non si ritentano.
+  contratto), `richiesta_non_valida` (422 del motore) e `archivio_non_disponibile` (impronta diversa) non si
+  ritentano. Una risposta di stato non `200` con corpo non conforme (500 testuale, 404 di un URL sbagliato) è un
+  guasto ritentabile; un corpo conforme vale con qualunque codice (404 del motore riavviato). Si accetta
+  qualunque contratto `1.x`.
+- Attesa massima di un'analisi: `ESPOSTI_MOTORE_TIMEOUT_SECONDI` = 2100 s, sopra i 1800 s del motore vero.
+- Collegamento automatico «stesso protocollo»: serve **numero e anno** (colonna calcolata
+  `pratica.chiave_protocollo`, migrazione `0006`): l'anno è quello scritto nel protocollo (`…/AAAA`) o, se
+  manca, quello di `data_protocollo`; senza anno nessun collegamento automatico. Vale anche per il conteggio
+  delle collegate e per «senza riscontro».
 - Il worker vive in `api/worker.py` (ha bisogno del database); il client e il finto sono in `backend/motore`.
 - Lettura del testo (`documento.testo`) e del file (`documento.apri`) vanno nel registro.
 - Validazione: servono esito e urgenza.

@@ -1,7 +1,7 @@
 """GET /api/v1/salute: database, archivio, coda dei lavori, motore.
 
 Codice HTTP: 503 se database o archivio non funzionano (l'applicazione non può lavorare);
-200 negli altri casi, anche con il motore irraggiungibile o con un contratto diverso
+200 negli altri casi, anche con il motore irraggiungibile, non pronto o con un contratto diverso
 («degradato»): il lavoro delle persone non si blocca senza il motore, e i lavori restano in coda.
 La risposta non contiene URL, percorsi né messaggi d'errore interni.
 """
@@ -67,7 +67,9 @@ def _motore() -> dict:
         return {"stato": "irraggiungibile", "versione_motore": None, "versione_contratto": None,
                 "contratto_compatibile": None, "occupato": None}
     compatibile = _stessa_versione_principale(s.versione_contratto, VERSIONE_CONTRATTO)
-    return {"stato": "ok" if compatibile else "contratto_diverso", "stato_dichiarato": s.stato,
+    # il motore vero dice «non_pronto» (es. modello assente o digest diversi): raggiungibile ma non usabile
+    stato = "contratto_diverso" if not compatibile else "ok" if s.stato == "pronto" else "non_pronto"
+    return {"stato": stato, "stato_dichiarato": s.stato,
             "versione_motore": s.versione_motore,
             "versione_contratto": s.versione_contratto, "contratto_compatibile": compatibile,
             "occupato": s.occupato}
