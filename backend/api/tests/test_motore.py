@@ -326,3 +326,23 @@ def test_aggiunta_documento_a_pratica_esistente_accoda_il_motore(s, accedi, work
     docs = smi.get(f"{P}/pratiche/{pid}/documenti").json()
     assert [d["analisi"]["stato"] for d in docs] == ["completata", "completata"]
     assert smi.get(f"{P}/pratiche/{pid}").json()["stato"] == "DA_SMISTARE"   # lo stato non si muove da solo
+
+
+# --- cartella temporanea del worker ------------------------------------------------------------------
+
+def test_il_worker_crea_la_cartella_temporanea_se_manca_e_la_lascia_vuota(s, accedi, worker, monkeypatch, tmp_path):
+    nuova = tmp_path / "non" / "ancora" / "creata"
+    monkeypatch.setattr(get_settings(), "dir_temporanea", str(nuova))
+    carica(accedi(s["smi"]), "esposto_cani.pdf")
+    assert worker() == {"completato": 1}
+    assert nuova.is_dir() and not list(nuova.iterdir())
+
+
+def test_all_avvio_il_worker_cancella_i_temporanei_rimasti(monkeypatch, tmp_path):
+    from api.worker import pulisci_temporanei
+    monkeypatch.setattr(get_settings(), "dir_temporanea", str(tmp_path))
+    (tmp_path / "esposti-vecchio").mkdir()
+    (tmp_path / "esposti-vecchio" / "documento").write_bytes(b"sintetico")
+    (tmp_path / "altro").mkdir()                             # non è del worker: resta
+    assert pulisci_temporanei() == 1
+    assert [p.name for p in tmp_path.iterdir()] == ["altro"]
