@@ -8,10 +8,13 @@ title Esposti - 2 Worker motore
 setlocal
 set "API=%~dp0..\backend\api"
 
-if not exist "%API%\.venv\Scripts\activate.bat" goto :manca_venv
-
 cd /d "%API%"
+if errorlevel 1 goto :manca_cartella
+if not exist ".venv\Scripts\activate.bat" goto :prima_il_file_1
 call ".venv\Scripts\activate.bat"
+python -c "import fastapi, uvicorn, sqlalchemy, alembic, psycopg, argon2, pydantic_settings, multipart, httpx" >nul 2>&1
+if errorlevel 1 goto :prima_il_file_1
+
 set "PYTHONPATH=.."
 set "ESPOSTI_AMBIENTE=sviluppo"
 
@@ -23,9 +26,14 @@ echo.
 python -m api.worker
 goto :fine
 
-:manca_venv
+:manca_cartella
 echo.
-echo [ERRORE] Manca l'ambiente virtuale: %API%\.venv  (vedi il file 1)
+echo [ERRORE] Non trovo la cartella %API%
+goto :fine
+
+:prima_il_file_1
+echo.
+echo [ERRORE] L'ambiente Python non e' pronto. Lancia prima avvia-1-api.bat: lo prepara lui.
 
 :fine
 echo.
