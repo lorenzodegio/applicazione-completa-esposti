@@ -79,3 +79,16 @@ Le decisioni di prodotto stabili finiscono anche in `backend/api/README.md` («D
   gli zeri iniziali sì (non si sa se `12` e `0000012` siano lo stesso protocollo).
 - **Temporanei del worker su tmpfs** (`/tmp/esposti-lavoro`, 1 GB): il documento scaricato non tocca mai
   il disco del container, come nel motore.
+
+## 2026-10-21 — aggancio con il motore vero (coordinatore)
+
+- **Prova di aggancio separata da `scripts/prove.sh`** (`scripts/prova-motore-vero.sh`,
+  `compose.motore-vero.yml`, `e2e/motore-vero/`). Motivo: usa la GPU e dura minuti; le prove normali
+  restano veloci e sempre con il finto.
+- **Documenti della prova: quelli sintetici del motore**, montati in sola lettura nel solo container
+  Playwright, con gli stessi nomi dichiarati della prova del motore. Motivo: sono fatti per il motore vero
+  (scansioni, scrittura a mano); non si copiano qui per non duplicare file del motore. Nessuna cartella di
+  lavoro del motore è montata.
+- **Controlli sui temi**: ogni tema proposto deve stare nel vocabolario e avere la frase; si richiede che
+  almeno un documento ne abbia, non tutti. Motivo: un documento può legittimamente non riguardare nessun
+  tema (per esempio un riscontro generico); la qualità dei temi la giudica Lorenzo.

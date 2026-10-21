@@ -93,6 +93,34 @@ contratto), aspetta che il worker svuoti la coda, controlla nel backoffice testo
 avvisi ed errori, poi smistamento, validazione nella Inbox (temi accettati), percorso a pallini e
 conflitto di versione fra due persone sulla stessa valutazione.
 
+### Prova di aggancio con il motore vero
+
+Usa la GPU (tramite il motore), dura alcuni minuti e **non** fa parte di `scripts/prove.sh`. Solo
+documenti sintetici: quelli del motore (`classificatore-esposti-v2/tests/dati_sintetici`), montati in sola
+lettura nel solo container della prova (`MOTORE_DATI_SINTETICI` per un altro percorso).
+
+```
+# 1. nel repository del motore (avvia anche Ollama; servizio "motore" sulla rete esposti_interna)
+cd ~/classificatore-esposti-v2 && docker compose up -d motore
+# 2. da qui: progetto separato e pulito (esposti-aggancio), worker e api verso http://motore:8080
+scripts/prova-motore-vero.sh
+```
+
+Cosa fa (`e2e/motore-vero/aggancio.spec.ts`, `compose.motore-vero.yml`):
+1. `/salute`: il motore vero risponde, è pronto, contratto `1.x`;
+2. lo smistatore carica dal backoffice 6 documenti sintetici: PDF digitale, Word, email inoltrata
+   scansionata, tre fogli scritti a mano;
+3. il worker li manda al motore uno alla volta; la prova aspetta ogni risultato e stampa il tempo di
+   analisi per documento;
+4. per ogni documento: lettura incerta sui fogli a mano e non sulle stampe, scheda con frase e pagina
+   per ogni voce, proposta con motivo e domanda decisiva, temi del vocabolario con frase, testo letto per
+   pagina (dall'archivio);
+5. smistamento a Medicina Veterinaria e Inbox dell'operatore: ogni documento c'è, con proposta, valutazione
+   precompilata (esito e urgenza della proposta), temi proposti e avviso di lettura incerta.
+
+Prima esecuzione (2026-10-21, 12/12 superati, modelli già caricati): digitale 22 s, Word 18 s, scansione di
+2 pagine 72 s, fogli a mano 40–46 s; circa 4 minuti in tutto.
+
 ## Rigenerare schema OpenAPI e tipi del frontend
 
 Dopo una modifica all'API:
