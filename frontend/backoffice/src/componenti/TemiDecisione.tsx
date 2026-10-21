@@ -2,7 +2,8 @@ import type { TemaCatalogo, TemaDecisione, TemaOut } from "../api/tipi";
 
 export type Decisioni = Record<string, "confermato" | "scartato">;
 
-/** I temi proposti dall'IA partono «confermati» come il resto del modulo; la persona li corregge. */
+/** I temi proposti dall'IA partono «confermati» come il resto del modulo; la persona li corregge.
+ * Regola del server: alla validazione un tema proposto che nessuno ha toccato si considera accettato. */
 export function decisioniIniziali(temi: TemaOut[]): Decisioni {
   return Object.fromEntries(temi.map((t) => [t.codice, t.stato === "scartato" ? "scartato" : "confermato"])) as Decisioni;
 }
@@ -36,6 +37,9 @@ export function TemiDecisione({ temi, catalogo, decisioni, onCambia }: {
     <section className="pila" aria-label="Temi">
       <h3>Temi (fascicoli)</h3>
       {temi.length === 0 && aggiunti.length === 0 && <div className="vuoto">Nessun tema proposto dall'IA.</div>}
+      {temi.some((t) => t.stato === "proposto") && (
+        <div className="sottotitolo" style={{ fontSize: 14 }}>I temi proposti dall'IA che non scarti vengono accettati con la conferma.</div>
+      )}
       {temi.map((t) => riga(t.codice, t.nome,
         t.origine === "ia" && t.motivo ? `Proposto dall'IA: ${t.motivo}${t.frase ? ` — «${t.frase}»` : ""}` : undefined))}
       {aggiunti.map((c) => (

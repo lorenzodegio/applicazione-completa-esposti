@@ -86,8 +86,10 @@ def test_bozza_e_poi_valutazione_compilata(s, accedi, da_validare, db):
     assert r.status_code == 200 and r.json()["compilata"] is False and r.json()["data_compilazione"] is None
     # una bozza non cancella la precompilazione
     assert op.get(f"{P}/pratiche/{pid}/valutazione").json()["precompilazione"] is not None
-    r = op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo())
+    assert r.json()["versione"] == 1
+    r = op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(versione=1))
     assert r.status_code == 200 and r.json()["compilata"] and r.json()["origine"] == "applicazione"
+    assert r.json()["versione"] == 2
     assert r.json()["autore_id"] == str(s["op"].id) and r.json()["da_risultato_id"]
     assert op.get(f"{P}/pratiche/{pid}/valutazione").json()["precompilazione"] is None
     assert azioni(db, pid).count("valutazione.salva") == 2
@@ -105,7 +107,7 @@ def test_registro_della_valutazione_ha_prima_dopo_ma_non_i_testi_liberi(s, acced
     pid = da_validare()
     op = accedi(s["op"])
     op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(note="dato riservato del segnalante"))
-    op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(urgenza="Alta", note="altro dato riservato"))
+    op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(urgenza="Alta", note="altro dato riservato", versione=1))
     righe = db.execute(select(RegistroAzioni).where(RegistroAzioni.pratica_id == pid,
                        RegistroAzioni.azione == "valutazione.salva").order_by(RegistroAzioni.id)).scalars().all()
     assert righe[1].dettagli["prima"]["urgenza"] == "Normale" and righe[1].dettagli["dopo"]["urgenza"] == "Alta"
@@ -118,9 +120,9 @@ def test_valutazione_ats_compilata_si_sovrascrive_solo_con_conferma(s, accedi, d
                        esito="Archiviato", urgenza="Bassa", azione=[]))
     db.commit()
     op = accedi(s["op"])
-    r = op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo())
-    assert r.status_code == 409
-    r = op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(conferma_sovrascrittura=True))
+    r = op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(versione=1))
+    assert r.status_code == 409 and "conferma" in r.json()["detail"]
+    r = op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(conferma_sovrascrittura=True, versione=1))
     assert r.status_code == 200 and r.json()["origine"] == "applicazione" and r.json()["autore_nome"] is None
 
 
@@ -132,7 +134,7 @@ def test_disaccordo_calcolato_e_filtrabile(s, accedi, da_validare):
     assert op.get(f"{P}/pratiche?disaccordo=true&per_page=100").json()["total"] == 0
     op.put(f"{P}/pratiche/{d}/valutazione", json=modulo())            # come l'IA: nessun disaccordo
     assert op.get(f"{P}/pratiche/{d}/valutazione").json()["disaccordo"] == []
-    op.put(f"{P}/pratiche/{d}/valutazione", json=modulo(urgenza="Alta", azione=["Sopralluogo", "Contatto segnalante"]))
+    op.put(f"{P}/pratiche/{d}/valutazione", json=modulo(urgenza="Alta", azione=["Sopralluogo", "Contatto segnalante"], versione=1))
     campi = {c["campo"]: c for c in op.get(f"{P}/pratiche/{d}/valutazione").json()["disaccordo"]}
     assert campi["urgenza"] == {"campo": "urgenza", "ia": "Normale", "operatore": "Alta"}
     assert campi["azione"]["ia"] == ["Sopralluogo congiunto"] and "esito" not in campi
@@ -153,7 +155,7 @@ def test_stesse_azioni_in_ordine_diverso_non_sono_disaccordo(s, accedi, da_valid
     op = accedi(s["op"])
     op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(azione=["Contatto segnalante", "Sopralluogo"]))
     assert op.get(f"{P}/pratiche/{pid}").json()["disaccordo"] == []
-    op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(azione=["Sopralluogo"]))
+    op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(azione=["Sopralluogo"], versione=1))
     assert [c["campo"] for c in op.get(f"{P}/pratiche/{pid}").json()["disaccordo"]] == ["azione"]
 
 
@@ -181,13 +183,70 @@ def test_validazione_porta_in_lavorazione_e_conferma_i_temi(s, accedi, da_valida
     assert op.get(f"{P}/pratiche/{pid}").json()["temi"][0]["codice"] == "cani"
 
 
-def test_validazione_richiede_di_decidere_ogni_tema_proposto(s, accedi, da_validare):
+def test_validazione_accetta_i_temi_proposti_non_toccati(s, accedi, da_validare, db):
     pid = da_validare()
     op = accedi(s["op"])
     v = op.get(f"{P}/pratiche/{pid}").json()["versione"]
     r = op.post(f"{P}/pratiche/{pid}/validazione", json={"versione": v, "valutazione": modulo(), "temi": []})
-    assert r.status_code == 422 and r.json()["detail"]["temi"] == ["Cani"]
-    assert op.get(f"{P}/pratiche/{pid}").json()["stato"] == "DA_VALIDARE"      # niente a metà
+    assert r.status_code == 200 and r.json()["stato"] == "IN_LAVORAZIONE"
+    tema = op.get(f"{P}/pratiche/{pid}/temi").json()[0]
+    assert (tema["codice"], tema["stato"], tema["origine"]) == ("cani", "confermato", "ia")
+    assert tema["deciso_da"] == str(s["op"].id) and tema["deciso_il"]
+    riga = db.execute(select(RegistroAzioni).where(RegistroAzioni.pratica_id == pid,
+                      RegistroAzioni.azione == "temi.decidi")).scalar_one()
+    assert riga.dettagli["temi"]["cani"] == {"prima": "proposto", "dopo": "confermato", "origine": "ia", "implicito": True}
+
+
+def test_validazione_scartare_un_tema_proposto_resta_possibile(s, accedi, da_validare):
+    pid = da_validare()
+    op = accedi(s["op"])
+    v = op.get(f"{P}/pratiche/{pid}").json()["versione"]
+    r = op.post(f"{P}/pratiche/{pid}/validazione", json={"versione": v, "valutazione": modulo(),
+                                                         "temi": [{"codice": "cani", "stato": "scartato"}]})
+    assert r.status_code == 200
+    assert [(t["codice"], t["stato"]) for t in op.get(f"{P}/pratiche/{pid}/temi").json()] == [("cani", "scartato")]
+
+
+# --- controllo di versione della valutazione -------------------------------------------------------------
+
+def test_secondo_salvataggio_concorrente_della_valutazione_409(s, accedi, da_validare, crea_utente, db):
+    pid = da_validare()
+    op, collega = accedi(s["op"]), accedi(crea_utente(Ruolo.operatore, s["a"]))
+    assert op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(compilata=False)).status_code == 200
+    # entrambi leggono la versione 1
+    assert op.get(f"{P}/pratiche/{pid}/valutazione").json()["valutazione"]["versione"] == 1
+    assert collega.get(f"{P}/pratiche/{pid}/valutazione").json()["valutazione"]["versione"] == 1
+    assert op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(urgenza="Alta", versione=1)).status_code == 200
+    r = collega.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(urgenza="Bassa", versione=1))
+    assert r.status_code == 409
+    assert r.json()["detail"]["codice"] == "valutazione_modificata" and r.json()["detail"]["versione_attuale"] == 2
+    v = db.execute(select(Valutazione).where(Valutazione.pratica_id == pid)).scalar_one()
+    assert (v.urgenza, v.versione) == ("Alta", 2)                                   # vince il primo, niente sovrascritto
+    assert azioni(db, pid).count("valutazione.salva") == 2
+    # ricaricata la versione aggiornata, il secondo salvataggio riesce
+    assert collega.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(urgenza="Bassa", versione=2)).json()["versione"] == 3
+
+
+def test_creazione_concorrente_della_valutazione_409(s, accedi, da_validare):
+    pid = da_validare()
+    op = accedi(s["op"])
+    assert op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo()).status_code == 200
+    r = op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo())           # crede che non ci sia ancora
+    assert r.status_code == 409 and r.json()["detail"]["versione_attuale"] == 1
+    assert op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(versione=7)).status_code == 409
+
+
+def test_validazione_con_valutazione_vecchia_409_e_nulla_cambia(s, accedi, da_validare):
+    pid = da_validare()
+    op = accedi(s["op"])
+    op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(compilata=False))
+    op.put(f"{P}/pratiche/{pid}/valutazione", json=modulo(compilata=False, versione=1))
+    v = op.get(f"{P}/pratiche/{pid}").json()["versione"]
+    r = op.post(f"{P}/pratiche/{pid}/validazione", json={"versione": v, "valutazione": modulo(versione=1), "temi": []})
+    assert r.status_code == 409 and r.json()["detail"]["codice"] == "valutazione_modificata"
+    assert op.get(f"{P}/pratiche/{pid}").json()["stato"] == "DA_VALIDARE"
+    assert op.post(f"{P}/pratiche/{pid}/validazione",
+                   json={"versione": v, "valutazione": modulo(versione=2), "temi": []}).status_code == 200
 
 
 def test_validazione_atomica_se_la_valutazione_e_invalida(s, accedi, da_validare, db):
@@ -226,7 +285,7 @@ def test_validazione_di_una_pratica_ats_gia_valutata_chiede_conferma(s, accedi, 
                        esito="Accolto", urgenza="Bassa", azione=[]))
     db.commit()
     op = accedi(s["op"])
-    corpo = {"versione": 2, "valutazione": modulo(), "temi": [{"codice": "cani", "stato": "confermato"}]}
+    corpo = {"versione": 2, "valutazione": modulo(versione=1), "temi": [{"codice": "cani", "stato": "confermato"}]}
     corpo["versione"] = op.get(f"{P}/pratiche/{pid}").json()["versione"]
     assert op.post(f"{P}/pratiche/{pid}/validazione", json=corpo).status_code == 409
     corpo["valutazione"]["conferma_sovrascrittura"] = True

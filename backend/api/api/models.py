@@ -211,6 +211,8 @@ class Valutazione(Base):
     azione: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list)
     note: Mapped[str | None] = mapped_column(Text)
     da_risultato_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("risultato_motore.id"))
+    # controllo di versione: ogni salvataggio la incrementa; chi salva indica quella che ha letto
+    versione: Mapped[int] = mapped_column(Integer, default=1)
     creata_il: Mapped[dt.datetime] = _ora()
     aggiornata_il: Mapped[dt.datetime] = _ora()
 
