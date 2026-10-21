@@ -1,0 +1,107 @@
+{
+  "versione_contratto": "1.1",
+  "versione_motore": "finto-1.0.0",
+  "documento": {
+    "id": "{{documento_id}}",
+    "sha256": "{{sha256}}"
+  },
+  "tipo_documento": {
+    "valore": "esposto",
+    "motivo": "Il mittente è un privato che descrive un problema e chiede un intervento."
+  },
+  "protocollo": {
+    "numero": "0005120/2025",
+    "data": "2025-04-11",
+    "frase": "Prot. n. 0005120/2025 del 11/04/2025",
+    "pagina": 1
+  },
+  "pagine": [
+    {
+      "numero": 1,
+      "acquisizione": "testo_nativo",
+      "lettura_incerta": false,
+      "motivo_incertezza": null,
+      "testo": "Prot. n. 0005120/2025 del 11/04/2025\nOggetto: esposto per pollaio"
+    },
+    {
+      "numero": 2,
+      "acquisizione": "ocr_manoscritto",
+      "lettura_incerta": true,
+      "motivo_incertezza": "Foglio scritto a mano: nomi, date e numeri vanno controllati sull'originale.",
+      "testo": "Io sottoscritto residente in Castelrovo, via dei Gelsi, segnalo circa 40 galline + 6 oche tenute a meno di 10 metri dalla mia finestra. Escrementi accumulati lungo la rete, odore insopportabile soprattutto d'estate. Ho già avvisato i vigili due volte."
+    }
+  ],
+  "lettura_incerta": true,
+  "scheda": {
+    "data_doc": {
+      "valore": "2025-04-09",
+      "frase": "Castelrovo, 9 aprile 2025",
+      "pagina": 2
+    },
+    "comune": {
+      "valore": "Castelrovo",
+      "frase": "residente in Castelrovo, via dei Gelsi",
+      "pagina": 2
+    },
+    "ambito": [
+      {
+        "valore": "Medicina Veterinaria",
+        "frase": "circa 40 galline + 6 oche",
+        "pagina": 2
+      },
+      {
+        "valore": "Igiene pubblica",
+        "frase": "odore insopportabile soprattutto d'estate",
+        "pagina": 2
+      }
+    ],
+    "ambito_altro": null,
+    "problematica": [
+      {
+        "valore": "Condizioni igieniche carenti",
+        "frase": "escrementi accumulati lungo la rete",
+        "pagina": 2
+      },
+      {
+        "valore": "Odori molesti",
+        "frase": "odore insopportabile soprattutto d'estate",
+        "pagina": 2
+      }
+    ],
+    "problematica_altro": null,
+    "elementi": [
+      {
+        "valore": "Presenza escrementi",
+        "frase": "escrementi accumulati lungo la rete",
+        "pagina": 2
+      },
+      {
+        "valore": "Precedenti segnalazioni",
+        "frase": "ho già avvisato i vigili due volte",
+        "pagina": 2
+      }
+    ],
+    "elementi_altro": null
+  },
+  "proposta": {
+    "esito": "Accolto",
+    "urgenza": "Bassa",
+    "azione": [
+      "Sopralluogo congiunto"
+    ],
+    "motivo": "Chi segnala, dove e cosa sono indicati: istanza completa. La situazione dura da mesi e i vigili sono già stati avvisati due volte, quindi urgenza ridotta.",
+    "domanda_decisiva": "L'esposto indica chi segnala, dove e qual è il problema?",
+    "da_verificare_sull_originale": [
+      "Numero degli animali (pagina 2, manoscritto)",
+      "Data del documento (pagina 2, manoscritto)"
+    ]
+  },
+  "temi": [
+    {
+      "valore": "Animali da reddito",
+      "motivo": "Galline e oche tenute in un cortile privato.",
+      "frase": "circa 40 galline + 6 oche",
+      "pagina": 2
+    }
+  ]
+}

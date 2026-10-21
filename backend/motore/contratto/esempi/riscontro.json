@@ -1,0 +1,58 @@
+{
+  "versione_contratto": "1.1",
+  "versione_motore": "finto-1.0.0",
+  "documento": {
+    "id": "{{documento_id}}",
+    "sha256": "{{sha256}}"
+  },
+  "tipo_documento": {
+    "valore": "riscontro_ats",
+    "motivo": "Lettera di ATS al segnalante che riferisce l'esito del sopralluogo."
+  },
+  "protocollo": {
+    "numero": "0003177/2025",
+    "data": "2025-04-02",
+    "frase": "Rif. Prot. 0003177/2025",
+    "pagina": 1
+  },
+  "pagine": [
+    {
+      "numero": 1,
+      "acquisizione": "ocr",
+      "lettura_incerta": false,
+      "motivo_incertezza": null,
+      "testo": "Rif. Prot. 0003177/2025. Si comunica che il sopralluogo sul cane tenuto alla catena ha avuto esito positivo."
+    }
+  ],
+  "lettura_incerta": false,
+  "scheda": {
+    "data_doc": null,
+    "comune": {
+      "valore": "Borgoverde",
+      "frase": "Gentile segnalante di Borgoverde",
+      "pagina": 1
+    },
+    "ambito": [],
+    "ambito_altro": null,
+    "problematica": [],
+    "problematica_altro": null,
+    "elementi": [],
+    "elementi_altro": null
+  },
+  "proposta": {
+    "esito": "Accolto",
+    "urgenza": "Bassa",
+    "azione": [],
+    "motivo": "È la risposta di ATS a un esposto già trattato: nessuna nuova azione.",
+    "domanda_decisiva": "Il documento è una risposta di ATS a un esposto esistente?",
+    "da_verificare_sull_originale": []
+  },
+  "temi": [
+    {
+      "valore": "Cani",
+      "motivo": "Riferito a un cane tenuto alla catena.",
+      "frase": "il cane tenuto alla catena",
+      "pagina": 1
+    }
+  ]
+}
