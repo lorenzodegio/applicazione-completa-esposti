@@ -1,0 +1,130 @@
+# Gestione esposti — ambiente completo in Docker (solo dati SINTETICI).
+#
+#   docker compose up -d --build                          # con il finto motore
+#   MOTORE_URL=http://motore:8080 docker compose up -d    # con il motore vero (rete esposti_interna)
+#   docker compose down        # spegne     ·     docker compose down -v   # spegne e azzera dati e archivio
+#
+# Backoffice: http://127.0.0.1:5173 · API: http://127.0.0.1:8100/api/v1 (8000 sull'host è occupata).
+# Le prove (profilo "prove") si lanciano con scripts/prove.sh: vedi docs/avvio.md.
+name: esposti-app
+
+x-backend-env: &backend-env
+  ESPOSTI_DATABASE_URL: postgresql+psycopg://esposti:esposti@db:5432/esposti
+  ESPOSTI_AMBIENTE: sviluppo
+  ESPOSTI_COOKIE_SECURE: "false"          # http in locale
+  ESPOSTI_ARCHIVIO_RADICE: /dati/archivio
+  ESPOSTI_DIR_TEMPORANEA: /tmp/esposti-lavoro
+  ESPOSTI_MOTORE_URL: ${MOTORE_URL:-http://motore-finto:8080}
+
+x-backend: &backend
+  build: ./backend
+  image: esposti-backend:dev
+  environment: *backend-env
+  volumes: [ "archivio:/dati" ]
+  depends_on:
+    db: { condition: service_healthy }
+
+services:
+  db:
+    image: postgres:16
+    environment: { POSTGRES_USER: esposti, POSTGRES_PASSWORD: esposti, POSTGRES_DB: esposti }
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/db/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro
+    healthcheck: { test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "esposti", "-d", "esposti"], interval: 2s, timeout: 3s, retries: 30 }
+
+  api:
+    <<: *backend
+    # migrazioni + demo sintetica (ripetibile: se c'è già non rifà nulla) e poi il server
+    command: ["sh", "-c", "alembic upgrade head && python -m api.demo && exec uvicorn api.main:app --host 0.0.0.0 --port 8000"]
+    ports: [ "127.0.0.1:8100:8000" ]
+    # esposti_interna: solo perché /salute possa interrogare il motore vero (GET /v1/salute)
+    networks: [ default, esposti_interna ]
+    healthcheck:
+      # /salute risponde 503 solo se database o archivio non funzionano (un motore assente è «degradato», 200)
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/salute', timeout=5)"]
+      interval: 3s
+      timeout: 6s
+      retries: 60
+      start_period: 20s
+
+  worker:
+    <<: *backend
+    command: ["python", "-m", "api.worker"]
+    # i documenti temporanei solo in memoria, mai sul disco del container (come nel motore)
+    tmpfs: [ "/tmp/esposti-lavoro:size=1g,mode=1777" ]
+    depends_on:
+      api: { condition: service_healthy }        # migrazioni già applicate
+      motore-finto: { condition: service_started }
+    # default: per raggiungere db e motore-finto; esposti_interna: per raggiungere il motore vero («motore»)
+    networks: [ default, esposti_interna ]
+
+  # Il servizio si chiama motore-finto: «motore» è il nome del motore vero sulla rete esposti_interna.
+  motore-finto:
+    build: ./backend
+    image: esposti-backend:dev
+    command: ["python", "-m", "motore.finto"]   # in ascolto su 0.0.0.0:8080
+    environment: { MOTORE_FINTO_HOST: 0.0.0.0, MOTORE_FINTO_PORTA: "8080" }
+
+  backoffice:
+    build: ./frontend/backoffice
+    image: esposti-backoffice:dev
+    environment:
+      VITE_API_URL: http://api:8000             # il proxy /api di Vite
+      VITE_HOST_AMMESSI: backoffice             # nome con cui lo raggiunge il browser delle prove end-to-end
+    volumes:                                    # sorgenti in sola lettura: Vite ricarica al volo
+      - ./frontend/backoffice/src:/app/src:ro
+    ports: [ "127.0.0.1:5173:5173" ]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5173/').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+
+  # --- prove (profilo "prove"; si lanciano con scripts/prove.sh, in un progetto separato e pulito) ---
+
+  test-backend:
+    <<: *backend
+    profiles: [ prove ]
+    environment:
+      <<: *backend-env
+      ESPOSTI_TEST_DATABASE_URL: postgresql+psycopg://esposti:esposti@db:5432/esposti_test
+    working_dir: /app/backend
+    command: ["python", "-m", "pytest", "-q", "-p", "no:cacheprovider", "api/tests", "documenti/tests", "motore/tests"]
+
+  test-frontend:
+    image: esposti-backoffice:dev
+    build: ./frontend/backoffice
+    profiles: [ prove ]
+    environment: { NO_COLOR: "1" }
+    command: ["sh", "-c", "npm run typecheck && npm test"]
+
+  test-live:
+    image: esposti-backoffice:dev
+    build: ./frontend/backoffice
+    profiles: [ prove ]
+    environment: { LIVE_API_URL: "http://api:8000", NO_COLOR: "1" }
+    command: ["npx", "vitest", "run", "src/test/live.test.tsx"]
+    depends_on:
+      api: { condition: service_healthy }
+      worker: { condition: service_started }
+
+  e2e:
+    build: ./e2e
+    image: esposti-e2e:dev
+    profiles: [ prove ]
+    environment: { BASE_URL: "http://backoffice:5173" }
+    ipc: host                                   # consigliato per Chromium in Docker
+    depends_on:
+      backoffice: { condition: service_healthy }
+      worker: { condition: service_started }
+
+networks:
+  esposti_interna:
+    external: true                              # rete interna (senza internet) condivisa con il motore vero
+
+volumes:
+  pgdata: {}
+  archivio: {}

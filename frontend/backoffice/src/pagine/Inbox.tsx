@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { eConflittoValutazione } from "../api/client";
 import { api } from "../api/endpoints";
 import type { PraticaDettaglio, PraticaRiga } from "../api/tipi";
-import { CampiValutazione, inValutazione, moduloIniziale, type Modulo } from "../componenti/ModuloValutazione";
+import {
+  CampiValutazione, inValutazione, MESSAGGIO_CONFLITTO, moduloIniziale, versioneValutazione, type Modulo,
+} from "../componenti/ModuloValutazione";
 import { PropostaIA } from "../componenti/PropostaIA";
 import { decisioniIniziali, inDecisioni, TemiDecisione, type Decisioni } from "../componenti/TemiDecisione";
 import { Avvisi, Caricamento, Dialogo, Intestazione, MessaggioErrore, Vuoto } from "../componenti/ui";
@@ -73,6 +76,8 @@ function Scheda({ p, coda, voc, catalogo }: {
   const [restituisci, setRestituisci] = useState(false);
   const [motivo, setMotivo] = useState("");
   const [salvata, setSalvata] = useState(false);
+  const [versione, setVersione] = useState(() => versioneValutazione(p));
+  const [conflitto, setConflitto] = useState(false);
 
   // la pratica si ricarica dopo una modifica: il modulo riparte dai dati nuovi solo al cambio di pratica (key)
   useEffect(() => setSalvata(false), [m, decisioni]);
@@ -84,14 +89,26 @@ function Scheda({ p, coda, voc, catalogo }: {
     navigate(altro ? `/inbox/${altro.id}` : "/inbox", { replace: true });
   };
   const aggiorna = () => qc.invalidateQueries();
+  // 409 «valutazione_modificata»: si ricarica la valutazione salvata da altri e si riparte da quella
+  const dopoErrore = async (e: unknown) => {
+    if (!eConflittoValutazione(e)) return;
+    const nuova = await qc.fetchQuery({ queryKey: ["pratica", p.id], queryFn: () => api.pratica(p.id), staleTime: 0 });
+    setM(moduloIniziale(nuova));
+    setVersione(versioneValutazione(nuova));
+    setConflitto(true);
+  };
 
   const valida = useMutation({
-    mutationFn: () => api.valida(p.id, { versione: p.versione, valutazione: inValutazione(m, true, sostituisciAts), temi: inDecisioni(decisioni) }),
+    mutationFn: () => api.valida(p.id, { versione: p.versione, valutazione: inValutazione(m, true, sostituisciAts, versione), temi: inDecisioni(decisioni) }),
+    onMutate: () => setConflitto(false),
     onSuccess: async () => { prossimo(); await aggiorna(); },
+    onError: dopoErrore,
   });
   const bozza = useMutation({
-    mutationFn: () => api.salvaValutazione(p.id, inValutazione(m, false, sostituisciAts)),
-    onSuccess: async () => { setSalvata(true); await aggiorna(); },
+    mutationFn: () => api.salvaValutazione(p.id, inValutazione(m, false, sostituisciAts, versione)),
+    onMutate: () => setConflitto(false),
+    onSuccess: async (v) => { setVersione(v.versione); setSalvata(true); await aggiorna(); },
+    onError: dopoErrore,
   });
   const restituzione = useMutation({
     mutationFn: () => api.restituisci(p.id, p.versione, motivo.trim()),
@@ -144,7 +161,7 @@ function Scheda({ p, coda, voc, catalogo }: {
           )}
           <CampiValutazione m={m} set={setM} voc={voc} />
           <TemiDecisione temi={p.temi} catalogo={catalogo} decisioni={decisioni} onCambia={setDecisioni} />
-          <MessaggioErrore errore={errore} />
+          {conflitto ? <div role="alert" className="avviso">{MESSAGGIO_CONFLITTO}</div> : <MessaggioErrore errore={errore} />}
           {salvata && <div role="status" className="ok">Bozza salvata.</div>}
           <div className="riga">
             <button type="submit" className="btn" disabled={occupato || manca || (ats && !sostituisciAts)}>

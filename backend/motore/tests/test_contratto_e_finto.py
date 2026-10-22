@@ -105,3 +105,83 @@ def test_risultato_invalido_segnala_solo_i_percorsi():
     with pytest.raises(RisultatoNonValido) as e:
         invia_e_concludi(motore_finto_in_processo(), "esposto_invalido.pdf")
     assert any("frase" in p for p in e.value.percorsi) and "xxx" not in str(e.value.percorsi)
+
+
+# --- codici HTTP del motore (stato) e contratto 1.2 -------------------------------------------------------
+
+def _motore_con(risposta):
+    import httpx
+    from motore.client import MotoreHttp
+    return MotoreHttp(http_client=httpx.Client(transport=httpx.MockTransport(lambda req: risposta(req)),
+                                               base_url="http://motore:8080"))
+
+
+def test_stato_500_testuale_e_irraggiungibile():
+    import httpx
+    from motore.client import MotoreIrraggiungibile
+    m = _motore_con(lambda req: httpx.Response(500, text="Internal Server Error"))
+    with pytest.raises(MotoreIrraggiungibile):
+        m.stato("l1")
+
+
+def test_stato_404_con_corpo_non_valido_e_irraggiungibile():
+    import httpx
+    from motore.client import MotoreIrraggiungibile
+    m = _motore_con(lambda req: httpx.Response(404, json={"detail": "Not Found"}))   # MOTORE_URL sbagliato, proxy
+    with pytest.raises(MotoreIrraggiungibile):
+        m.stato("l1")
+
+
+def test_stato_404_dopo_riavvio_del_motore_resta_un_errore_ritentabile():
+    import httpx
+    corpo = {"id_lavoro": "l1", "stato": "errore",
+             "errore": {"codice": "errore_interno", "messaggio": "Lavoro sconosciuto.", "ritentabile": True}}
+    s = _motore_con(lambda req: httpx.Response(404, json=corpo)).stato("l1")
+    assert s.stato == "errore" and s.errore.codice == "errore_interno" and s.errore.ritentabile
+
+
+def test_stato_200_fuori_contratto_resta_risultato_non_valido():
+    import httpx
+    m = _motore_con(lambda req: httpx.Response(200, json={"id_lavoro": "l1", "stato": "completato"}))
+    with pytest.raises(RisultatoNonValido):
+        m.stato("l1")
+
+
+def test_metadati_malformati_422_richiesta_non_valida():
+    from fastapi.testclient import TestClient
+    from motore.finto.app import crea_app
+    c = TestClient(crea_app())
+    for metadati in ("non json", json.dumps({"id_lavoro": "l1"}), json.dumps({"id_lavoro": "l1", "documento": {}})):
+        r = c.post("/v1/analisi", files={"documento": ("a.pdf", b"x")}, data={"metadati": metadati})
+        assert r.status_code == 422
+        assert r.json()["errore"] == {"codice": "richiesta_non_valida", "messaggio": "Metadati mancanti o malformati.",
+                                     "ritentabile": False}
+
+
+def test_il_client_rifiuta_senza_ritentare_una_richiesta_non_valida():
+    import httpx
+    corpo = {"id_lavoro": None, "stato": "errore",
+             "errore": {"codice": "richiesta_non_valida", "messaggio": "x", "ritentabile": False}}
+    m = _motore_con(lambda req: httpx.Response(422, json=corpo))
+    with pytest.raises(MotoreRifiuto) as e:
+        m.invia(id_lavoro="l1", documento=io.BytesIO(b"x"), nome_file="a.pdf", tipo_mime=None, documento_id="d", sha256=SHA)
+    assert e.value.errore.codice == "richiesta_non_valida" and not e.value.errore.ritentabile
+
+
+@pytest.mark.parametrize("versione,valida", [("1.0", True), ("1.1", True), ("1.2", True), ("1.17", True),
+                                              ("2.0", False), ("1", False), ("1.x", False)])
+def test_si_accetta_qualunque_versione_1_x(versione, valida):
+    from pydantic import ValidationError
+    dati = json.loads((CONTRATTO / "esempi" / "lettura_pulita.json").read_text(encoding="utf-8")
+                      .replace("{{documento_id}}", "d").replace("{{sha256}}", SHA))
+    dati["versione_contratto"] = versione
+    if valida:
+        assert Risultato.model_validate(dati).versione_contratto == versione
+    else:
+        with pytest.raises(ValidationError):
+            Risultato.model_validate(dati)
+
+
+def test_versione_del_contratto_e_1_2():
+    from motore.contratto import VERSIONE_CONTRATTO
+    assert VERSIONE_CONTRATTO == "1.2"
