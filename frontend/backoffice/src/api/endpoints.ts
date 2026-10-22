@@ -1,4 +1,4 @@
-import { del, get, invia, patch, post, put } from "./client";
+import { del, get, invia, inviaConAvanzamento, patch, post, put } from "./client";
 import type * as T from "./tipi";
 import type { components } from "./schema";
 
@@ -56,12 +56,14 @@ export const api = {
   rilanciaAnalisi: (did: string) => post<T.Lavoro>(`/documenti/${did}/analisi`),
   testoDocumento: (did: string) => get<{ documento_id: string; pagine: T.PaginaTesto[] }>(`/documenti/${did}/testo`),
   urlContenuto: (did: string) => `/api/v1/documenti/${did}/contenuto`,
-  nuovaPratica: (files: File[], campi: { titolo?: string; protocollo?: string; comune?: string }) => {
+  nuovaPratica: (files: File[], campi: { titolo?: string; protocollo?: string; comune?: string },
+                 onAvanzamento?: (frazione: number) => void) => {
     const f = new FormData();
     files.forEach((x) => f.append("files", x));
     Object.entries(campi).forEach(([k, v]) => v && f.append(k, v));
-    return invia<T.NuovaPratica>("/pratiche", f);
+    return onAvanzamento ? inviaConAvanzamento<T.NuovaPratica>("/pratiche", f, onAvanzamento) : invia<T.NuovaPratica>("/pratiche", f);
   },
+  lavoro: (lid: string) => get<T.Lavoro>(`/lavori/${lid}`),
   aggiungiDocumenti: (id: string, files: File[]) => {
     const f = new FormData();
     files.forEach((x) => f.append("files", x));
