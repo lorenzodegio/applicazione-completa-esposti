@@ -9,6 +9,14 @@ export class ApiError extends Error {
 type Query = Record<string, string | number | boolean | null | undefined>;
 interface Opzioni { corpo?: unknown; form?: FormData; query?: Query }
 
+/** Codice del 409 «qualcun altro ha salvato la valutazione nel frattempo» (controllo di versione). */
+export const CONFLITTO_VALUTAZIONE = "valutazione_modificata";
+
+export function eConflittoValutazione(e: unknown): boolean {
+  return e instanceof ApiError && e.status === 409
+    && (e.detail as { codice?: string } | undefined)?.codice === CONFLITTO_VALUTAZIONE;
+}
+
 export const EVENTO_NON_AUTORIZZATO = "esposti:non-autorizzato";
 const BASE = "/api/v1";
 

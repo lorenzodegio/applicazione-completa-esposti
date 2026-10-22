@@ -8,7 +8,7 @@ import uuid
 from enum import Enum as PyEnum
 
 from sqlalchemy import (
-    MetaData, Table, Column, BigInteger, Boolean, CheckConstraint, Date, DateTime, Enum, ForeignKey, Identity,
+    Computed, MetaData, Table, Column, BigInteger, Boolean, CheckConstraint, Date, DateTime, Enum, ForeignKey, Identity,
     Index, Integer, String, Text, UniqueConstraint, Uuid, func, text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
@@ -32,6 +32,15 @@ def _pk() -> Mapped[uuid.UUID]:
 def _ora() -> Mapped[dt.datetime]:
     return mapped_column(DateTime(timezone=True), server_default=func.now())
 
+
+
+# Collegamento automatico «stesso protocollo»: serve numero E anno (migrazione 0006, stessa espressione).
+CHIAVE_PROTOCOLLO = r"""CASE
+  WHEN protocollo IS NULL OR btrim(protocollo) = '' THEN NULL
+  WHEN btrim(protocollo) ~ '/\s*[0-9]{4}$' THEN regexp_replace(upper(btrim(protocollo)), '\s*/\s*', '/', 'g')
+  WHEN data_protocollo IS NOT NULL THEN upper(btrim(protocollo)) || '/' || (extract(year FROM data_protocollo))::int::text
+  ELSE NULL
+END"""
 
 class Base(DeclarativeBase):
     pass
@@ -112,6 +121,9 @@ class Pratica(Base):
     numero: Mapped[str] = mapped_column(String(32), unique=True)
     protocollo: Mapped[str | None] = mapped_column(String(64), index=True)
     data_protocollo: Mapped[dt.date | None] = mapped_column(Date)
+    # numero + anno (dal protocollo o da data_protocollo); NULL senza anno: colonna calcolata dal database
+    chiave_protocollo: Mapped[str | None] = mapped_column(String(80), Computed(CHIAVE_PROTOCOLLO, persisted=True),
+                                                          index=True)
     tipo: Mapped[str] = mapped_column(String(64), default="esposto")
     titolo: Mapped[str] = mapped_column(String(300))
     comune: Mapped[str | None] = mapped_column(String(200))
@@ -211,6 +223,8 @@ class Valutazione(Base):
     azione: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list)
     note: Mapped[str | None] = mapped_column(Text)
     da_risultato_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("risultato_motore.id"))
+    # controllo di versione: ogni salvataggio la incrementa; chi salva indica quella che ha letto
+    versione: Mapped[int] = mapped_column(Integer, default=1)
     creata_il: Mapped[dt.datetime] = _ora()
     aggiornata_il: Mapped[dt.datetime] = _ora()
 

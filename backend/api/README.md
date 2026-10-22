@@ -24,15 +24,17 @@ ambito → ufficio), SharePoint, riassegnazione/gestione utenti oltre al minimo,
 
 ## Avvio in sviluppo
 
+Il modo raccomandato è Docker Compose dalla radice del repository (dettagli in
+[docs/avvio.md](../../docs/avvio.md)):
+
 ```
-cd backend/api
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-cp .env.example .env            # solo valori di sviluppo; .env non va nel repository
-alembic upgrade head
-python -m api.seed              # dati SINTETICI (solo ESPOSTI_AMBIENTE=sviluppo)
-uvicorn api.main:app --reload
+docker compose up -d --build        # db, api (migrazioni + demo), worker, motore-finto, backoffice
+curl -s http://127.0.0.1:8100/api/v1/salute
 ```
+
+L'immagine `backend/Dockerfile` contiene dipendenze e sorgenti (api, worker, finto motore, test).
+Senza Docker resta possibile il percorso classico (`pip install -e ".[dev]"`, `alembic upgrade head`,
+`python -m api.seed`, `uvicorn api.main:app`), con `PYTHONPATH=..`.
 
 ## API (`/api/v1`)
 
@@ -89,7 +91,7 @@ Documentazione interattiva su `/docs` quando il server gira.
 | `GET /temi` | schermate |
 | `GET /tipi-collegamento` | schermate |
 | `GET /vocabolari` | schermate |
-| `GET /salute` | — |
+| `GET /salute` | — (database, archivio, coda, motore; vedi Decisioni) |
 
 ## Ambiente demo per il frontend
 
@@ -114,26 +116,48 @@ python -m api.worker --una-volta    # svuota la coda ed esce (senza --una-volta 
 
 `ESPOSTI_MOTORE_URL` vuoto = finto motore nello stesso processo; con un URL
 (`http://motore:8080`) il worker parla al servizio HTTP (anche il finto:
-`python -m motore.finto`, porta 8080). Il **nome del file** sceglie lo scenario
+`python -m motore.finto`, in ascolto su `MOTORE_FINTO_HOST`:`MOTORE_FINTO_PORTA`, default `0.0.0.0:8080`;
+in compose è il servizio `motore-finto`). Il **nome del file** sceglie lo scenario
 (elenco in `backend/motore/finto/app.py`): `riscontro`, `manoscritto`/`incerto`,
 `errore`/`.pages`, `illeggibile`, `scaduto` (3 tentativi), `instabile` (riesce al
 secondo), `occupato` (429 una volta), `invalido` (viola il contratto). L'archivio
 locale sta in `ESPOSTI_ARCHIVIO_RADICE` (default `~/.esposti/archivio`, fuori dal repository).
+I temporanei del worker stanno in `ESPOSTI_DIR_TEMPORANEA` (creata se manca; ogni lavoro cancella il suo,
+all'avvio il worker cancella quelli rimasti da un'interruzione).
 
 ## Test
 
 ```
-pytest
+scripts/prove.sh backend            # dalla radice: pytest in Docker su PostgreSQL 16 (database esposti_test)
 ```
 
 I test girano su PostgreSQL vero, con lo schema creato dalle migrazioni.
 Con `ESPOSTI_TEST_DATABASE_URL=postgresql+psycopg://…` usano quel database
-(es. il servizio `db` di Docker); senza, avviano un PostgreSQL temporaneo
+(in compose: `esposti_test` del servizio `db`); senza, avviano un PostgreSQL temporaneo
 con `pgserver`. Ogni test crea dati con nomi unici.
 
-## Decisioni prese qui (da confermare)
+## Decisioni
 
-- Riassegnazione ammessa solo in `DA_VALIDARE` (stato invariato, motivo obbligatorio).
+Decise il 2026-10-21 (le prime tre dal coordinatore, le altre su raccomandazione; motivi in
+[docs/diario.md](../../docs/diario.md)).
+
+- **Riassegnazione** ammessa solo in `DA_VALIDARE` (stato invariato, motivo obbligatorio). *Confermata.*
+- **Temi proposti dall'IA**: alla validazione quelli che l'operatore non tocca si considerano **accettati**
+  (diventano `confermato`, origine `ia`, decisi da chi valida; nel registro `temi.decidi` con `implicito: true`).
+  Scartare resta sempre possibile; zero temi confermati è ammesso. Niente più 422 per temi non decisi.
+  Fuori dalla validazione (`PUT /temi`) un tema non indicato resta com'è.
+- **Valutazione con controllo di versione**: ogni salvataggio incrementa `valutazione.versione`; chi salva
+  (PUT `/valutazione` o `/validazione`) rimanda la `versione` letta (`null` se non c'era ancora). Se nel
+  frattempo è cambiata: **409** con `detail = {codice: "valutazione_modificata", versione_attuale, messaggio}`
+  e nulla cambia; il backoffice mostra un messaggio e ricarica la valutazione aggiornata. Migrazione `0005`.
+  Una valutazione ATS già compilata si sostituisce solo con `conferma_sovrascrittura`. I testi liberi
+  (`note`, `*_altro`, descrizione attività) non entrano mai nel registro, che conserva prima/dopo.
+- **`GET /salute`**: controlla database, archivio (scrittura e cancellazione di un file di prova), coda
+  (lavori `in_coda`/`in_corso`) e motore (`GET {MOTORE_URL}/v1/salute`, timeout 2 s, con versione del motore
+  e del contratto). **503** solo se database o archivio non funzionano; motore irraggiungibile, non pronto
+  (`stato` diverso da `pronto`, es. `non_pronto`) o con contratto di versione principale diversa = `"degradato"`
+  con **200** (il lavoro delle persone continua, i
+  lavori restano in coda). Nessun URL, percorso o messaggio interno nella risposta.
 - Restituzione ammessa da `DA_VALIDARE` e `IN_LAVORAZIONE`: `ufficio_id` torna `NULL`.
 - Limite di tentativi di accesso: 5 falliti per nome utente in 15 minuti.
 - Un amministratore non può disattivare sé stesso né cambiarsi ruolo.
@@ -141,16 +165,22 @@ con `pgserver`. Ogni test crea dati con nomi unici.
   motore fallisce): il lavoro umano non si blocca. Si precompilano **solo** `tipo` e, se
   vuoti, protocollo e comune; ufficio, valutazione e temi restano alle persone.
 - Errori del motore: ritentabili fino a 3 tentativi; `risultato_non_valido` (fuori
-  contratto) e `archivio_non_disponibile` (impronta diversa) non si ritentano.
+  contratto), `richiesta_non_valida` (422 del motore) e `archivio_non_disponibile` (impronta diversa) non si
+  ritentano. Una risposta di stato non `200` con corpo non conforme (500 testuale, 404 di un URL sbagliato) è un
+  guasto ritentabile; un corpo conforme vale con qualunque codice (404 del motore riavviato). Si accetta
+  qualunque contratto `1.x`.
+- Attesa massima di un'analisi: `ESPOSTI_MOTORE_TIMEOUT_SECONDI` = 2100 s, sopra i 1800 s del motore vero.
+- Collegamento automatico «stesso protocollo»: serve **numero e anno** (colonna calcolata
+  `pratica.chiave_protocollo`, migrazione `0006`): l'anno è quello scritto nel protocollo (`…/AAAA`) o, se
+  manca, quello di `data_protocollo`; senza anno nessun collegamento automatico. Vale anche per il conteggio
+  delle collegate e per «senza riscontro».
 - Il worker vive in `api/worker.py` (ha bisogno del database); il client e il finto sono in `backend/motore`.
 - Lettura del testo (`documento.testo`) e del file (`documento.apri`) vanno nel registro.
-- Validazione: serve esito e urgenza; **ogni tema proposto dall'IA va deciso** (confermato o scartato),
-  altrimenti 422 e non cambia nulla. Zero temi confermati è ammesso. Una valutazione ATS già compilata si
-  sostituisce solo con `conferma_sovrascrittura`.
-- La valutazione si salva (PUT) senza versione: l'ultima scrittura vince, il registro conserva prima/dopo.
-  I testi liberi (`note`, `*_altro`, descrizione attività) non entrano mai nel registro.
+- Validazione: servono esito e urgenza.
 - Attività: solo su pratiche `IN_LAVORAZIONE`; `conclusa`/`annullata` sono definitive.
 - «Senza riscontro» (Home) = esposti `IN_LAVORAZIONE` senza una pratica `riscontro_ats` collegata (stesso
   protocollo o collegamento manuale RISCONTRO); il percorso mostra il passo «atteso» anche in `DA_VALIDARE`.
 - Collegare richiede di vedere entrambe le pratiche; rimuovere basta vederne una.
 - Solo lo smistatore crea pratiche; smistatore e operatore (sulle proprie) aggiungono documenti e rilanciano.
+- La demo (`python -m api.demo`) analizza i suoi file sintetici sempre con il finto nello stesso processo,
+  anche quando `ESPOSTI_MOTORE_URL` punta al motore vero.
