@@ -72,6 +72,18 @@ Password di tutti: `password-sintetica-1` (solo sviluppo).
 La demo crea 8 pratiche sintetiche analizzate dal finto e ne assegna alcune agli uffici. È ripetibile:
 se c'è già, non rifà nulla.
 
+## Caricare i documenti
+
+Come **smistatore**: menu **Smistamento** → **«Carica un nuovo esposto»** (si apre il riquadro) → campo
+**«Documenti (anche più di uno)»** → pulsante **«Carica e analizza»**.
+
+- Si accettano **PDF, Word (.doc, .docx) e RTF**; altri formati vengono rifiutati prima dell'invio.
+- Con più file si sceglie **«Una pratica per ogni file»** (predefinito) oppure **«Tutti i file in una sola
+  pratica»**. Titolo, protocollo e comune facoltativi valgono solo quando si crea una pratica sola.
+- I file si inviano uno alla volta, con la barra di avanzamento; per ogni documento compare la pratica creata
+  (link «Aprila») e lo stato dell'analisi, aggiornato da solo: *In coda per il motore*, *In analisi*,
+  *Analizzato*, *Analisi non disponibile (codice)*. Le pratiche analizzate compaiono poi in «Da smistare».
+
 ## Prove
 
 Ogni suite gira in un **progetto compose separato** (`esposti-prove-<suite>`), con database su tmpfs,
@@ -135,6 +147,30 @@ scripts/genera-tipi.sh           # backend/api → frontend/backoffice/openapi.j
 docker compose down              # spegne, i dati restano
 docker compose down -v           # spegne e cancella database e archivio (al prossimo avvio: demo nuova)
 ```
+
+### Ripartire da zero (per esempio per una prova con documenti reali)
+
+Svuota pratiche, documenti con l'archivio, lavori e risultati del motore, valutazioni, temi delle
+pratiche, attività, collegamenti, assegnazioni, cambi di stato, note e **registro delle azioni**, e rimette a
+1 la numerazione delle pratiche. **Restano** uffici, utenti (con le password), sessioni, temi, vocabolari e
+tipi di collegamento. Gira **solo con `ESPOSTI_AMBIENTE=sviluppo`** (quello del compose) e senza
+`--conferma` non tocca nulla.
+
+```
+docker compose stop worker                                 # nessun lavoro a metà durante lo svuotamento
+docker compose exec api python -m api.azzera               # mostra cosa svuoterebbe (solo conteggi)
+docker compose exec api python -m api.azzera --conferma    # svuota
+DEMO=0 MOTORE_URL=http://motore:8080 docker compose up -d  # riparte senza ricreare la demo, worker compreso
+```
+
+- **`DEMO=0`** serve sempre, finché si prova con documenti propri: senza, all'avvio `api` ricrea le 8
+  pratiche demo sintetiche (`python -m api.demo` le rifà se non ne trova).
+- Il registro è di sola aggiunta: lo svuotamento ne disattiva e riattiva i trigger nella stessa transazione,
+  e la prima riga del registro nuovo è `sistema.azzera` (con i conteggi di ciò che è stato svuotato).
+- **Documenti reali**: restano solo su questa workstation, nei volumi Docker `esposti-app_archivio`
+  (documenti e testo estratto) e `esposti-app_pgdata` (schede, proposte, valutazioni). Mai nel repository,
+  in chat o nei log. Finita la prova: di nuovo `python -m api.azzera --conferma`, oppure
+  `docker compose down -v` (cancella anche uffici e utenti; al prossimo avvio torna la demo).
 
 Se una prova si interrompe a metà: `docker compose -p esposti-prove-e2e down -v` (o `-backend`,
 `-frontend`, `-live`), anche se `scripts/prove.sh` lo fa da solo alla successiva esecuzione.

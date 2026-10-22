@@ -15,6 +15,7 @@ x-backend-env: &backend-env
   ESPOSTI_ARCHIVIO_RADICE: /dati/archivio
   ESPOSTI_DIR_TEMPORANEA: /tmp/esposti-lavoro
   ESPOSTI_MOTORE_URL: ${MOTORE_URL:-http://motore-finto:8080}
+  ESPOSTI_DEMO: ${DEMO:-1}                # 0 = all'avvio non crea la demo (prove con documenti reali, docs/avvio.md)
 
 x-backend: &backend
   build: ./backend
@@ -35,8 +36,8 @@ services:
 
   api:
     <<: *backend
-    # migrazioni + demo sintetica (ripetibile: se c'è già non rifà nulla) e poi il server
-    command: ["sh", "-c", "alembic upgrade head && python -m api.demo && exec uvicorn api.main:app --host 0.0.0.0 --port 8000"]
+    # migrazioni + demo sintetica (ripetibile: se c'è già non rifà nulla; saltata con DEMO=0) e poi il server
+    command: ["sh", "-c", "alembic upgrade head && { [ \"$$ESPOSTI_DEMO\" = 0 ] || python -m api.demo; } && exec uvicorn api.main:app --host 0.0.0.0 --port 8000"]
     ports: [ "127.0.0.1:8100:8000" ]
     # esposti_interna: solo perché /salute possa interrogare il motore vero (GET /v1/salute)
     networks: [ default, esposti_interna ]
