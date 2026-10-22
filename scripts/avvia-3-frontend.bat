@@ -4,7 +4,7 @@ rem  TERMINALE 3 di 3 - Interfaccia (frontend) su http://localhost:5173
 rem  La prima volta installa le dipendenze (qualche minuto). Fermare con Ctrl+C.
 rem  Le chiamate /api vengono inoltrate al server del file 1 (porta 8000).
 rem ============================================================================
-title Esposti - 3 Frontend
+title Esposti - 3 Frontend - accessi demo: op.vet, smistatore, admin - password-sintetica-1
 setlocal
 set "FE=%~dp0..\frontend\backoffice"
 
@@ -22,7 +22,7 @@ echo.
 echo Apri http://localhost:5173 nel browser.
 echo Accessi demo: smistatore, op.vet, op.igp, admin   Password: password-sintetica-1
 echo.
-call npm run dev
+call npm run dev -- --clearScreen false
 goto :fine
 
 :manca
