@@ -56,3 +56,23 @@ export const put = <T>(p: string, corpo?: unknown) => richiesta<T>("PUT", p, { c
 export const patch = <T>(p: string, corpo?: unknown) => richiesta<T>("PATCH", p, { corpo });
 export const del = <T>(p: string) => richiesta<T>("DELETE", p);
 export const invia = <T>(p: string, form: FormData) => richiesta<T>("POST", p, { form });
+
+/** POST multipart con avanzamento del caricamento (fetch non lo espone): stessi errori di `richiesta`. */
+export function inviaConAvanzamento<T>(percorso: string, form: FormData, onAvanzamento: (frazione: number) => void): Promise<T> {
+  return new Promise<T>((risolvi, rifiuta) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", costruisciUrl(percorso));
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.withCredentials = true;
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable && e.total > 0) onAvanzamento(e.loaded / e.total); };
+    xhr.onerror = () => rifiuta(new ApiError(0, "Connessione al server non riuscita"));
+    xhr.onload = () => {
+      let dati: unknown = undefined;
+      try { dati = xhr.responseText ? JSON.parse(xhr.responseText) : undefined; } catch { dati = xhr.responseText; }
+      if (xhr.status >= 200 && xhr.status < 300) { onAvanzamento(1); risolvi(dati as T); return; }
+      if (xhr.status === 401) window.dispatchEvent(new Event(EVENTO_NON_AUTORIZZATO));
+      rifiuta(new ApiError(xhr.status, (dati as { detail?: unknown } | undefined)?.detail));
+    };
+    xhr.send(form);
+  });
+}

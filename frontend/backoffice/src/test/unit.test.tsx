@@ -1,6 +1,6 @@
 /** Test veloci: backend simulato con fetch. Verificano ciò che l'app invia e mostra. */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -366,5 +366,92 @@ describe("controllo di versione della valutazione", () => {
     const modulo = await screen.findByRole("form", { name: "La tua valutazione" });
     expect(within(modulo).getByText(/che non scarti vengono accettati con la conferma/)).toBeInTheDocument();
     expect(within(within(modulo).getByRole("group", { name: "Animali da reddito" })).getByRole("radio", { name: "Conferma" })).toBeChecked();
+  });
+});
+
+// --- Smistamento: caricamento dei documenti ------------------------------------------------------------------
+
+/** XMLHttpRequest finto: il caricamento con avanzamento non passa da fetch. */
+function simulaCaricamenti(risposte: unknown[]) {
+  const inviati: { url: string; file: string[] }[] = [];
+  class XhrFinto {
+    upload: { onprogress: ((e: { lengthComputable: boolean; loaded: number; total: number }) => void) | null } = { onprogress: null };
+    onload: (() => void) | null = null;
+    onerror: (() => void) | null = null;
+    status = 0; responseText = ""; withCredentials = false; private url = "";
+    open(_m: string, url: string) { this.url = url; }
+    setRequestHeader() {}
+    send(form: FormData) {
+      const n = inviati.push({ url: this.url, file: (form.getAll("files") as File[]).map((f) => f.name) });
+      setTimeout(() => {
+        this.upload.onprogress?.({ lengthComputable: true, loaded: 50, total: 100 });
+        this.status = 201; this.responseText = JSON.stringify(risposte[n - 1]);
+        this.onload?.();
+      }, 0);
+    }
+  }
+  vi.stubGlobal("XMLHttpRequest", XhrFinto);
+  return inviati;
+}
+
+const creata = (n: number) => ({
+  pratica: { ...riga, id: `p${n}`, numero: `ESP-2026-00000${n}`, stato: "IN_ANALISI", ufficio: null },
+  documenti: [{ id: `d${n}`, nome_file: `f${n}`, tipo_mime: null, dimensione: 1, sha256: "x", tipo_documento: null, caricato_il: "2026-10-22T10:00:00Z", principale: true,
+    analisi: { stato: "in_corso", lavoro_id: `l${n}`, stato_lavoro: "in_coda", tentativi: 0, codice_errore: null } }],
+});
+const lavoro = (n: number, stato: string, codice_errore: string | null = null) => ({
+  id: `l${n}`, documento_id: `d${n}`, stato, tentativi: 1, richiesto_il: "2026-10-22T10:00:00Z", iniziato_il: null, finito_il: null, codice_errore });
+
+describe("Smistamento: caricamento dei documenti", () => {
+  const base = (extra: Record<string, Gestore> = {}) => simula({
+    "GET /auth/me": () => me("smistatore"), "GET /home": () => homeVuota,
+    "GET /smistamento": () => ({ items: [], total: 0, page: 1, per_page: 25 }), ...extra,
+  });
+
+  it("più file: una pratica per file, avanzamento e stato dell'analisi di ciascuno", async () => {
+    base({ "GET /lavori/l1": () => lavoro(1, "completato"), "GET /lavori/l2": () => lavoro(2, "errore", "documento_illeggibile") });
+    const inviati = simulaCaricamenti([creata(1), creata(2)]);
+    const u = userEvent.setup();
+    avvia("/smistamento");
+    await u.click(await screen.findByText("Carica un nuovo esposto"));
+    const input = screen.getByLabelText("Documenti (anche più di uno)") as HTMLInputElement;
+    expect(input.accept).toBe(".pdf,.doc,.docx,.rtf");
+    await u.upload(input, [new File(["a"], "esposto_uno.pdf", { type: "application/pdf" }), new File(["b"], "esposto_due.docx")]);
+    expect(screen.getByRole("radio", { name: /Una pratica per ogni file/ })).toBeChecked();
+    expect(screen.getByLabelText("Titolo (facoltativo)")).toBeDisabled();   // con più pratiche il titolo viene da ogni documento
+    await u.click(screen.getByRole("button", { name: "Carica e analizza" }));
+
+    const esito = await screen.findByRole("status", { name: "Documenti caricati" });
+    expect(await within(esito).findByText("Analizzato")).toBeInTheDocument();
+    expect(await within(esito).findByText("Analisi non disponibile (documento_illeggibile)")).toBeInTheDocument();
+    expect(within(esito).getAllByRole("link", { name: "Aprila" }).map((l) => l.getAttribute("href"))).toEqual(["/pratiche/p1", "/pratiche/p2"]);
+    expect(inviati).toEqual([{ url: "/api/v1/pratiche", file: ["esposto_uno.pdf"] }, { url: "/api/v1/pratiche", file: ["esposto_due.docx"] }]);
+  });
+
+  it("tutti in una sola pratica: un solo invio con tutti i file", async () => {
+    base({ "GET /lavori/l1": () => lavoro(1, "in_corso") });
+    const una = creata(1);
+    const doppia = { ...una, documenti: [...una.documenti, ...una.documenti.map((d) => ({ ...d, id: "d9" }))] };   // stesso lavoro l1
+    const inviati = simulaCaricamenti([doppia]);
+    const u = userEvent.setup();
+    avvia("/smistamento");
+    await u.click(await screen.findByText("Carica un nuovo esposto"));
+    await u.upload(screen.getByLabelText("Documenti (anche più di uno)"), [new File(["a"], "esposto.pdf"), new File(["b"], "allegato.rtf")]);
+    await u.click(screen.getByRole("radio", { name: "Tutti i file in una sola pratica" }));
+    await u.click(screen.getByRole("button", { name: "Carica e analizza" }));
+    expect(await screen.findAllByText("In analisi")).toHaveLength(2);
+    expect(inviati).toEqual([{ url: "/api/v1/pratiche", file: ["esposto.pdf", "allegato.rtf"] }]);
+  });
+
+  it("un formato diverso da PDF, Word o RTF si rifiuta prima di inviare", async () => {
+    base();
+    const inviati = simulaCaricamenti([]);
+    const u = userEvent.setup();
+    avvia("/smistamento");
+    await u.click(await screen.findByText("Carica un nuovo esposto"));
+    fireEvent.change(screen.getByLabelText("Documenti (anche più di uno)"), { target: { files: [new File(["x"], "foto.jpg")] } });
+    expect(screen.getByRole("alert")).toHaveTextContent("Formato non accettato: foto.jpg");
+    expect(screen.getByRole("button", { name: "Carica e analizza" })).toBeDisabled();
+    expect(inviati).toHaveLength(0);
   });
 });
