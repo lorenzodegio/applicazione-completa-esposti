@@ -92,3 +92,19 @@ Le decisioni di prodotto stabili finiscono anche in `backend/api/README.md` («D
 - **Controlli sui temi**: ogni tema proposto deve stare nel vocabolario e avere la frase; si richiede che
   almeno un documento ne abbia, non tutti. Motivo: un documento può legittimamente non riguardare nessun
   tema (per esempio un riscontro generico); la qualità dei temi la giudica Lorenzo.
+
+## 2026-10-22 — caricamento dal backoffice e ripartenza da zero (coordinatore)
+
+- **Caricamento in Smistamento rifatto** (`componenti/CaricaDocumenti.tsx`): solo PDF, Word e RTF
+  (rifiuto prima dell'invio); con più file, una pratica per file (predefinito) o tutte in una;
+  invio un file alla volta con avanzamento (XMLHttpRequest, perché fetch non espone l'avanzamento
+  del caricamento); stato dell'analisi di ogni documento da `GET /lavori/{id}` ogni 3 s finché il
+  lavoro non è completato o in errore. Motivo: le prove con molti documenti propri, uno per pratica.
+- **Formato non supportato nell'end-to-end**: il modulo ora rifiuta `.pages`; la prova verifica il
+  rifiuto e crea quella pratica dall'API, così il percorso d'errore del motore resta coperto.
+- **`python -m api.azzera`**: un unico TRUNCATE delle 12 tabelle legate alle pratiche (si riferiscono
+  l'una all'altra), trigger del registro disattivati e riattivati nella stessa transazione, prima riga
+  del registro nuovo `sistema.azzera`; numerazione da 1; archivio svuotato (radici sospette rifiutate).
+  Restano anche le sessioni, perché gli utenti restano. Il test lavora in una transazione annullata e
+  non riavvia la numerazione, per non toccare i dati degli altri test.
+- **`DEMO=0`** nel compose: senza, all'avvio `api` ricreerebbe le pratiche demo dopo lo svuotamento.

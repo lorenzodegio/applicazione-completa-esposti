@@ -53,10 +53,21 @@ test("caricamento dal backoffice: una pratica per scenario, in coda per il motor
   await page.getByRole("navigation", { name: "Menu principale" }).getByRole("link", { name: "Smistamento" }).click();
   await page.getByText("Carica un nuovo esposto").click();
   for (const s of SCENARI) {
-    await page.getByLabel("Documenti (anche più di uno)").setInputFiles({
+    const documento = {
       name: s.file, mimeType: s.file.endsWith(".pdf") ? "application/pdf" : "application/octet-stream",
       buffer: Buffer.from(`contenuto sintetico di prova (${s.file})`),
-    });
+    };
+    await page.getByLabel("Documenti (anche più di uno)").setInputFiles(documento);
+    if (!s.file.endsWith(".pdf")) {
+      // il modulo accetta solo PDF, Word e RTF: il formato non supportato si prova direttamente dall'API,
+      // per verificare che il motore lo rifiuti e la pratica vada comunque allo smistamento
+      await expect(page.getByRole("alert")).toContainText("Formato non accettato");
+      await expect(page.getByRole("button", { name: "Carica e analizza" })).toBeDisabled();
+      const r = await page.request.post("/api/v1/pratiche", { multipart: { files: documento, titolo: titolo(s) } });
+      expect(r.status()).toBe(201);
+      ids[s.chiave] = (await r.json()).pratica.id;
+      continue;
+    }
     await page.getByLabel("Titolo (facoltativo)").fill(titolo(s));
     await page.getByRole("button", { name: "Carica e analizza" }).click();
     const esito = page.getByRole("status").filter({ hasText: "creata: il motore sta analizzando" });
