@@ -314,3 +314,57 @@ describe("accessibilità", () => {
     expect(await violazioni()).toEqual([]);
   });
 });
+
+// --- controllo di versione della valutazione e temi accettati -------------------------------------------
+
+describe("controllo di versione della valutazione", () => {
+  const salvata = (extra: object = {}) => ({ id: "v1", origine: "applicazione", autore_id: "x", autore_nome: null, compilata: false,
+    data_compilazione: null, data_doc: null, comune: "Castelrovo", ambito: [], problematica: [], elementi: [], ambito_originale: null,
+    ambito_altro: null, problematica_altro: null, elementi_altro: null, esito: "Accolto", urgenza: "Normale", azione: [], note: null,
+    da_risultato_id: "r1", versione: 1, creata_il: "", aggiornata_il: "", ...extra });
+  const conflitto = { detail: { codice: "valutazione_modificata", versione_attuale: 2, messaggio: "La valutazione è stata modificata nel frattempo" } };
+
+  it("la bozza invia la versione letta e poi quella nuova", async () => {
+    let n = 0;
+    const chiamate = inboxBase({ "PUT /pratiche/p1/valutazione": () => salvata({ versione: ++n }) });
+    const u = userEvent.setup();
+    avvia("/inbox/p1");
+    const modulo = await screen.findByRole("form", { name: "La tua valutazione" });
+    await u.click(within(modulo).getByRole("button", { name: "Salva bozza" }));
+    expect(await within(modulo).findByText("Bozza salvata.")).toBeInTheDocument();
+    await u.click(within(modulo).getByRole("radio", { name: "Alta" }));
+    await u.click(within(modulo).getByRole("button", { name: "Salva bozza" }));
+    await waitFor(() => expect(chiamate.filter((c) => c.chiave === "PUT /pratiche/p1/valutazione")).toHaveLength(2));
+    expect(chiamate.filter((c) => c.chiave === "PUT /pratiche/p1/valutazione").map((c) => c.corpo.versione)).toEqual([null, 1]);
+  });
+
+  it("un 409 sulla valutazione mostra il messaggio e ricarica la valutazione aggiornata", async () => {
+    let letture = 0;
+    const chiamate = inboxBase({
+      "GET /pratiche/p1": () => (++letture === 1
+        ? dettaglio({ valutazione: { valutazione: salvata(), precompilazione, disaccordo: [] } })
+        : dettaglio({ valutazione: { valutazione: salvata({ versione: 2, urgenza: "Immediata" }), precompilazione, disaccordo: [] } })),
+      "POST /pratiche/p1/validazione": (corpo) => (corpo.valutazione.versione === 1 ? risposta(409, conflitto) : { ...riga, stato: "IN_LAVORAZIONE" }),
+    });
+    const u = userEvent.setup();
+    avvia("/inbox/p1");
+    const modulo = await screen.findByRole("form", { name: "La tua valutazione" });
+    expect(within(modulo).getByRole("radio", { name: "Normale" })).toBeChecked();
+    await u.click(within(modulo).getByRole("radio", { name: "Alta" }));
+    await u.click(within(modulo).getByRole("button", { name: "Conferma e vai al prossimo" }));
+    expect(await within(modulo).findByRole("alert")).toHaveTextContent("Un'altra persona ha salvato questa valutazione");
+    expect(within(modulo).getByRole("radio", { name: "Immediata" })).toBeChecked();      // la versione di chi ha salvato prima
+    await u.click(within(modulo).getByRole("button", { name: "Conferma e vai al prossimo" }));
+    await waitFor(() => expect(chiamate.filter((c) => c.chiave === "POST /pratiche/p1/validazione")).toHaveLength(2));
+    const ultimo = chiamate.filter((c) => c.chiave === "POST /pratiche/p1/validazione")[1]!.corpo;
+    expect(ultimo.valutazione).toMatchObject({ versione: 2, urgenza: "Immediata" });
+  });
+
+  it("i temi proposti non scartati si accettano: lo dice il modulo", async () => {
+    inboxBase();
+    avvia("/inbox/p1");
+    const modulo = await screen.findByRole("form", { name: "La tua valutazione" });
+    expect(within(modulo).getByText(/che non scarti vengono accettati con la conferma/)).toBeInTheDocument();
+    expect(within(within(modulo).getByRole("group", { name: "Animali da reddito" })).getByRole("radio", { name: "Conferma" })).toBeChecked();
+  });
+});

@@ -208,6 +208,7 @@ documento (`<id_documento>.testo.json`).
 | azione | text[] | scelta multipla |
 | note | text, null | |
 | da_risultato_id | uuid → risultato_motore, null | da quale proposta è partita la precompilazione |
+| versione | int | controllo di versione: chi salva rimanda quella letta, altrimenti 409 |
 | creata_il, aggiornata_il | | ogni modifica nel registro con prima/dopo |
 
 **Disaccordo IA–operatore**: vista calcolata, vera se
@@ -218,6 +219,7 @@ elenco (es. "IA: urgenza Immediata, operatore: Alta").
 **pratica_tema**: pratica_id, tema_id, origine (`ia`, `operatore`), stato
 (`proposto`, `confermato`, `scartato`), deciso_da, deciso_il. Il motore
 propone, l'operatore conferma durante la validazione; può aggiungerne altri.
+I temi proposti che l'operatore non tocca si considerano accettati alla validazione.
 
 ### 3.6 Lavorazione
 

@@ -7,17 +7,34 @@ dell'IA è solo un suggerimento: decide sempre la persona).
 
 Chi arriva sul progetto parte da [docs/consegna.md](docs/consegna.md).
 
+## Avvio rapido (Docker, da WSL)
+
+```
+docker compose up -d --build                         # con il finto motore
+MOTORE_URL=http://motore:8080 docker compose up -d   # con il motore vero (rete esposti_interna)
+scripts/prove.sh                                     # tutte le prove: backend, frontend, live, end-to-end
+docker compose down -v                               # spegne e azzera
+```
+
+Backoffice su http://127.0.0.1:5173, API su http://127.0.0.1:8100. Utenti demo, password e dettagli in
+[docs/avvio.md](docs/avvio.md); le decisioni prese strada facendo in [docs/diario.md](docs/diario.md).
+
 ## Struttura
 
 ```
 frontend/
   frontoffice/   mockup della parte cittadino (HTML/JS, congelato)
-  backoffice/    applicazione operatori (React + Vite + TypeScript) — oggi: mockup di riferimento
+  backoffice/    applicazione operatori (React + Vite + TypeScript)
 backend/
   api/           FastAPI + PostgreSQL: pratiche, ruoli, permessi, registro azioni
   motore/        connettore verso il motore (servizio Docker esterno, coda di lavori)
   documenti/     interfaccia unica per l'archivio (cartella locale, poi SharePoint)
+e2e/             prove end-to-end nel browser (Playwright) contro lo stack compose
+scripts/         prove.sh (tutte le prove in Docker), genera-tipi.sh (OpenAPI → tipi TypeScript)
+compose.yml      ambiente completo: db, api, worker, motore-finto, backoffice (+ profilo "prove")
 docs/
+  avvio.md             come si avvia, si prova, si spegne
+  diario.md            decisioni prese strada facendo, con data e motivo
   piano.md             modello dei dati, API, schermate, fasi
   contratto_motore.md  interfaccia applicazione ↔ motore
   consegna.md          per chi arriva sul progetto
