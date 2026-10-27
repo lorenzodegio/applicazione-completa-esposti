@@ -40,6 +40,7 @@ docs/
   consegna.md          per chi arriva sul progetto
   mockups/             schermate di riferimento: Home, Inbox, Fascicolo, Gestione pratiche
   mockup.md            descrizione del primo mockup HTML/JS
+  collaudo/            collaudo manuale: checklist, modelli di segnalazione ed esiti, documenti sintetici di prova
 ```
 
 Il motore di classificazione è un repository separato
