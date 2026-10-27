@@ -1,0 +1,87 @@
+name: Problema di collaudo
+description: Un problema trovato seguendo docs/collaudo/checklist.md (solo dati sintetici)
+title: "[COLLAUDO] <codice> — <frase breve>"
+labels: ["collaudo"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Una issue per problema.** Solo dati sintetici: niente documenti reali, niente nomi o dati veri,
+        screenshot solo della finestra dell'applicazione con dati di prova.
+  - type: input
+    id: codice
+    attributes:
+      label: Codice della prova
+      description: Uno o più codici della checklist, separati da virgola
+      placeholder: INB-06
+    validations:
+      required: true
+  - type: dropdown
+    id: motore
+    attributes:
+      label: Motore
+      options: ["finto", "vero"]
+    validations:
+      required: true
+  - type: input
+    id: ambiente
+    attributes:
+      label: Browser, macchina e versione
+      description: "Browser e versione; workstation ATS o PC personale; risultato di `git log --oneline -1` sul ramo dev"
+      placeholder: "Edge 141 · workstation ATS · 48701bd Unione di frontend in dev"
+    validations:
+      required: true
+  - type: textarea
+    id: passi
+    attributes:
+      label: Passi
+      description: Numerati, esattamente come li hai fatti, con l'utente usato
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: atteso
+    attributes:
+      label: Atteso
+      description: Il risultato atteso scritto nella checklist
+    validations:
+      required: true
+  - type: textarea
+    id: ottenuto
+    attributes:
+      label: Ottenuto
+      description: Cosa è successo davvero; messaggi esatti tra virgolette
+    validations:
+      required: true
+  - type: dropdown
+    id: ripetibile
+    attributes:
+      label: Si ripete?
+      options: ["sempre", "a volte", "una volta sola"]
+    validations:
+      required: true
+  - type: dropdown
+    id: gravita
+    attributes:
+      label: Gravità
+      options:
+        - "Bloccante: impedisce di proseguire o mostra dati a chi non dovrebbe vederli"
+        - "Grave: risultato sbagliato, ma si può aggirare"
+        - "Lieve: aspetto, testi, comodità"
+    validations:
+      required: true
+  - type: textarea
+    id: allegati
+    attributes:
+      label: Screenshot e log
+      description: Solo dati sintetici. Per i log, controlla che non contengano dati personali.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Dati
+      options:
+        - label: Confermo che la segnalazione e gli allegati contengono solo dati sintetici
+          required: true
