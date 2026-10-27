@@ -108,3 +108,20 @@ Le decisioni di prodotto stabili finiscono anche in `backend/api/README.md` («D
   Restano anche le sessioni, perché gli utenti restano. Il test lavora in una transazione annullata e
   non riavvia la numerazione, per non toccare i dati degli altri test.
 - **`DEMO=0`** nel compose: senza, all'avvio `api` ricreerebbe le pratiche demo dopo lo svuotamento.
+
+## 2026-10-27 — collaudo manuale (coordinatore)
+
+- **`docs/collaudo/checklist.md`**: 117 prove in 13 aree, ognuna con codice, ruolo, passi, atteso, esito e
+  note. Khalil: caricamento, motore, registro, amministrazione, robustezza (48); Syed: accesso,
+  smistamento, Inbox, pratica, fascicoli, Gestione pratiche e Home (51); permessi e privacy a entrambi,
+  in modo indipendente (18). Motivo: Khalil conosce motore e backend; Syed parte dai flussi
+  dell'interfaccia, che gli fanno conoscere l'applicazione.
+- **Documenti di collaudo** in `docs/collaudo/dati/`, generati da `scripts/genera-dati-collaudo.sh`
+  (container usa e getta con reportlab, python-docx, Pillow): PDF digitale, scansione di email
+  inoltrata (solo immagine), Word, RTF, vuoto, danneggiato, formati non ammessi, riscontro con lo stesso
+  protocollo e un file per scenario del finto motore. Eccezione mirata nel `.gitignore`. Per il motore
+  vero si usano anche i sintetici del motore (non copiati qui).
+- **Prove non ancora possibili** segnate nella checklist come tali: suggerimento dell'ufficio
+  (SMI-07, N/A), valutazioni ATS (GES-06: atteso elenco vuoto), registro generale (REG-04 via `psql`).
+- **Esiti**: copia personale della checklist e riepilogo in `docs/collaudo/esiti-<nome>.md`; modello di
+  issue `.github/ISSUE_TEMPLATE/collaudo.yml` (etichetta `collaudo`).
