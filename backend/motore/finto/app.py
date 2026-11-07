@@ -1,4 +1,4 @@
-"""Finto motore: stessa forma del vero (contratto 1.1), risposte deterministiche.
+"""Finto motore: stessa forma del vero (contratto 1.2), risposte deterministiche.
 
 Non legge il contenuto dei documenti: sceglie lo scenario dal NOME del file.
 
@@ -12,6 +12,7 @@ Non legge il contenuto dei documenti: sceglie lo scenario dal NOME del file.
     instabile                  errore_interno la prima volta, poi riesce
     occupato                   la prima consegna riceve 429 + Retry-After
     invalido                   risultato che viola il contratto (frase > 300)
+    (metadati malformati)      422 richiesta_non_valida, non ritentabile (1.2)
     (altro)                    esposto digitato, nessuna incertezza (6.1)
 
 Ogni lavoro passa da in_coda → in_corso → concluso a ogni interrogazione
@@ -43,7 +44,7 @@ class StatoFinto:
 
 
 def crea_app() -> FastAPI:
-    app = FastAPI(title="Finto motore (contratto 1.1)")
+    app = FastAPI(title="Finto motore (contratto 1.2)")
     stato = StatoFinto()
     app.state.finto = stato
 
@@ -90,11 +91,17 @@ def crea_app() -> FastAPI:
 
     @app.post("/v1/analisi", status_code=202)
     async def consegna(documento: UploadFile = File(...), metadati: str = Form(...)):
-        meta = json.loads(metadati)
-        id_lavoro = meta["id_lavoro"]
+        try:
+            meta = json.loads(metadati)
+            id_lavoro, nome = str(meta["id_lavoro"]), str(meta["documento"]["nome_file"])
+            if not (meta["documento"]["id"] and meta["documento"]["sha256"]):
+                raise KeyError("documento")
+        except (ValueError, KeyError, TypeError):
+            return JSONResponse({"id_lavoro": None, "stato": "errore", "errore": {
+                "codice": "richiesta_non_valida", "messaggio": "Metadati mancanti o malformati.",
+                "ritentabile": False}}, status_code=422)
         if id_lavoro in stato.lavori:  # idempotenza
             return {"id_lavoro": id_lavoro, "stato": stato.lavori[id_lavoro]["stato"]}
-        nome = meta["documento"]["nome_file"]
         if "occupato" in nome.lower() and stato.tentativi_per_nome.get(nome + "#429", 0) == 0:
             stato.tentativi_per_nome[nome + "#429"] = 1
             return JSONResponse({"id_lavoro": id_lavoro, "stato": "errore", "errore": {

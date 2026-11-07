@@ -70,12 +70,21 @@ class MotoreHttp:
             raise MotoreIrraggiungibile(f"risposta {r.status_code}") from e
 
     def stato(self, id_lavoro: str) -> StatoLavoro:
+        """Un corpo StatoLavoro valido vale con qualunque codice HTTP (es. il 404 del motore riavviato, con
+        errore_interno ritentabile). Un corpo non valido: con 200 è un risultato fuori contratto; con un altro
+        codice (500 testuale, 404 di un URL sbagliato, proxy) è un guasto, ritentabile."""
         r = self._chiama("GET", f"/v1/analisi/{id_lavoro}")
         try:
-            return StatoLavoro.model_validate(r.json())
+            dati = r.json()
+        except ValueError as e:
+            raise MotoreIrraggiungibile(f"risposta {r.status_code} non JSON") from e
+        try:
+            return StatoLavoro.model_validate(dati)
         except Exception as e:
+            if r.status_code != 200:
+                raise MotoreIrraggiungibile(f"risposta {r.status_code} non conforme") from e
             # Un risultato che viola il contratto: lo si distingue da un guasto di rete.
-            raise RisultatoNonValido(_percorsi_errore(e), r.json()) from e
+            raise RisultatoNonValido(_percorsi_errore(e), dati) from e
 
     def conferma(self, id_lavoro: str) -> None:
         self._chiama("DELETE", f"/v1/analisi/{id_lavoro}")

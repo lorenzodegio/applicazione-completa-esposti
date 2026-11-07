@@ -13,7 +13,7 @@ from ..models import Attivita, CambioStato, Pratica, PraticaTema, Utente, Valuta
 from ..permessi import carica_pratica
 from ..registro import registra
 from ..schemas import (
-    AttivitaIn, AttivitaOut, AttivitaPatch, PraticaOut, TemaOut, TemiIn, ValidazioneIn,
+    AttivitaIn, AttivitaOut, AttivitaPatch, PraticaOut, TemaDecisione, TemaOut, TemiIn, ValidazioneIn,
     ValutazioneIn, ValutazioneOut, ValutazioneVista,
 )
 from ..valutazione import (
@@ -56,7 +56,7 @@ def scrivi_valutazione(pratica_id: uuid.UUID, dati: ValutazioneIn, utente: Utent
 @router.post("/pratiche/{pratica_id}/validazione", response_model=PraticaOut)
 def valida_pratica(pratica_id: uuid.UUID, dati: ValidazioneIn, utente: Utente = Depends(smistatore_o_operatore),
                    db: Session = Depends(get_db)) -> Pratica:
-    """Valutazione compilata + decisione su ogni tema proposto → IN_LAVORAZIONE. La decide la persona."""
+    """Valutazione compilata → IN_LAVORAZIONE. La decide la persona; i temi proposti non toccati diventano confermati."""
     pratica = carica_pratica(db, utente, pratica_id, per_modifica=True)
     if pratica.versione != dati.versione:
         raise HTTPException(409, "La pratica è stata modificata nel frattempo: ricarica e riprova")
@@ -65,15 +65,17 @@ def valida_pratica(pratica_id: uuid.UUID, dati: ValidazioneIn, utente: Utente = 
     dati.valutazione.compilata = True
     valida(db, dati.valutazione, per_conferma=True)
 
+    # I temi proposti dall'IA che l'operatore non tocca si considerano accettati da chi valida.
     decisi = {d.codice for d in dati.temi}
-    da_decidere = [pt.tema.nome for pt in db.execute(select(PraticaTema).where(
+    impliciti = [pt.tema.codice for pt in db.execute(select(PraticaTema).where(
         PraticaTema.pratica_id == pratica.id, PraticaTema.stato == StatoTema.proposto)).scalars()
         if pt.tema.codice not in decisi]
-    if da_decidere:
-        raise HTTPException(422, {"messaggio": "Conferma o scarta tutti i temi proposti", "temi": da_decidere})
 
     salva_valutazione(db, pratica, utente, dati.valutazione, azione_registro="valutazione.conferma")
-    cambi = applica_temi(db, pratica, utente, dati.temi)
+    cambi = applica_temi(db, pratica, utente, [*dati.temi, *(TemaDecisione(codice=c, stato=StatoTema.confermato)
+                                                              for c in impliciti)])
+    for c in impliciti:
+        cambi[c]["implicito"] = True
     if cambi:
         registra(db, utente_id=utente.id, azione="temi.decidi", oggetto_tipo="pratica", oggetto_id=pratica.id,
                  pratica_id=pratica.id, dettagli={"temi": cambi})

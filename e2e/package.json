@@ -1,0 +1,12 @@
+{
+  "name": "esposti-e2e",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Prove end-to-end nel browser (Playwright) contro lo stack compose: solo dati sintetici",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

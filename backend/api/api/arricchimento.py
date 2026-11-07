@@ -40,9 +40,10 @@ def arricchisci(db: Session, pratiche: list[Pratica]) -> list[PraticaRiga]:
         select(Collegamento.pratica_a_id.label("p")).where(Collegamento.rimosso_il.is_(None),
                                                            Collegamento.pratica_a_id.in_(ids))).subquery()
     n_manuali = dict(db.execute(select(lati.c.p, func.count()).group_by(lati.c.p)).all())
-    protocolli = {p.protocollo for p in pratiche if p.protocollo}
-    per_protocollo = dict(db.execute(select(Pratica.protocollo, func.count()).where(Pratica.protocollo.in_(protocolli))
-                                     .group_by(Pratica.protocollo)).all()) if protocolli else {}
+    protocolli = {p.chiave_protocollo for p in pratiche if p.chiave_protocollo}
+    per_protocollo = dict(db.execute(select(Pratica.chiave_protocollo, func.count())
+                                     .where(Pratica.chiave_protocollo.in_(protocolli))
+                                     .group_by(Pratica.chiave_protocollo)).all()) if protocolli else {}
 
     out = []
     for p in pratiche:
@@ -53,6 +54,6 @@ def arricchisci(db: Session, pratiche: list[Pratica]) -> list[PraticaRiga]:
         riga.proposta = proposte.get(p.id)
         riga.lettura_incerta = p.id in incerte
         riga.disaccordo = disaccordi.get(p.id, [])
-        riga.n_collegate = n_manuali.get(p.id, 0) + (per_protocollo.get(p.protocollo, 1) - 1 if p.protocollo else 0)
+        riga.n_collegate = n_manuali.get(p.id, 0) + (per_protocollo.get(p.chiave_protocollo, 1) - 1 if p.chiave_protocollo else 0)
         out.append(riga)
     return out

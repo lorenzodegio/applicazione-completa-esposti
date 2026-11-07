@@ -72,6 +72,15 @@ class ArchivioCartellaLocale:
     def elimina(self, rif_id: str) -> None:  # solo per i test e le migrazioni verificate
         self._percorso(rif_id).unlink(missing_ok=True)
 
+    def verifica(self) -> None:
+        """Scrive e cancella un file di prova nella radice (nessun documento coinvolto)."""
+        prova = self.radice / f".salute-{uuid.uuid4().hex}"
+        try:
+            prova.write_bytes(b"ok")
+            prova.unlink()
+        except OSError as e:
+            raise ErroreArchivio("archivio non scrivibile") from e
+
 
 class _Bytes:
     def __init__(self, dati: bytes):

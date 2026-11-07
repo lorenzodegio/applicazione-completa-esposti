@@ -10,6 +10,9 @@ export interface Modulo {
   altro: { ambito_altro: string | null; problematica_altro: string | null; elementi_altro: string | null };
 }
 
+/** Versione della valutazione salvata (null se non c'è ancora): va rimandata a ogni salvataggio. */
+export const versioneValutazione = (p: PraticaDettaglio): number | null => p.valutazione?.valutazione?.versione ?? null;
+
 const uno = (v?: string | null) => (v ? [v] : []);
 
 /** Valutazione già salvata → altrimenti proposta dell'IA (precompilazione). Una bozza si completa con la proposta. */
@@ -37,7 +40,8 @@ export function moduloIniziale(p: PraticaDettaglio): Modulo {
   };
 }
 
-export function inValutazione(m: Modulo, compilata: boolean, sostituisciAts = false): ValutazioneIn {
+/** Corpo della richiesta. `versione` è quella letta: se nel frattempo è cambiata il server risponde 409. */
+export function inValutazione(m: Modulo, compilata: boolean, sostituisciAts: boolean, versione: number | null): ValutazioneIn {
   return {
     data_doc: m.dataDoc || null,
     comune: m.comune.trim() || null,
@@ -49,8 +53,12 @@ export function inValutazione(m: Modulo, compilata: boolean, sostituisciAts = fa
     note: m.note.trim() || null,
     compilata,
     conferma_sovrascrittura: sostituisciAts,
+    versione,
   };
 }
+
+export const MESSAGGIO_CONFLITTO =
+  "Un'altra persona ha salvato questa valutazione mentre la compilavi. Qui sotto c'è la versione aggiornata: controllala e, se serve, rifai le tue modifiche.";
 
 const voci = (voc: Vocabolari | undefined, nome: string) => (voc?.[nome] ?? []).map((x) => x.codice);
 

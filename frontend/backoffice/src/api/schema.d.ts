@@ -503,7 +503,7 @@ export interface paths {
         put?: never;
         /**
          * Valida Pratica
-         * @description Valutazione compilata + decisione su ogni tema proposto → IN_LAVORAZIONE. La decide la persona.
+         * @description Valutazione compilata → IN_LAVORAZIONE. La decide la persona; i temi proposti non toccati diventano confermati.
          */
         post: operations["valida_pratica_api_v1_pratiche__pratica_id__validazione_post"];
         delete?: never;
@@ -540,7 +540,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Salute */
+        /**
+         * Salute
+         * @description Database, archivio, coda e motore. 503 solo se database o archivio non funzionano.
+         */
         get: operations["salute_api_v1_salute_get"];
         put?: never;
         post?: never;
@@ -1582,6 +1585,8 @@ export interface components {
             problematica_altro?: string | null;
             /** Urgenza */
             urgenza?: string | null;
+            /** Versione */
+            versione?: number | null;
         };
         /** ValutazioneOut */
         ValutazioneOut: {
@@ -1637,6 +1642,8 @@ export interface components {
             problematica_altro: string | null;
             /** Urgenza */
             urgenza: string | null;
+            /** Versione */
+            versione: number;
         };
         /** ValutazioneVista */
         ValutazioneVista: {
@@ -3017,9 +3024,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": unknown;
                 };
             };
         };

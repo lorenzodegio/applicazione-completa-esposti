@@ -275,6 +275,9 @@ class ValutazioneIn(BaseModel):
     note: str | None = Field(default=None, max_length=10000)
     compilata: bool = True
     conferma_sovrascrittura: bool = False  # serve solo per sovrascrivere una valutazione ATS importata
+    # Controllo di versione: la `versione` della valutazione letta (null se non ce n'era ancora una).
+    # Se nel frattempo qualcuno l'ha salvata: 409 con codice «valutazione_modificata».
+    versione: int | None = None
 
 
 class ValutazioneOut(_Out):
@@ -298,6 +301,7 @@ class ValutazioneOut(_Out):
     azione: list[str]
     note: str | None
     da_risultato_id: uuid.UUID | None
+    versione: int
     creata_il: dt.datetime
     aggiornata_il: dt.datetime
 

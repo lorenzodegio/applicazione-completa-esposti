@@ -1,8 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { eConflittoValutazione } from "../../api/client";
 import { api } from "../../api/endpoints";
 import type { PraticaDettaglio } from "../../api/tipi";
-import { CampiValutazione, inValutazione, moduloIniziale } from "../../componenti/ModuloValutazione";
+import {
+  CampiValutazione, inValutazione, MESSAGGIO_CONFLITTO, moduloIniziale, versioneValutazione,
+} from "../../componenti/ModuloValutazione";
 import { PropostaIA } from "../../componenti/PropostaIA";
 import { decisioniIniziali, inDecisioni, TemiDecisione } from "../../componenti/TemiDecisione";
 import { MessaggioErrore } from "../../componenti/ui";
@@ -20,12 +23,23 @@ export function TabRiepilogo({ p }: { p: PraticaDettaglio }) {
   const [m, setM] = useState(() => moduloIniziale(p));
   const [decisioni, setDecisioni] = useState(() => decisioniIniziali(p.temi));
   const [sostituisciAts, setSostituisciAts] = useState(false);
+  const [versione, setVersione] = useState(() => versioneValutazione(p));
+  const [conflitto, setConflitto] = useState(false);
   const ats = v?.origine === "import_ats" && v.compilata;
   const aggiorna = () => qc.invalidateQueries();
 
   const salva = useMutation({
-    mutationFn: () => api.salvaValutazione(p.id, inValutazione(m, true, sostituisciAts)),
-    onSuccess: async () => { setModifica(false); await aggiorna(); },
+    mutationFn: () => api.salvaValutazione(p.id, inValutazione(m, true, sostituisciAts, versione)),
+    onMutate: () => setConflitto(false),
+    onSuccess: async (nuova) => { setVersione(nuova.versione); setModifica(false); await aggiorna(); },
+    onError: async (e) => {
+      // 409 «valutazione_modificata»: si riparte dalla valutazione salvata da altri
+      if (!eConflittoValutazione(e)) return;
+      const nuova = await qc.fetchQuery({ queryKey: ["pratica", p.id], queryFn: () => api.pratica(p.id), staleTime: 0 });
+      setM(moduloIniziale(nuova));
+      setVersione(versioneValutazione(nuova));
+      setConflitto(true);
+    },
   });
   const salvaTemi = useMutation({
     mutationFn: () => api.decidiTemi(p.id, inDecisioni(decisioni)),
@@ -100,10 +114,10 @@ export function TabRiepilogo({ p }: { p: PraticaDettaglio }) {
               </div>
             )}
             <CampiValutazione m={m} set={setM} voc={voc.data} />
-            <MessaggioErrore errore={salva.error} />
+            {conflitto ? <div role="alert" className="avviso">{MESSAGGIO_CONFLITTO}</div> : <MessaggioErrore errore={salva.error} />}
             <div className="riga">
               <button type="submit" className="btn" disabled={salva.isPending || !m.esito[0] || !m.urgenza[0] || (ats && !sostituisciAts)}>Salva la valutazione</button>
-              <button type="button" className="btn secondario" onClick={() => { setModifica(false); setM(moduloIniziale(p)); }}>Annulla</button>
+              <button type="button" className="btn secondario" onClick={() => { setModifica(false); setConflitto(false); setM(moduloIniziale(p)); setVersione(versioneValutazione(p)); }}>Annulla</button>
             </div>
           </form>
         )}

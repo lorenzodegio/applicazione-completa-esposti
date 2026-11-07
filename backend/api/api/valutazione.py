@@ -18,6 +18,7 @@ from .models import (
 from .registro import registra
 from .schemas import Differenza, TemaDecisione, TemaOut, ValutazioneIn, ValutazioneOut, ValutazioneVista
 
+CONFLITTO_VALUTAZIONE = "valutazione_modificata"
 CAMPI_LISTA = {"ambito": "ambito", "problematica": "problematica", "elementi": "elementi", "azione": "azione"}
 CAMPI_VALORE = {"esito": "esito", "urgenza": "urgenza"}
 CAMPI_TESTO_LIBERO = ("ambito_altro", "problematica_altro", "elementi_altro", "note")  # nel registro: solo "cambiato"
@@ -140,6 +141,12 @@ def salva_valutazione(db: Session, pratica: Pratica, utente: Utente, dati: Valut
     una valutazione ATS compilata si sovrascrive solo con conferma esplicita."""
     esistente = db.execute(select(Valutazione).where(Valutazione.pratica_id == pratica.id)
                            .with_for_update()).scalar_one_or_none()
+    # controllo di versione (la pratica è già bloccata da carica_pratica(per_modifica=True))
+    attuale = esistente.versione if esistente else None
+    if dati.versione != attuale:
+        raise HTTPException(409, {"codice": CONFLITTO_VALUTAZIONE, "versione_attuale": attuale,
+                                  "messaggio": "La valutazione è stata modificata nel frattempo da un'altra persona: "
+                                               "ricarica la versione aggiornata e riprova"})
     if (esistente and esistente.origine == OrigineValutazione.import_ats and esistente.compilata
             and not dati.conferma_sovrascrittura):
         raise HTTPException(409, "Esiste una valutazione ATS già compilata: per sostituirla serve la conferma esplicita")
@@ -148,8 +155,10 @@ def salva_valutazione(db: Session, pratica: Pratica, utente: Utente, dati: Valut
     campi = {c: getattr(dati, c) for c in CAMPI}
     adesso = dt.datetime.now(dt.timezone.utc)
     if esistente is None:
-        esistente = Valutazione(pratica_id=pratica.id, origine=OrigineValutazione.applicazione)
+        esistente = Valutazione(pratica_id=pratica.id, origine=OrigineValutazione.applicazione, versione=1)
         db.add(esistente)
+    else:
+        esistente.versione += 1
     for c, v in campi.items():
         setattr(esistente, c, v)
     esistente.origine = OrigineValutazione.applicazione

@@ -25,9 +25,9 @@ class Collegata:
 def collegate(db: Session, pratica: Pratica) -> list[Collegata]:
     """Tutte le pratiche collegate, senza guardare i permessi (lo si fa in uscita)."""
     out: list[Collegata] = []
-    if pratica.protocollo:
+    if pratica.chiave_protocollo:  # numero e anno: un protocollo senza anno non collega nulla
         tipo = db.execute(select(TipoCollegamento).where(TipoCollegamento.codice == "STESSO_PROTOCOLLO")).scalar_one()
-        for altra in db.execute(select(Pratica).where(Pratica.protocollo == pratica.protocollo,
+        for altra in db.execute(select(Pratica).where(Pratica.chiave_protocollo == pratica.chiave_protocollo,
                                                        Pratica.id != pratica.id)
                                 .order_by(Pratica.creata_il, Pratica.id)).scalars():
             out.append(Collegata(altra, tipo, tipo.etichetta, None))

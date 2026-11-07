@@ -1,4 +1,4 @@
-"""Contratto 1.1 eseguibile (docs/contratto_motore.md, sezioni 2, 3 e 5).
+"""Contratto 1.2 eseguibile (docs/contratto_motore.md, sezioni 2, 3 e 5).
 
 Regole del contratto rispettate qui:
 - i campi sconosciuti si ignorano (extra="ignore");
@@ -11,7 +11,9 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-VERSIONE_CONTRATTO = "1.1"
+VERSIONE_CONTRATTO = "1.2"
+# Si accetta qualunque versione minore della stessa principale (regole di evoluzione, sezione 7).
+VERSIONE_COMPATIBILE = r"^1\.[0-9]+$"
 
 Acquisizione = Literal["testo_nativo", "ocr", "ocr_manoscritto", "nessuna"]
 
@@ -85,7 +87,7 @@ class DocumentoRef(_M):
 
 
 class Risultato(_M):
-    versione_contratto: str
+    versione_contratto: str = Field(pattern=VERSIONE_COMPATIBILE)
     versione_motore: str
     documento: DocumentoRef
     tipo_documento: TipoDocumento

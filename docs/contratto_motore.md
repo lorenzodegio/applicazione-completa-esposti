@@ -1,4 +1,4 @@
-# Contratto del motore — versione 1.1
+# Contratto del motore — versione 1.2
 
 Questo documento definisce **l'unico punto di contatto** tra l'applicazione
 (questo repository) e il motore di classificazione (`classificatore-esposti-v2`,
@@ -48,7 +48,7 @@ risponde `429` con `Retry-After`; l'applicazione riprova più tardi.
 {
   "stato": "pronto",
   "versione_motore": "2.3.0",
-  "versione_contratto": "1.1",
+  "versione_contratto": "1.2",
   "occupato": false
 }
 ```
@@ -57,12 +57,13 @@ risponde `429` con `Retry-After`; l'applicazione riprova più tardi.
 
 `multipart/form-data` con due parti:
 
-- `documento`: il file (PDF, immagine, `.eml`, `.docx`…);
+- `documento`: il file (PDF, immagine, `.docx`…). **`.eml` per ora non è supportato dal motore vero**:
+  risponde con l'errore `formato_non_supportato` (sezione 5);
 - `metadati`: JSON
 
 ```json
 {
-  "versione_contratto": "1.1",
+  "versione_contratto": "1.2",
   "id_lavoro": "6f1c2a0e-8b7d-4d5e-9a31-0c2b9e4f7a10",
   "documento": {
     "id": "d2b5c7e1-3a4f-4b8e-9c10-5e6f7a8b9c0d",
@@ -81,6 +82,8 @@ risponde `429` con `Retry-After`; l'applicazione riprova più tardi.
   non crea un secondo lavoro (idempotenza).
 - Il motore verifica `sha256`; se non coincide risponde `422`
   `impronta_non_coincide`.
+- Metadati mancanti o malformati (JSON non valido, `id_lavoro` o `documento`
+  incompleti): `422` `richiesta_non_valida`, non ritentabile (dalla 1.2).
 - `contesto` è facoltativo e serve solo come aiuto (es. protocollo già
   noto dall'arrivo); il motore restituisce comunque ciò che legge nel
   documento.
@@ -111,7 +114,7 @@ la **frase del documento** che le giustifica, e la pagina dove si trova.
 
 ```json
 {
-  "versione_contratto": "1.1",
+  "versione_contratto": "1.2",
   "versione_motore": "2.3.0",
   "documento": { "id": "d2b5…9c0d", "sha256": "9f2c…e41a" },
 
@@ -195,11 +198,11 @@ la **frase del documento** che le giustifica, e la pagina dove si trova.
 | `tipo_documento.valore` | sì | vocabolario `tipo_documento` |
 | `protocollo` | no | `null` se il documento non riporta un protocollo leggibile |
 | `pagine[]` | sì | una voce per pagina, in ordine; `testo` può essere vuoto |
-| `pagine[].acquisizione` | sì | `testo_nativo` (testo già presente nel file), `ocr` (stampato scansionato), `ocr_manoscritto` (scritto a mano), `nessuna` (pagina non leggibile) |
+| `pagine[].acquisizione` | sì | `testo_nativo` (testo già presente nel file), `ocr` (stampato scansionato), `ocr_manoscritto` (scritto a mano), `nessuna` (pagina non leggibile). **Il motore vero oggi scrive sempre `ocr` per le pagine trascritte** (non distingue `ocr_manoscritto`): l'applicazione lo mostra come informazione e non ci basa nessuna logica; l'incertezza si legge da `lettura_incerta` |
 | `pagine[].lettura_incerta` | sì | `true` se il motore non è sicuro del testo di quella pagina |
 | `lettura_incerta` | sì | `true` se almeno una pagina è incerta; produce l'avviso in pratica |
 | `scheda.*` | sì (anche vuoti) | voce singola: oggetto o `null`; voce multipla: lista, anche vuota |
-| `scheda.*.frase` | sì per ogni voce valorizzata | testo **letterale** del documento; massimo 300 caratteri |
+| `scheda.*.frase` | sì per ogni voce valorizzata | testo **letterale** del documento; massimo 300 caratteri. Eccezione: quando il protocollo è ricavato dal **nome del file**, la frase è convenzionale, `(nome del file) …`, con `pagina: 1`, e non è testo del documento |
 | `scheda.*_altro` | no | testo libero quando il valore non è nel vocabolario |
 | `proposta.esito`, `urgenza` | sì | vocabolari `esito`, `urgenza` |
 | `proposta.azione` | sì | lista (anche vuota), vocabolario `azione` |
@@ -232,7 +235,7 @@ Esito, urgenza, azione, ambito, problematica ed elementi sono **gli elenchi
 del modulo di valutazione ATS**, con le stesse etichette: così proposta
 dell'IA e valutazione dell'operatore si confrontano campo per campo.
 
-| Vocabolario | Scelta | Valori (versione 1.1) |
+| Vocabolario | Scelta | Valori (versione 1.2) |
 |---|---|---|
 | `tipo_documento` | singola | `esposto`, `inoltro_per_competenza`, `richiesta_ente`, `riscontro_ats`, `lettera_avvocato`, `integrazione`, `altro` |
 | `ambito` | multipla | `Medicina Veterinaria`, `Igiene pubblica`, `Disturbo/rumori`, `ARPA`, `Altro` (elenco attuale, vedi 4.1) |
@@ -290,9 +293,17 @@ conserva sempre anche il valore originale.
 | `impronta_non_coincide` | sì | il file è arrivato danneggiato |
 | `tempo_scaduto` | sì | analisi oltre il tempo massimo del motore |
 | `occupato` | sì | (solo come `429`) un altro lavoro è in corso |
+| `richiesta_non_valida` | no | (come `422` a `POST /v1/analisi`) metadati mancanti o malformati; dalla 1.2 |
 | `errore_interno` | sì | qualunque altro errore |
 
-`messaggio` non contiene mai testo del documento. Dopo 3 tentativi falliti
+`messaggio` non contiene mai testo del documento.
+
+Codici HTTP di `GET /v1/analisi/{id_lavoro}`: il corpo conta più del codice. Un corpo
+conforme (anche con `404`, per esempio un lavoro che il motore non conosce più dopo un
+riavvio, con `errore_interno` ritentabile) si usa così com'è; un corpo non conforme con un
+codice diverso da `200` (500 testuale, `{"detail": "Not Found"}` di un URL sbagliato, un
+proxy) è un guasto e si ritenta; un corpo non conforme con `200` è un risultato fuori
+contratto (`risultato_non_valido`, non si ritenta). Dopo 3 tentativi falliti
 l'applicazione porta la pratica in `DA_SMISTARE` con l'avviso "analisi non
 disponibile": il lavoro umano non si blocca.
 
@@ -304,7 +315,7 @@ disponibile": il lavoro umano non si blocca.
 
 ```json
 {
-  "versione_contratto": "1.1",
+  "versione_contratto": "1.2",
   "versione_motore": "2.3.0",
   "documento": { "id": "a1…", "sha256": "…" },
   "tipo_documento": { "valore": "esposto", "motivo": "Email di un privato che segnala animali in difficoltà." },
@@ -375,7 +386,9 @@ a *concluso*.
 - `versione_contratto` segue `MAGGIORE.MINORE`. Aggiungere campi facoltativi
   o valori di vocabolario = versione minore; togliere o rinominare campi =
   versione maggiore, concordata da entrambe le parti.
-- L'applicazione ignora i campi che non conosce.
+- L'applicazione ignora i campi che non conosce e accetta qualunque versione
+  minore della stessa principale (`1.x`); una versione principale diversa è un
+  risultato fuori contratto e, in `/salute`, un motore «contratto_diverso».
 - Ogni modifica a questo documento passa dal ramo `backend` con revisione.
 - Il **finto motore** dell'applicazione implementa esattamente questo
   contratto ed è il riferimento per i test di contratto.
@@ -388,3 +401,4 @@ a *concluso*.
 |---|---|
 | 1.0 | prima stesura |
 | 1.1 | vocabolari fissati sugli elenchi del modulo ATS; `lettera_avvocato` tra i tipi di documento (il motore la produce già); ambito: elenco attuale + conversione dall'elenco storico (4.1) |
+| 1.2 | codice d'errore `richiesta_non_valida` (`422`, non ritentabile) per metadati malformati; regola sui codici HTTP di `GET /v1/analisi/{id}`; annotati: `acquisizione` del motore vero sempre `ocr` per le pagine trascritte, `frase` convenzionale quando il protocollo viene dal nome del file, `.eml` non ancora supportato. L'applicazione accetta qualunque `1.x` |

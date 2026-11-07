@@ -9,17 +9,16 @@ sono un riferimento, non codice riusato. Il vecchio mockup HTML di questa cartel
 
 ## Avvio in sviluppo
 
-```
-# 1. backend (da backend/api, vedi il suo README)
-export PYTHONPATH=..  ESPOSTI_COOKIE_SECURE=false  ESPOSTI_AMBIENTE=sviluppo
-alembic upgrade head
-python -m api.demo                 # dati SINTETICI: pratiche già analizzate dal finto motore
-uvicorn api.main:app --port 8000
+Dalla radice del repository, tutto in Docker (dettagli in [docs/avvio.md](../../docs/avvio.md)):
 
-# 2. frontend (da frontend/backoffice)
-npm install
-npm run dev                        # http://localhost:5173, inoltra /api a http://localhost:8000
 ```
+docker compose up -d --build       # http://127.0.0.1:5173 ; il proxy /api va al servizio api
+```
+
+`src/` è montata nel container in sola lettura: Vite ricarica al volo. Senza Docker: `npm install`,
+`npm run dev` (inoltra `/api` a `http://localhost:8000`, o a `VITE_API_URL`). `VITE_HOST_AMMESSI`
+(elenco separato da virgole) aggiunge nomi host accettati da Vite oltre a localhost (in compose:
+`backoffice`, per il browser delle prove end-to-end).
 
 Accessi demo (password `password-sintetica-1`): `smistatore`, `op.vet`, `op.igp`, `admin`.
 Con `VITE_API_URL=http://host:porta npm run dev` il proxy punta altrove. In sviluppo il cookie di
@@ -41,8 +40,10 @@ sessione è `Secure` salvo `ESPOSTI_COOKIE_SECURE=false` (Safari non lo accetta 
 ## Come è fatto
 
 - `src/api/schema.d.ts` è **generato** dallo schema OpenAPI del backend: se cambia l'API si rigenera e
-  `tsc` indica cosa rompe. Per aggiornarlo: `cd backend/api && PYTHONPATH=.. python -m api.esporta_openapi
-  ../../frontend/backoffice/openapi.json`, poi `npm run gen:api`.
+  `tsc` indica cosa rompe. Per aggiornarlo (in Docker): `scripts/genera-tipi.sh` dalla radice
+  (`api.esporta_openapi` → `openapi.json` → `npm run gen:api`).
+- La valutazione viaggia con la sua `versione`: a un 409 `valutazione_modificata` Inbox e scheda mostrano
+  un messaggio e ricaricano la valutazione salvata da altri (`eConflittoValutazione` in `client.ts`).
 - `src/api/endpoints.ts`: tutte le chiamate, tipizzate; `client.ts`: `fetch` con gestione errori
   (`ApiError`, un 401 fuori dall'accesso riporta alla pagina di accesso); `errori.ts`: messaggi per l'utente.
 - Stato del server con TanStack Query; dopo ogni modifica si invalida la cache (i dati sono piccoli).
@@ -50,17 +51,16 @@ sessione è `Secure` salvo `ESPOSTI_COOKIE_SECURE=false` (Safari non lo accetta 
 
 ## Test
 
+Dalla radice, in Docker:
+
 ```
-npm run typecheck && npm test     # veloci: backend simulato (valida i corpi delle richieste, ruoli, accessibilità)
+scripts/prove.sh frontend          # npm run typecheck && npm test: backend simulato (corpi delle richieste, ruoli, accessibilità)
+scripts/prove.sh live              # src/test/live.test.tsx contro API + worker + finto motore veri, database nuovo
+scripts/prove.sh e2e               # Playwright in e2e/: browser vero contro lo stack compose
 ```
 
 I test `src/test/live.test.tsx` renderizzano l'app vera contro un backend vero e si attivano solo con
-`LIVE_API_URL` (dopo `python -m api.demo` su un database vuoto):
-
-```
-LIVE_API_URL=http://localhost:8000 npm test
-```
-
+`LIVE_API_URL` (dopo `python -m api.demo` su un database vuoto: `scripts/prove.sh live` lo prepara da sé).
 Modificano i dati demo (validano, assegnano, creano un utente): per rifarli serve un database nuovo.
 `axe-core` controlla le regole strutturali di accessibilità; **il contrasto dei colori e l'uso da tastiera
 vanno verificati in un browser**.

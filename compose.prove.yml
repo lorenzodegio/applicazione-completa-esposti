@@ -1,0 +1,23 @@
+# Sovrapposizione per le prove (scripts/prove.sh): database su tmpfs, nessuna porta sull'host,
+# sempre il finto motore, nessun aggancio alla rete del motore vero. Ogni esecuzione parte pulita.
+services:
+  db:
+    volumes: !override
+      - ./docker/db/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro
+    tmpfs: [ /var/lib/postgresql/data ]
+
+  api:
+    ports: !reset []
+    networks: !override [ default ]
+    environment:
+      ESPOSTI_MOTORE_URL: http://motore-finto:8080
+
+  worker:
+    networks: !override [ default ]
+    environment:
+      ESPOSTI_MOTORE_URL: http://motore-finto:8080
+      ESPOSTI_MOTORE_INTERVALLO_SECONDI: "0.5"
+
+  backoffice:
+    ports: !reset []
+    volumes: !reset []

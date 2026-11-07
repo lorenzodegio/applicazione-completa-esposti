@@ -326,3 +326,42 @@ def test_aggiunta_documento_a_pratica_esistente_accoda_il_motore(s, accedi, work
     docs = smi.get(f"{P}/pratiche/{pid}/documenti").json()
     assert [d["analisi"]["stato"] for d in docs] == ["completata", "completata"]
     assert smi.get(f"{P}/pratiche/{pid}").json()["stato"] == "DA_SMISTARE"   # lo stato non si muove da solo
+
+
+# --- cartella temporanea del worker ------------------------------------------------------------------
+
+def test_il_worker_crea_la_cartella_temporanea_se_manca_e_la_lascia_vuota(s, accedi, worker, monkeypatch, tmp_path):
+    nuova = tmp_path / "non" / "ancora" / "creata"
+    monkeypatch.setattr(get_settings(), "dir_temporanea", str(nuova))
+    carica(accedi(s["smi"]), "esposto_cani.pdf")
+    assert worker() == {"completato": 1}
+    assert nuova.is_dir() and not list(nuova.iterdir())
+
+
+def test_all_avvio_il_worker_cancella_i_temporanei_rimasti(monkeypatch, tmp_path):
+    from api.worker import pulisci_temporanei
+    monkeypatch.setattr(get_settings(), "dir_temporanea", str(tmp_path))
+    (tmp_path / "esposti-vecchio").mkdir()
+    (tmp_path / "esposti-vecchio" / "documento").write_bytes(b"sintetico")
+    (tmp_path / "altro").mkdir()                             # non è del worker: resta
+    assert pulisci_temporanei() == 1
+    assert [p.name for p in tmp_path.iterdir()] == ["altro"]
+
+
+def test_motore_che_risponde_500_testuale_si_ritenta_fino_al_limite(s, accedi, worker, db):
+    import httpx
+    from motore.client import MotoreHttp
+
+    def risposta(req: httpx.Request) -> httpx.Response:
+        if req.method == "POST":
+            return httpx.Response(202, json={"id_lavoro": "x", "stato": "in_coda"})
+        if req.method == "GET":
+            return httpx.Response(500, text="Internal Server Error")
+        return httpx.Response(204)
+    rotto = MotoreHttp(http_client=httpx.Client(transport=httpx.MockTransport(risposta), base_url="http://motore:8080"))
+    pid = carica(accedi(s["smi"]), "esposto_cani.pdf")["pratica"]["id"]
+    esegui_coda(client=rotto, archivio=get_archivio(), dormi=lambda x: None)
+    lavoro = db.execute(select(LavoroMotore).where(LavoroMotore.pratica_id == pid)).scalar_one()
+    assert (lavoro.stato, lavoro.codice_errore, lavoro.tentativi) == (StatoLavoro.errore, "errore_interno", 3)
+    assert azioni(db, pid).count("motore.ritenta") == 2
+    assert db.get(Pratica, pid).stato == Stato.DA_SMISTARE

@@ -2549,6 +2549,17 @@
               }
             ],
             "title": "Urgenza"
+          },
+          "versione": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Versione"
           }
         },
         "title": "ValutazioneIn",
@@ -2755,6 +2766,10 @@
               }
             ],
             "title": "Urgenza"
+          },
+          "versione": {
+            "title": "Versione",
+            "type": "integer"
           }
         },
         "required": [
@@ -2778,6 +2793,7 @@
           "azione",
           "note",
           "da_risultato_id",
+          "versione",
           "creata_il",
           "aggiornata_il"
         ],
@@ -5285,7 +5301,7 @@
     },
     "/api/v1/pratiche/{pratica_id}/validazione": {
       "post": {
-        "description": "Valutazione compilata + decisione su ogni tema proposto → IN_LAVORAZIONE. La decide la persona.",
+        "description": "Valutazione compilata → IN_LAVORAZIONE. La decide la persona; i temi proposti non toccati diventano confermati.",
         "operationId": "valida_pratica_api_v1_pratiche__pratica_id__validazione_post",
         "parameters": [
           {
@@ -5482,16 +5498,13 @@
     },
     "/api/v1/salute": {
       "get": {
+        "description": "Database, archivio, coda e motore. 503 solo se database o archivio non funzionano.",
         "operationId": "salute_api_v1_salute_get",
         "responses": {
           "200": {
             "content": {
               "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Salute Api V1 Salute Get",
-                  "type": "object"
-                }
+                "schema": {}
               }
             },
             "description": "Successful Response"

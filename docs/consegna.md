@@ -162,7 +162,7 @@ Regole che valgono sempre:
   dietro interfaccia unica.
 - Ruoli e visibilità (piano, sezione 6); collegamenti verso altri uffici
   visibili solo come numero, ufficio, stato.
-- Contratto del motore 1.1, con risultato **per documento**.
+- Contratto del motore 1.1 alla consegna (oggi 1.2), con risultato **per documento**.
 - Elenchi del modulo ATS (ambito, problematica, elementi, esito, urgenza,
   azione) e tipi di documento, compresa la **lettera avvocato**. Per
   l'ambito ci sono due elenchi: quello attuale, che il motore deve produrre,

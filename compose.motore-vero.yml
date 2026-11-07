@@ -1,0 +1,39 @@
+# Sovrapposizione per la prova di aggancio con il motore VERO (scripts/prova-motore-vero.sh):
+# progetto separato e pulito (database su tmpfs, archivio nuovo, nessuna porta sull'host),
+# worker e api verso http://motore:8080 sulla rete interna esposti_interna.
+# Il motore (classificatore-esposti-v2) va avviato prima, nel suo repository: docker compose up -d motore
+# I documenti caricati sono quelli SINTETICI del motore, montati in sola lettura nel solo container
+# delle prove (nessun dato reale; nessuna cartella di lavoro del motore).
+services:
+  db:
+    volumes: !override
+      - ./docker/db/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro
+    tmpfs: [ /var/lib/postgresql/data ]
+
+  api:
+    ports: !reset []
+    environment:
+      ESPOSTI_MOTORE_URL: http://motore:8080
+
+  worker:
+    environment:
+      ESPOSTI_MOTORE_URL: http://motore:8080
+
+  backoffice:
+    ports: !reset []
+    volumes: !reset []
+
+  e2e-motore-vero:
+    build: ./e2e
+    image: esposti-e2e:dev
+    profiles: [ motore-vero ]
+    environment:
+      BASE_URL: http://backoffice:5173
+      DATI_SINTETICI: /dati-sintetici
+    volumes:
+      - ${MOTORE_DATI_SINTETICI:-../classificatore-esposti-v2/tests/dati_sintetici}:/dati-sintetici:ro
+    command: ["npx", "playwright", "test", "--config", "playwright.motore-vero.config.ts"]
+    ipc: host
+    depends_on:
+      backoffice: { condition: service_healthy }
+      worker: { condition: service_started }

@@ -4,9 +4,14 @@ Crea (se mancano) i dati sintetici del seed, carica documenti SINTETICI scelti p
 scattare i vari scenari del finto motore, li fa analizzare e ne assegna alcuni agli uffici,
 così Inbox, Smistamento, Gestione pratiche e Fascicoli hanno contenuto.
 Solo con ESPOSTI_AMBIENTE=sviluppo. Ripetibile: se c'è già, non rifà nulla.
+
+I documenti della demo li analizza SEMPRE il finto motore nello stesso processo, anche se
+ESPOSTI_MOTORE_URL punta al motore vero: sono file sintetici fatti per gli scenari del finto.
 """
 from fastapi.testclient import TestClient
 from sqlalchemy import func, select
+
+from motore.client import motore_finto_in_processo
 
 from .config import get_settings
 from .db import get_sessionmaker
@@ -43,7 +48,7 @@ def main() -> None:
         r = c.post("/api/v1/pratiche", files=[("files", (nome, f"contenuto sintetico di {nome}".encode(), "application/pdf"))],
                    data={"titolo": nome.rsplit(".", 1)[0].replace("_", " ").capitalize() + "_demo"})
         ids.append(r.json()["pratica"]["id"])
-    esegui_coda(dormi=lambda s: None)
+    esegui_coda(client=motore_finto_in_processo(), dormi=lambda s: None)
     with get_sessionmaker()() as db:
         uffici = {u.codice: u for u in db.execute(select(Ufficio)).scalars()}
     for pid, (_, uff) in zip(ids, CASI):

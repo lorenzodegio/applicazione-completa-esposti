@@ -55,6 +55,32 @@ def test_collegamento_automatico_per_stesso_protocollo(s, accedi, crea_pratica, 
     assert r[0]["pratica"]["id"] == str(p2.id) and r[0]["pratica"]["titolo"]
 
 
+@pytest.mark.parametrize("prot1,data1,prot2,data2,collegate", [
+    ("{n}/2025", None, "{n}/2025", None, True),
+    ("{n} / 2025", None, "{n}/2025", None, True),            # spazi e maiuscole non contano
+    ("{n}", None, "{n}", None, False),                       # solo cifre, nessun anno: mai uniti
+    ("{n}", "2024-03-01", "{n}", "2025-03-01", False),       # stesso numero, anni diversi
+    ("{n}", "2025-01-10", "{n}", "2025-11-30", True),        # anno dalla data del protocollo
+    ("{n}/2025", None, "{n}", "2025-06-01", True),
+    ("{n}/2024", None, "{n}", "2025-06-01", False),
+    ("{n}/2024", None, "{n}/2025", None, False),
+])
+def test_stesso_protocollo_richiede_numero_e_anno(s, accedi, crea_pratica, db, prot1, data1, prot2, data2, collegate):
+    import datetime as dt
+    import uuid as _uuid
+    n = str(_uuid.uuid4().int)[:9]
+    p1, p2 = crea_pratica(Stato.DA_VALIDARE, s["a"]), crea_pratica(Stato.DA_VALIDARE, s["a"])
+    p1.protocollo, p2.protocollo = prot1.format(n=n), prot2.format(n=n)
+    p1.data_protocollo = dt.date.fromisoformat(data1) if data1 else None
+    p2.data_protocollo = dt.date.fromisoformat(data2) if data2 else None
+    db.commit()
+    op = accedi(s["op"])
+    automatici = [c for c in op.get(f"{P}/pratiche/{p1.id}/collegamenti").json() if c["automatico"]]
+    assert bool(automatici) is collegate
+    riga = next(r for r in op.get(f"{P}/pratiche?testo={n}&per_page=100").json()["items"] if r["id"] == str(p1.id))
+    assert riga["n_collegate"] == (1 if collegate else 0)
+
+
 def test_pratica_collegata_di_altro_ufficio_solo_numero_ufficio_stato(s, accedi, crea_pratica, db):
     mia, altrui = crea_pratica(Stato.DA_VALIDARE, s["a"]), crea_pratica(Stato.IN_LAVORAZIONE, s["b"])
     altrui.protocollo = mia.protocollo

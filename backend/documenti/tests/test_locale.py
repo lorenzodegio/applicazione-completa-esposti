@@ -40,3 +40,13 @@ def test_percorsi_fuori_dall_archivio_rifiutati(arch):
 def test_nessun_file_parziale(arch):
     arch.salva(uuid.uuid4(), "a.pdf", io.BytesIO(b"x"))
     assert not list(arch.radice.rglob("*.parziale"))
+
+
+def test_verifica_di_salute(arch, tmp_path):
+    arch.verifica()                                        # scrivibile: nessun errore, nessun file lasciato
+    assert not list(arch.radice.glob(".salute-*"))
+    finto = tmp_path / "non_una_cartella"
+    finto.write_bytes(b"x")
+    arch.radice = finto                                    # la radice non è più una cartella usabile
+    with pytest.raises(ErroreArchivio):
+        arch.verifica()

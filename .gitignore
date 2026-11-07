@@ -43,6 +43,9 @@ backend/documenti/archivio/
 *.7z
 # Eccezione: fixture sintetiche dei test
 !**/tests/fixtures/**
+# Eccezione: documenti SINTETICI del collaudo manuale (generati da scripts/genera-dati-collaudo.sh)
+!docs/collaudo/dati/
+!docs/collaudo/dati/**
 
 # --- Uscite del motore di classificazione ---
 backend/motore/output/

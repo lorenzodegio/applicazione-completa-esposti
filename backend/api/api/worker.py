@@ -58,6 +58,28 @@ def _ora():
     return dt.datetime.now(dt.timezone.utc)
 
 
+# --- cartella temporanea ----------------------------------------------------------------
+
+PREFISSO_TEMP = "esposti-"
+
+
+def cartella_temporanea() -> str | None:
+    """La cartella dei temporanei (ESPOSTI_DIR_TEMPORANEA): si crea se manca. None = quella di sistema."""
+    d = get_settings().dir_temporanea
+    if d:
+        Path(d).mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def pulisci_temporanei() -> int:
+    """All'avvio: cancella i temporanei rimasti da un worker interrotto (il documento non deve restare qui)."""
+    base = Path(cartella_temporanea() or tempfile.gettempdir())
+    vecchi = [p for p in base.glob(f"{PREFISSO_TEMP}*") if p.is_dir()]
+    for p in vecchi:
+        shutil.rmtree(p, ignore_errors=True)
+    return len(vecchi)
+
+
 # --- coda -----------------------------------------------------------------------------
 
 def riprendi_interrotti(db: Session) -> int:
@@ -191,7 +213,7 @@ def elabora(db: Session, lavoro: LavoroMotore, *, client: ClientMotore, archivio
     cfg = get_settings()
     doc = db.get(Documento, lavoro.documento_id)
     id_invio = str(uuid.uuid5(lavoro.id, str(lavoro.tentativi)))  # nuovo id a ogni tentativo
-    tmp = tempfile.mkdtemp(prefix="esposti-", dir=cfg.dir_temporanea)
+    tmp = tempfile.mkdtemp(prefix=PREFISSO_TEMP, dir=cartella_temporanea())
     consegnato = False
     try:
         locale = Path(tmp) / "documento"
@@ -278,6 +300,9 @@ def main() -> None:
     ap.add_argument("--una-volta", action="store_true", help="svuota la coda ed esce")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO)
+    rimossi = pulisci_temporanei()
+    if rimossi:
+        log.info("temporanei rimasti da un avvio precedente: %d, cancellati", rimossi)
     while True:
         conteggi = esegui_coda()
         if conteggi:

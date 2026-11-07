@@ -20,7 +20,8 @@ class Settings(BaseSettings):
     # motore: vuoto = finto motore nello stesso processo; altrimenti URL (es. http://motore:8080)
     motore_url: str = ""
     motore_max_tentativi: int = 3
-    motore_timeout_secondi: float = 600.0
+    # sopra il tempo massimo del motore vero (tempo_max_s = 1800): è il motore a dichiarare tempo_scaduto
+    motore_timeout_secondi: float = 2100.0
     motore_intervallo_secondi: float = 2.0
 
 

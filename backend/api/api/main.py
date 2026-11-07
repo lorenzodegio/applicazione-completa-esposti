@@ -1,10 +1,10 @@
 import uuid
 
 from fastapi import FastAPI, Request
-from sqlalchemy import text
+from fastapi.responses import JSONResponse
 
-from .db import get_engine
 from .registro import id_richiesta_corrente
+from .salute import salute as controlla_salute
 from .routers import amministrazione, auth, collegamenti, documenti, operatore, pratiche, schermate
 
 app = FastAPI(title="Gestione esposti — ATS Insubria", version="0.1.0")
@@ -29,11 +29,7 @@ for r in (auth.router, collegamenti.router, pratiche.router, operatore.router, d
 
 
 @app.get("/api/v1/salute")
-def salute() -> dict:
-    # Archivio, coda e motore si aggiungono quando esistono (fasi 2 e 5).
-    try:
-        with get_engine().connect() as conn:
-            conn.execute(text("SELECT 1"))
-        return {"database": "ok"}
-    except Exception:
-        return {"database": "errore"}
+def salute() -> JSONResponse:
+    """Database, archivio, coda e motore. 503 solo se database o archivio non funzionano."""
+    codice, corpo = controlla_salute()
+    return JSONResponse(corpo, status_code=codice)
