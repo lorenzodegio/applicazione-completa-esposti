@@ -533,7 +533,7 @@ Esito: [x] OK  [ ] KO  [ ] N/A — Note:
 
 **Atteso:** ora vede le pratiche di Igiene pubblica (come `op.igp`) e nessuna di Veterinaria.
 
-Esito: [ ] OK  [x] KO  [ ] N/A — Note: #1
+Esito: [ ] OK  [ ] KO  [x] N/A — Note: #1
 
 #### AMM-08 — Disattivare un ufficio
 1. Disattiva **Ufficio di collaudo**.

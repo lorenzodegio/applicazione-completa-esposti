@@ -23,22 +23,22 @@ Solo le aree che ti erano assegnate (sezione 6 della checklist) più quelle in c
 | 8. Fascicoli e temi | 7 | | | |
 | 9. Gestione pratiche e Home | 8 | | | |
 | 10. Registro delle azioni | 5 | 5 | 0 | 0 |
-| 11. Amministrazione | 8 | 7 | 1 | 0 |
+| 11. Amministrazione | 8 | 7 | 0 | 1 |
 | 12. Robustezza | 7 | 7 | 0 | 0 |
 | 13. Privacy | 5 | 5 | 0 | 0 |
-| **Totale** | 66 | 65 | 1 | 0 |
+| **Totale** | 66 | 65 | 0 | 1 |
 
 ## Problemi trovati (KO)
 
 | Codice | Issue | Gravità | In breve |
 |---|---|---|---|
-| AMM-07 | #1 | Bloccante | Non è presente una sezione/bottone per permettere all'admin di assegnare un ufficio differente |
+| | |
 
 ## Prove non applicabili (N/A) e perché
 
 | Codice | Motivo |
 |---|---|
-| | |
+| AMM-07 | #1 | Bloccante | Non è presente una sezione/bottone per permettere all'admin di assegnare un ufficio differente |
 
 ## Tempi del motore vero (se provato)
 
@@ -60,5 +60,6 @@ si potrebbero diminuire il numero di esposti prima della visualizzazione dei bot
 Questo anche di dover scorrere all'infinito per cambiare utente a fine pagina.
 - Diminuire la dimensione dei "box" che contengono gli elementi per aggiungere un allegato,
 questo perché altrimenti se clicco sulla destra della pagina mi prende l'input e mi apre la finestra, finendo di aggiungere un documento per sbaglio.
+- Non è presente una sezione/bottone per permettere all'admin di assegnare un ufficio differente
 
 Per il resto molto intuitiva e semplice.
