@@ -1,13 +1,11 @@
 @echo off
 rem ============================================================================
-rem  CONTROLLA E RIPARA GLI ACCESSI DEMO
-rem  Guarda nel database quali utenti demo esistono e se la password funziona.
-rem  Se mancano (database vuoto) li crea insieme ai dati demo; se ci sono ma sono
-rem  disattivati o con un'altra password, li riattiva e rimette la password demo.
-rem  Non serve che il server API sia acceso, ma Postgres si'. Ripetibile senza danni.
-rem  Solo dati sintetici di sviluppo.
+rem  MIGRA E RIPARA GLI ACCESSI DEMO
+rem  1) applica le migrazioni (inclusa la rinomina smistatore -> gestore_delle_pratiche)
+rem  2) riattiva gli account demo e reimposta la password demo
+rem  Usa solo dati sintetici di sviluppo. Postgres deve essere acceso.
 rem ============================================================================
-title Esposti - controlla e ripara gli accessi demo
+title Esposti - migra e ripara gli accessi demo
 setlocal
 set "API=%~dp0..\backend\api"
 
@@ -19,29 +17,43 @@ set "PYTHONPATH=.."
 set "ESPOSTI_AMBIENTE=sviluppo"
 
 echo.
-python -m api.accessi_demo --ripara
-if errorlevel 1 goto :errore
+echo [1/2] Applico le migrazioni del database...
+python -m alembic upgrade head
+if errorlevel 1 goto :errore_migrazione
 
 echo.
-echo Fatto. Torna al browser e riprova ad accedere.
-echo Se il browser compila la password da solo, cancellala e riscrivila a mano.
+echo [2/2] Controllo e ripristino le credenziali demo...
+python -m api.accessi_demo --ripara
+if errorlevel 1 goto :errore_riparazione
+
+echo.
+echo [OK] Ripristino completato.
+echo.
+echo Torna al browser, ricarica la pagina e inserisci le credenziali indicate.
 goto :fine
 
 :manca_cartella
 echo.
-echo [ERRORE] Non trovo la cartella %API%
+echo [ERRORE] Non trovo la cartella %API%.
 goto :fine
 
 :prima_il_file_1
 echo.
-echo [ERRORE] L'ambiente Python non e' pronto. Lancia prima avvia-1-api.bat.
+echo [ERRORE] Ambiente Python non pronto. Lancia prima avvia-1-api.bat.
 goto :fine
 
-:errore
+:errore_migrazione
 echo.
-echo [ERRORE] Non sono riuscito a sistemare gli accessi. Leggi il messaggio qui sopra:
-echo se parla di connessione o password del database, Postgres non e' acceso o non
-echo e' configurato (lancia crea-database.bat). Altrimenti incolla qui tutto il messaggio.
+echo [ERRORE] Migrazione non riuscita. Controlla l'errore qui sopra:
+echo - password authentication failed: controlla la connessione/credenziali Postgres;
+echo - connection refused: avvia Postgres;
+echo - altri errori: copia qui il messaggio completo.
+goto :fine
+
+:errore_riparazione
+echo.
+echo [ERRORE] Non sono riuscito a riparare gli accessi. Copia qui il messaggio completo.
+goto :fine
 
 :fine
 echo.

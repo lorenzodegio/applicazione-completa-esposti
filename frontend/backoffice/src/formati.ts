@@ -9,7 +9,7 @@ export const ETICHETTA_STATO: Record<StatoPratica, string> = {
 };
 
 export const ETICHETTA_RUOLO: Record<Ruolo, string> = {
-  smistatore: "Smistatore",
+  smistatore: "Gestore delle pratiche",
   operatore: "Operatore di ufficio",
   amministratore: "Amministratore",
 };

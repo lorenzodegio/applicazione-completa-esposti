@@ -1,0 +1,33 @@
+PATCH DOCKER - ETICHETTA DEL RUOLO E NOME DELL'OPERATRICE
+
+MODIFICHE VISIBILI
+- Il titolo/logo "Esposti ATS" RESTA INVARIATO.
+- Solo la dicitura nel div class="ufficio", subito sotto "Esposti ATS",
+  passa da "Smistatore" a "Gestore delle pratiche".
+- Anche la dicitura del ruolo sotto "Sara Gestore" e sopra il pulsante
+  "Esci" diventa "Gestore delle pratiche".
+- Il nome visualizzato dell'account diventa "Sara Gestore".
+
+Il ruolo tecnico nel database resta `smistatore`: non vengono cambiati
+permessi, username o password. La modifica aggiorna l'etichetta mostrata
+nell'interfaccia e il nome visualizzato dell'account.
+
+La patch aggiorna anche il seed per le installazioni nuove e applica la
+migrazione 0008 al database già in uso. Non cancella database, pratiche
+o documenti.
+
+PROCEDURA DOCKER
+1. Estrai la cartella `patch-gestore-pratiche` e questo file direttamente
+   nella cartella principale `applicazione-completa-esposti`, accanto a
+   `compose.yml`.
+2. Apri WSL/terminale nella cartella principale del progetto.
+3. Esegui:
+      bash patch-gestore-pratiche/applica-patch-docker.sh
+4. Al termine, aggiorna il browser con Ctrl+F5.
+
+La procedura richiede che l'applicazione sia già avviata e che sia già stata
+applicata la precedente patch Docker per gli accessi che installa la
+migrazione 0007. Prima di ricreare l'API, legge dal container i valori
+attivi del motore e DEMO e li conserva nel file .env di Compose.
+
+Vengono creati backup dei file sorgente modificati e del file .env, se presente.

@@ -1,13 +1,13 @@
-"""rinomina l'account demo dello smistatore
+"""Rinomina l'account demo dello smistatore.
 
-Revision ID: 0002
-Revises: 0001
+Revision ID: 0007
+Revises: 0006
 """
 from alembic import op
 import sqlalchemy as sa
 
-revision = "0002"
-down_revision = "0001"
+revision = "0007"
+down_revision = "0006"
 branch_labels = None
 depends_on = None
 
@@ -25,6 +25,7 @@ def upgrade() -> None:
         sa.text("SELECT id FROM utente WHERE username = :username"),
         {"username": NUOVO_USERNAME},
     ).first()
+
     if vecchio and nuovo:
         raise RuntimeError(
             "Impossibile rinominare l'account: esistono già sia 'smistatore' "
@@ -47,6 +48,7 @@ def downgrade() -> None:
         sa.text("SELECT id FROM utente WHERE username = :username"),
         {"username": VECCHIO_USERNAME},
     ).first()
+
     if nuovo and vecchio:
         raise RuntimeError(
             "Impossibile annullare la rinomina: esistono già entrambi gli username."
