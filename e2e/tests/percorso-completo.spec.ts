@@ -49,7 +49,7 @@ async function nuovaPagina(browser: Browser, utente: string) {
 test.describe.configure({ mode: "serial" });
 
 test("caricamento dal backoffice: una pratica per scenario, in coda per il motore", async ({ page }) => {
-  await accedi(page, "smistatore");
+  await accedi(page, "gestore_delle_pratiche");
   await page.getByRole("navigation", { name: "Menu principale" }).getByRole("link", { name: "Smistamento" }).click();
   await page.getByText("Carica un nuovo esposto").click();
   for (const s of SCENARI) {
@@ -79,7 +79,7 @@ test("caricamento dal backoffice: una pratica per scenario, in coda per il motor
 });
 
 test("la coda si svuota: il worker porta ogni pratica fuori da «In analisi»", async ({ page }) => {
-  await accedi(page, "smistatore");
+  await accedi(page, "gestore_delle_pratiche");
   for (const s of SCENARI) {
     await expect.poll(async () => (await (await page.request.get(`/api/v1/pratiche/${ids[s.chiave]}`)).json()).stato,
       { timeout: 180_000, intervals: [1000] }).toBe("DA_SMISTARE");
@@ -90,7 +90,7 @@ test("la coda si svuota: il worker porta ogni pratica fuori da «In analisi»", 
 
 for (const s of SCENARI) {
   test(`risultato visibile nel backoffice: ${s.chiave}`, async ({ page }) => {
-    await accedi(page, "smistatore");
+    await accedi(page, "gestore_delle_pratiche");
     await page.goto(`/pratiche/${ids[s.chiave]}`);
     await expect(page.getByRole("heading", { name: titolo(s) })).toBeVisible();
     await expect(page.locator(".tag", { hasText: "Da smistare" })).toBeVisible();
@@ -127,7 +127,7 @@ for (const s of SCENARI) {
 }
 
 test("smistamento: lo smistatore assegna le pratiche all'ufficio", async ({ page }) => {
-  await accedi(page, "smistatore");
+  await accedi(page, "gestore_delle_pratiche");
   await page.getByRole("navigation", { name: "Menu principale" }).getByRole("link", { name: "Smistamento" }).click();
   for (const chiave of ["pulito", "manoscritto", "instabile"]) {
     const voce = page.locator(".voce").filter({ has: page.getByRole("link", { name: `E2E ${chiave}`, exact: true }) });

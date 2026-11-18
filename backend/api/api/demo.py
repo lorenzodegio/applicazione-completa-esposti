@@ -42,7 +42,7 @@ def main() -> None:
             print("Demo già presente.")
             return
     c = TestClient(app, base_url="https://demo")
-    assert c.post("/api/v1/auth/login", json={"username": "smistatore", "password": PASSWORD_SVILUPPO}).status_code == 200
+    assert c.post("/api/v1/auth/login", json={"username": "gestore_delle_pratiche", "password": PASSWORD_SVILUPPO}).status_code == 200
     ids = []
     for nome, _ in CASI:
         r = c.post("/api/v1/pratiche", files=[("files", (nome, f"contenuto sintetico di {nome}".encode(), "application/pdf"))],
@@ -56,7 +56,7 @@ def main() -> None:
             v = c.get(f"/api/v1/pratiche/{pid}").json()["versione"]
             r = c.post(f"/api/v1/pratiche/{pid}/assegnazione", json={"versione": v, "ufficio_id": str(uffici[uff].id)})
             assert r.status_code == 200, r.text
-    print(f"Demo creata: {len(ids)} pratiche. Utenti: smistatore, op.vet, op.igp, admin (password: {PASSWORD_SVILUPPO})")
+    print(f"Demo creata: {len(ids)} pratiche. Utenti: gestore_delle_pratiche, op.vet, op.igp, admin (password: {PASSWORD_SVILUPPO})")
 
 
 if __name__ == "__main__":

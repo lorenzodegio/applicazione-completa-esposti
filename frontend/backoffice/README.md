@@ -20,7 +20,7 @@ docker compose up -d --build       # http://127.0.0.1:5173 ; il proxy /api va al
 (elenco separato da virgole) aggiunge nomi host accettati da Vite oltre a localhost (in compose:
 `backoffice`, per il browser delle prove end-to-end).
 
-Accessi demo (password `password-sintetica-1`): `smistatore`, `op.vet`, `op.igp`, `admin`.
+Accessi demo (password `password-sintetica-1`): `gestore_delle_pratiche`, `op.vet`, `op.igp`, `admin`.
 Con `VITE_API_URL=http://host:porta npm run dev` il proxy punta altrove. In sviluppo il cookie di
 sessione è `Secure` salvo `ESPOSTI_COOKIE_SECURE=false` (Safari non lo accetta su http).
 

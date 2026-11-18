@@ -137,7 +137,7 @@ Indirizzo: **http://127.0.0.1:5173**. Password di tutti: **`password-sintetica-1
 
 | Utente | Ruolo | Ufficio | Menu che deve vedere |
 |---|---|---|---|
-| `smistatore` | smistatore | — | Home, Inbox, Fascicoli, Gestione pratiche, **Smistamento** |
+| `gestore_delle_pratiche` | smistatore | — | Home, Inbox, Fascicoli, Gestione pratiche, **Smistamento** |
 | `op.vet` | operatore | Medicina Veterinaria | Home, Inbox, Fascicoli, Gestione pratiche |
 | `op.igp` | operatore | Igiene pubblica | Home, Inbox, Fascicoli, Gestione pratiche |
 | `admin` | amministratore | — | **solo** Uffici, Utenti (nessuna pratica) |
@@ -231,9 +231,9 @@ avviato con **DEMO=1 e finto motore** (2.2).
 ### Area 1 — Accesso (Syed)
 
 #### ACC-01 — Ogni ruolo entra e vede solo il suo menu
-Ruolo: `smistatore`, `op.vet`, `op.igp`, `admin` (uno alla volta)
+Utenti: `gestore_delle_pratiche`, `op.vet`, `op.igp`, `admin` (uno alla volta)
 1. Apri http://127.0.0.1:5173.
-2. Accedi con `smistatore` / `password-sintetica-1` e annota le voci del menu a sinistra e il nome in basso.
+2. Accedi con `gestore_delle_pratiche` / `password-sintetica-1` e annota le voci del menu a sinistra e il nome in basso.
 3. Clicca **Esci** e ripeti con `op.vet`, `op.igp`, `admin`.
 
 **Atteso:** i menu sono quelli della tabella in sezione 3; smistatore e operatori arrivano sulla **Home**,
@@ -299,7 +299,7 @@ Esito: [ ] OK  [ ] KO  [ ] N/A — Note:
 
 ### Area 2 — Permessi e sicurezza (Khalil e Syed, separatamente)
 
-Prima di cominciare, con `smistatore` annota in un file di appunti:
+Prima di cominciare, con `gestore_delle_pratiche` annota in un file di appunti:
 - l'**id di una pratica di Medicina Veterinaria** (es. «Esposto cani via robinie_demo»: aprila da Gestione
   pratiche e copia l'ultima parte dell'indirizzo) e l'**id del suo documento** (scheda *Documenti*, link «Apri»);
 - l'**id di una pratica di Igiene pubblica** (es. «Esposto rumori laboratorio_demo»).
@@ -429,14 +429,14 @@ Accesso come `op.vet` da `/docs`
 2. `POST /api/v1/pratiche/{pratica_id}/restituzione` con lo stesso id e corpo
    `{"versione": 1, "motivo": "prova"}`.
 
-**Atteso:** **404** in entrambi i casi; con `smistatore` nel backoffice la pratica non ha la nota e non è
+**Atteso:** **404** in entrambi i casi; con `gestore_delle_pratiche` nel backoffice la pratica non ha la nota e non è
 cambiata.
 
 Esito: [ ] OK  [ ] KO  [ ] N/A — Note:
 
 ### Area 3 — Caricamento (Khalil)
 
-Tutte le prove come `smistatore` → **Smistamento** → **«Carica un nuovo esposto»** (il riquadro si apre),
+Tutte le prove come `gestore_delle_pratiche` → **Smistamento** → **«Carica un nuovo esposto»** (il riquadro si apre),
 campo **«Documenti (anche più di uno)»**, pulsante **«Carica e analizza»**. File dalla sezione 4.
 
 #### CAR-01 — PDF digitale
@@ -553,7 +553,7 @@ Esito: [ ] OK  [ ] KO  [ ] N/A — Note:
 
 ### Area 4 — Motore (Khalil)
 
-**Finto motore (MOT-01…09):** come `smistatore`, carica ogni file **da solo** (una pratica per file), poi
+**Finto motore (MOT-01…09):** come `gestore_delle_pratiche`, carica ogni file **da solo** (una pratica per file), poi
 apri la pratica: **Riepilogo** (avvisi, proposta) e **Documenti** (stato dell'analisi, «Testo letto»). Il
 finto motore restituisce sempre gli stessi esempi (stessi testi e lo stesso protocollo inventato
 `0004512/2025` per molti documenti): è normale.

@@ -19,7 +19,7 @@ from .registro import registra
 from .security import hash_password, verifica_password
 from .seed import PASSWORD_SVILUPPO
 
-UTENTI_DEMO = ["smistatore", "op.vet", "op.igp", "admin"]
+UTENTI_DEMO = ["gestore_delle_pratiche", "op.vet", "op.igp", "admin"]
 
 
 def diagnosi(db: Session) -> dict[str, dict]:

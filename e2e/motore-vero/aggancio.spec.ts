@@ -47,7 +47,7 @@ const json = async (page: Page, url: string) => {
 test.describe.configure({ mode: "serial" });
 
 test("il motore vero è raggiungibile e pronto", async ({ page }) => {
-  await accedi(page, "smistatore");
+  await accedi(page, "gestore_delle_pratiche");
   const salute = await json(page, "/api/v1/salute");
   expect(salute.motore.stato).toBe("ok");
   expect(salute.motore.versione_motore).not.toMatch(/^finto/);
@@ -55,7 +55,7 @@ test("il motore vero è raggiungibile e pronto", async ({ page }) => {
 });
 
 test("caricamento dal backoffice dei documenti sintetici", async ({ page }) => {
-  await accedi(page, "smistatore");
+  await accedi(page, "gestore_delle_pratiche");
   await page.getByRole("navigation", { name: "Menu principale" }).getByRole("link", { name: "Smistamento" }).click();
   await page.getByText("Carica un nuovo esposto").click();
   for (const d of DOCUMENTI) {
@@ -73,7 +73,7 @@ test("caricamento dal backoffice dei documenti sintetici", async ({ page }) => {
 });
 
 test("il motore vero analizza un documento alla volta; tempi per documento", async ({ page }) => {
-  await accedi(page, "smistatore");
+  await accedi(page, "gestore_delle_pratiche");
   const tempi: string[] = [];
   for (const d of DOCUMENTI) {
     await expect.poll(async () => (await json(page, `/api/v1/pratiche/${ids[d.chiave]}`)).stato,
@@ -90,7 +90,7 @@ test("il motore vero analizza un documento alla volta; tempi per documento", asy
 
 for (const d of DOCUMENTI) {
   test(`risultato completo dal motore vero: ${d.chiave}`, async ({ page }) => {
-    await accedi(page, "smistatore");
+    await accedi(page, "gestore_delle_pratiche");
     const a = analisi[d.chiave];
     expect(a.versione_motore).not.toMatch(/^finto/);
     expect(a.versione_contratto).toMatch(/^1\./);
@@ -121,7 +121,7 @@ test("almeno un documento ha temi proposti per il fascicolo", async () => {
 });
 
 test("smistamento: lo smistatore assegna le pratiche all'ufficio", async ({ page }) => {
-  await accedi(page, "smistatore");
+  await accedi(page, "gestore_delle_pratiche");
   await page.getByRole("navigation", { name: "Menu principale" }).getByRole("link", { name: "Smistamento" }).click();
   for (const d of DOCUMENTI) {
     const voce = page.locator(".voce").filter({ has: page.getByRole("link", { name: titolo(d), exact: true }) });

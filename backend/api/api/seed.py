@@ -28,7 +28,7 @@ def esegui(db: Session) -> bool:
     db.flush()
     h = hash_password(PASSWORD_SVILUPPO)
     for username, nome, ruolo, uff in [
-        ("smistatore", "Sara Smistatrice (sintetica)", Ruolo.smistatore, None),
+        ("gestore_delle_pratiche", "Sara Smistatrice (sintetica)", Ruolo.smistatore, None),
         ("op.vet", "Vittorio Veterinari (sintetico)", Ruolo.operatore, vet),
         ("op.igp", "Irene Igiene (sintetica)", Ruolo.operatore, igp),
         ("admin", "Amedeo Admin (sintetico)", Ruolo.amministratore, None),

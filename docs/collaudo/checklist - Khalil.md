@@ -134,7 +134,7 @@ Accesso come `op.vet` da `/docs`
 2. `POST /api/v1/pratiche/{pratica_id}/restituzione` con lo stesso id e corpo
    `{"versione": 1, "motivo": "prova"}`.
 
-**Atteso:** **404** in entrambi i casi; con `smistatore` nel backoffice la pratica non ha la nota e non è
+**Atteso:** **404** in entrambi i casi; con `gestore_delle_pratiche` nel backoffice la pratica non ha la nota e non è
 cambiata.
 
 Esito: [x] OK  [ ] KO  [ ] N/A — Note:
@@ -146,7 +146,7 @@ Esito: [x] OK  [ ] KO  [ ] N/A — Note:
 
 ### Area 3 — Caricamento (Khalil)
 
-Tutte le prove come `smistatore` → **Smistamento** → **«Carica un nuovo esposto»** (il riquadro si apre),
+Tutte le prove come `gestore_delle_pratiche` → **Smistamento** → **«Carica un nuovo esposto»** (il riquadro si apre),
 campo **«Documenti (anche più di uno)»**, pulsante **«Carica e analizza»**. File dalla sezione 4.
 
 #### CAR-01 — PDF digitale
@@ -268,7 +268,7 @@ Esito: [x] OK  [ ] KO  [ ] N/A — Note:
 
 ### Area 4 — Motore (Khalil)
 
-**Finto motore (MOT-01…09):** come `smistatore`, carica ogni file **da solo** (una pratica per file), poi
+**Finto motore (MOT-01…09):** come `gestore_delle_pratiche`, carica ogni file **da solo** (una pratica per file), poi
 apri la pratica: **Riepilogo** (avvisi, proposta) e **Documenti** (stato dell'analisi, «Testo letto»). Il
 finto motore restituisce sempre gli stessi esempi (stessi testi e lo stesso protocollo inventato
 `0004512/2025` per molti documenti): è normale.
@@ -537,7 +537,7 @@ Esito: [ ] OK  [ ] KO  [x] N/A — Note: #1
 
 #### AMM-08 — Disattivare un ufficio
 1. Disattiva **Ufficio di collaudo**.
-2. Come `smistatore`, assegna una pratica: controlla l'elenco degli uffici.
+2. Come `gestore_delle_pratiche`, assegna una pratica: controlla l'elenco degli uffici.
 3. Come `admin`, prova a creare un operatore in quell'ufficio.
 
 **Atteso:** l'ufficio disattivato non compare tra quelli assegnabili; l'operatore non si crea («Un operatore

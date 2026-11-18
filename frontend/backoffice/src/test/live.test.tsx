@@ -134,7 +134,7 @@ describe.skipIf(!BACKEND)("end-to-end contro il backend vero", () => {
   });
 
   it("smistatore: assegna a un ufficio una pratica da smistare", async () => {
-    const u = await accedi("smistatore");
+    const u = await accedi("gestore_delle_pratiche");
     await u.click(await screen.findByRole("link", { name: "Smistamento" }, attesa));
     const voce = (await screen.findByRole("link", { name: /cane libero/i }, attesa)).closest(".voce") as HTMLElement;
     await u.click(within(voce).getByRole("button", { name: "Assegna" }));

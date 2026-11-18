@@ -12,7 +12,7 @@ Indirizzo: **http://localhost:5173**. La password è la stessa per tutti: **`pas
 |---|---|---|---|
 | `op.vet` | Operatore, **Medicina Veterinaria** | Solo le pratiche del suo ufficio. Menu: Home, Inbox, Fascicoli, Gestione pratiche | È l'utente principale: validare esposti, correggere la proposta dell'IA, aggiungere azioni e note |
 | `op.igp` | Operatore, **Igiene pubblica** | Solo le pratiche del suo ufficio | Verificare i **permessi**: non deve vedere le pratiche di Veterinaria |
-| `smistatore` | Smistatore | **Tutte** le pratiche. Menu: come l'operatore, in più **Smistamento** | Assegnare le pratiche agli uffici, riassegnarle, caricare nuovi esposti, riaprire pratiche chiuse |
+| `gestore_delle_pratiche` | Smistatore | **Tutte** le pratiche. Menu: come l'operatore, in più **Smistamento** | Assegnare le pratiche agli uffici, riassegnarle, caricare nuovi esposti, riaprire pratiche chiuse |
 | `admin` | Amministratore | **Solo** Uffici e Utenti, nessuna pratica | Creare uffici e utenti, disattivarli, reimpostare password |
 
 Se sbagli la password **5 volte** con lo stesso nome utente, l'accesso resta bloccato per circa
@@ -125,7 +125,7 @@ protocollo". È normale, non un errore.
 4. **Fascicoli** (prima erano vuoti, perché nessun tema era confermato): ora *Cani* contiene la pratica,
    con il suo percorso a destra.
 5. **Restituisci "Colonia felina in cortile"** (pulsante in Inbox) scrivendo un motivo: sparisce dalla tua Inbox.
-6. **`smistatore` → Smistamento.** Ora vedi la pratica restituita fra quelle da assegnare (insieme a
+6. **`gestore_delle_pratiche` → Smistamento.** Ora vedi la pratica restituita fra quelle da assegnare (insieme a
    "Lettera ente_demo", "Esposto cane libero_demo" e le due pratiche di base). Assegna "Esposto cane libero_demo"
    a **Igiene pubblica**, poi accedi come `op.igp`: la trovi nella sua Inbox.
 7. **Carica un nuovo esposto** (Smistamento, con il worker acceso) con un file chiamato per esempio

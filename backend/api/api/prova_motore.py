@@ -26,7 +26,7 @@ def main() -> None:
         raise SystemExit("Le prove girano solo con ESPOSTI_AMBIENTE=sviluppo")
     nomi = sys.argv[1:] or SCENARI
     c = TestClient(app, base_url="https://prova")
-    r = c.post("/api/v1/auth/login", json={"username": "smistatore", "password": PASSWORD_SVILUPPO})
+    r = c.post("/api/v1/auth/login", json={"username": "gestore_delle_pratiche", "password": PASSWORD_SVILUPPO})
     if r.status_code != 200:
         raise SystemExit("Login non riuscito: hai eseguito `python -m api.seed`?")
     ids = {}

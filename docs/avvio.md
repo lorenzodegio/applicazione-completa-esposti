@@ -64,7 +64,7 @@ Password di tutti: `password-sintetica-1` (solo sviluppo).
 
 | Utente | Ruolo |
 |---|---|
-| `smistatore` | smistatore (vede tutto, assegna, carica nuovi esposti) |
+| `gestore_delle_pratiche` | smistatore (vede tutto, assegna, carica nuovi esposti) |
 | `op.vet` | operatore di Medicina Veterinaria |
 | `op.igp` | operatore di Igiene pubblica |
 | `admin` | amministratore (uffici e utenti, non vede le pratiche) |
